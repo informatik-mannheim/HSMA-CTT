@@ -1,0 +1,67 @@
+<html lang="de" 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+	<title>Neue Veranstaltung anlegen</title>
+</head>
+
+<body>
+ <div layout:fragment="content">
+ 
+   <div class="border border-secondary p-2 pb-5 mb-3">
+	 <h5 class="mb-4">Neue Veranstaltung anlegen</h5>
+	 
+	 <p>Als Gastgeber legen Sie bitte hier eine Veranstaltung an.</p>
+	 
+	  <form action="/neu">
+		  <div class="form-group row">
+			<label class="col-md-2 col-form-label" for="name">Name: *</label>
+			<div class="col-md-4">
+				<input type="text" id="name" name="name" size="24" required autofocus>
+			</div>
+		  </div>
+		  
+		  <div class="form-group row">
+		  	<label class="col-md-2 col-form-label" for="datum">Datum: *</label>
+		  	<div class="col-md-2">
+		  		<input type="date" name="datum" id="datum" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required>	
+		  	</div>
+		  	<label class="col-md-2 col-form-label"for="datum">Anfangszeit: *</label>
+		  	<div class="col-md-1">
+		  		<input type="time" name="zeit" id="zeit" th:value="${#dates.format(#dates.createNow(), 'HH:mm')}" required>	
+		  	</div>
+		  	<label class="col-form-label ml-1">Uhr</label>
+		  </div>
+		  	
+		 <div class="form-group row"> 	
+		 	<!-- 
+		 	<label class="col-md-2 col-form-label float-right" for="max">Dauer: *</label>
+		    <div class="col-md-1">
+				<input type="number" id="max" name="max" value="90" required min="15" size="5">
+			</div>
+			<label class="col-form-label col-md-1 ml-n2">min</label>
+			-->
+			
+		 	<label class="col-md-2 col-form-label" for="max">Raumkapazität: *</label>
+		    <div class="col-md-1">
+				<input type="number" id="max" name="max" value="12" required min="2" size="5">
+			</div>
+			<label class="col-form-label ml-1">Personen</label>
+
+		  </div>
+		  
+		  <div class="form-group row">
+			  <div class="col-md-2"><button class="btn btn-info" type="submit">Anlegen</button></div>
+			  <p class="ml-3"><small><i>* = notwendige Eingabe</i></small></p>
+		  </div>	
+		
+	  </form> 
+  </div>
+ 
+</div>
+	
+</body>
+
+</html>

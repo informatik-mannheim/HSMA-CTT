@@ -1,0 +1,28 @@
+Argumente für das Corona Tracing Tool (CTT)
+
+- CTT ist so einfach und sicher zu benutzen das Infektionschhutz praktischer wird.
+
+- Infektionsschutz sollte so einfach wie möglich durchführbar sein, damit alle mit machen. Das CTT  ist so einfach.
+
+- Wenn keine Papier listen herumgereicht werden ist das Abstandsgebot leichter einzuhalten.
+
+- CTT braucht keine Stifte, die von wohlmeinenden Studierenden weitergereicht werden. Das für die Hygiene gut.
+
+- keine zusätzlichen Flächen müssen berührt oder desinfiziert werden.
+
+-Keine zusätzlichen Geräte oder Server müssen angeschafft oder aufgehängt werden.
+
+- Große Datensicherheit wird gewährleistet, durch speichern ausschließlich in Hochschulcloud, Datenspaarsmakeit und einhalten von Löschfristen.
+
+-Für den Betrieb der Software ist kein IT Fachpersonal notwendig.
+
+-Oft haben kleine dinge große Wirkung im Infektionsschutz. Je schneller Kontaktverfolgung geschieht, des do besser lassen sich Infektionsketten brechen. Durch das CTT lassen sich Kontakte viel schneller verfolgen als durch Papier oder Excel Listen.
+
+- Datenschutz sollte nicht in einem Konflikt mit Infektionsschutz stehen. Das CTT speichert nur so wenige Daten wie für die Kontaktverfolgung irgendwie möglich. Oft genügt es eine Email Adresse zu speichern. Das sorgt für maximale Datensparsamkeit. 
+
+-Die Daten werden gelöscht sobald die Corona Verordnung das erlaubt. 
+
+- Daten aus denen sich Bewegungsprofiele erstellen lassen sollten nicht in den USA gespeichert werden müssen, wenn die Daten auch auf einem eigenen Rechner speichern lassen. Das CTT läuft auf einem Rechner im Hause.
+
+
+- Infektionsschutz ist eine gesamtgesellschaftliche Aufgabe, sich daran zu bereichern ist unmoralisch. Daher ist unsere Lösung kostenlos, werbefrei, quelloffen und auch für jeden Nutzer auf Wunsch erweiterbar und veränderbar. Eine aggressive 

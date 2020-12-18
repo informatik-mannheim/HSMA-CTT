@@ -1,0 +1,49 @@
+body {
+  padding-top: 90px;
+  padding-left: 15px;
+  margin-right: 30px;
+  
+  color: #f8f8f8; 
+  font-family: 'Raleway',sans-serif; 
+}
+
+p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+footer {
+    position: fixed;
+    height: 35px;
+    bottom: 0;
+    width: 100%;
+    background-color: #ddd;
+    margin-left: -15px;
+}
+
+footer p {
+	margin-top: 0px;
+    padding: 8px;
+}
+
+form.form-horizontal {
+	max-width: 720px; 
+	padding: 15px; 
+	margin: 0 auto; 
+	border-style: solid; 
+	border-width: 1px; 
+	border-radius: 0.3em; 
+	background-color: #f2f2f2;"
+} 
+
+h1, h2, h3, h4, h5, h6 {
+	color: #22376f;
+}
+
+a:visited, a:link {
+	color: #3f65c4;
+}
+
+a:hover {
+	color: #22376f;
+}

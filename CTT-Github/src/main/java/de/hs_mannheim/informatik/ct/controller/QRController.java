@@ -1,0 +1,81 @@
+package de.hs_mannheim.informatik.ct.controller;
+
+import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponents;
+
+import javax.servlet.http.HttpServletRequest;
+
+@RestController
+@RequestMapping("QRCodes")
+public class QRController {
+    private final String veranstaltungPath = "/besuchMitCode?vid=%s";
+
+    private final int maxSizeInPx = 2000;
+
+    @Autowired
+    private VeranstaltungsService veranstaltungsService;
+
+    @Autowired
+    private RoomService roomService;
+
+    @Autowired
+    private DynamicContentService contentService;
+
+    @Autowired
+    private Utilities utilities;
+
+    @Value("${server.port}")
+    private String port;
+
+    @Value("${hostname}")
+    private String host;
+
+    @GetMapping(value = "/room/{roomId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getRoomQRCode(
+            @PathVariable(name = "roomId") String roomId,
+            @RequestParam(required = false, defaultValue = "400") int width,
+            @RequestParam(required = false, defaultValue = "400") int height,
+            HttpServletRequest request
+    ) {
+        val room = roomService.findByName(roomId);
+        if (!room.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        val qrUri = utilities.getUriToLocalPath(
+                RoomController.getRoomCheckinPath(room.get()),
+                request
+        );
+
+        return getQRImage(qrUri, width, height);
+    }
+
+    @GetMapping(value = "/event/{eventId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] veranstaltungsCode(
+            @PathVariable(name = "eventId") long veranstaltungsId,
+            @RequestParam(required = false, defaultValue = "400") int width,
+            @RequestParam(required = false, defaultValue = "400") int height,
+            HttpServletRequest request) {
+        val veranstaltung = veranstaltungsService.getVeranstaltungById(veranstaltungsId);
+        if (!veranstaltung.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        val qrUri = utilities.getUriToLocalPath(String.format(veranstaltungPath, veranstaltung.get().getId()), request);
+
+        return getQRImage(qrUri, width, height);
+    }
+
+    private byte[] getQRImage(UriComponents uri, int requestedWidth, int requestedHeight) {
+        return contentService.getQRCodePNGImage(uri, Math.min(requestedWidth, maxSizeInPx), Math.min(requestedHeight, maxSizeInPx));
+    }
+}
