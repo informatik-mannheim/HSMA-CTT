@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="https://hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Images/favicon.ico" type="image/vnd.microsoft.icon" crossorigin="anonymous">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+	
+	<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.7.2/css/all.css">	
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md fixed-top navbar-dark text-white" style="background-color: #22376f;">
+      <a class="navbar-brand" href="/">
+          <img src="https://www.hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Icons/logo_bildmarke.svg" alt="HSMA" style="width:40px;" class="mr-2">CTT
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse text-nowrap" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/"><i class="fa fa-home"></i> Home</a>
+          </li>
+          <li class="nav-item ml-3">
+            <a class="nav-link text-white" title="erfordert Benutzerkonto" href="veranstaltungen"><i class="fas fa-list-ul"></i> Veranstaltungsliste</a>
+          </li>
+          <li class="nav-item ml-1">
+            <a class="nav-link text-white" title="erfordert Benutzerkonto" href="/neuVer"><i class="far fa-plus-square"></i> Veranstaltung</a>
+          </li>
+          <li class="nav-item ml-1">
+            <a class="nav-link text-white" title="erfordert Admin-Login" href="/suche"><i class="fas fa-binoculars"></i> Kontaktverfolgung</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" sec:authorize="isAnonymous()">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/login">Einloggen</a>
+          </li>
+        </ul>
+        
+        <ul class="navbar-nav ml-auto" sec:authorize="isAuthenticated()" style="float: right;" >
+           <li class="nav-item" th:inline="text">
+				<a class="nav-link disabled" href="#">[[${#httpServletRequest.remoteUser}]]</a>
+			</li>
+			<li>
+				<form th:action="@{/logout}" method="post" class="form-inline mt-2 mt-md-0">
+					<button class="btn btn-info my-2 my-sm-0 text-white" type="submit">Ausloggen</button>
+				</form>
+			</li>
+		</ul>
+        
+      </div>
+    </nav>
+      
+    <main role="main" class="container float-left">    
+	   	<p th:if="${message}" class="alert alert-info" style="color: blue" th:text="${message}"></p>
+   		<p th:if="${error}" class="alert alert-danger" style="color: red" th:text="${error}"></p>	
+   		
+   		<div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
+		  <i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so konfigurieren, dass Sie nach dem Verlassen der Seite wieder gelöscht werden.
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="setBannerCookie()">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+
+		<div layout:fragment="content">
+			<p>Body contents</p>
+		</div>
+		
+	</main>
+	
+	<footer style="z-index: 1;">
+		<p style="font-size: 85%">&copy; 2020
+			<a href="https://www.space.hs-mannheim.de" target="_blank">StartupLab@HSMA</a> und
+			<a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakult&auml;t f&uuml;r Informatik</a>
+			<a class="float-right" href="https://www.hs-mannheim.de/impressum.html" target="_blank">Impressum</a>
+			<a class="float-right mr-2" th:href="@{/datenschutz}">Datenschutz</a>
+		</p>
+	</footer>
+	
+	<script>
+	window.onload=cookieBanner();
+	
+	function cookieBanner() {
+  		 if (!document.cookie.includes('CookiesAccepted'))
+    	 	document.getElementById("cookieBanner").removeAttribute("hidden");
+	}
+	
+	function setBannerCookie() {
+		  var d = new Date();
+		  d.setTime(d.getTime() + (5*365*24*60*60*1000));
+		  document.cookie = "CookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+		}
+	</script>
+
+</body>
+
+</html>

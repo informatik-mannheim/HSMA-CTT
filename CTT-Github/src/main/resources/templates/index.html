@@ -1,0 +1,23 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+
+<head>
+	<title>Willkommen</title>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		
+		<h4>Willkommen beim CTT, dem Corona Tracking Tool der Hochschule Mannheim.</h4>
+		<p>Ihre Daten werden zum Zwecke der Kontaktnachverfolgung datenschutzsicher aufbewahrt und nach 4 Wochen automatisch gel&ouml;scht.</p>
+		<p sec:authorize="isAnonymous()">Als Gastgeber loggen sich zur Anzeige der Seite mit dem QR-Code bitte <a href="/login"> hier ein</a>.</p>
+		
+		<div th:replace="~{fragments/liste.html (welche='Heutige und zuk&uuml;nftige')}"></div>
+
+		<p>Zum <a href="https://www.hs-mannheim.de/die-hochschule/hochschule-mannheim/betrieb-unter-corona.html">Corona-Hygienekonzept</a> der Hochschule.</p>
+	</div>
+</body>
+
+</html>

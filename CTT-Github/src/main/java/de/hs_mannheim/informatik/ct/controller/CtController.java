@@ -1,0 +1,255 @@
+package de.hs_mannheim.informatik.ct.controller;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Veranstaltung;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import de.hs_mannheim.informatik.ct.persistence.VeranstaltungsService;
+
+@Controller
+public class CtController implements ErrorController {
+	@Autowired
+	private VeranstaltungsService vservice;
+
+	@Autowired
+	private Utilities util;
+
+	@Value("${server.port}")
+	private String port;
+
+	@Value("${hostname}")
+	private String host;
+
+	@RequestMapping("/")
+	public String home(Model model) {
+		Collection<Veranstaltung> veranstaltungen = vservice.findeAlleHeutigenVeranstaltungen();
+		model.addAttribute("veranstaltungen", veranstaltungen);
+
+		return "index";
+	}
+
+	@RequestMapping("/neu")
+	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max, 
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
+			@RequestParam String zeit,	// TODO: schauen, ob das auch eleganter geht
+			Model model, Authentication auth, @RequestHeader(value = "Referer", required = false) String referer) {
+
+		// Optional beim int, um prüfen zu können, ob ein Wert übergeben wurde
+		if (name.isEmpty() || !max.isPresent()) {				// Achtung, es gibt Java-8-Versionen, die Optional.isEmpty noch nicht enthalten!
+			model.addAttribute("message", "Bitte alle mit Sternchen markierten Felder ausfüllen.");
+			return "neue";
+		}
+
+		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
+			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
+
+			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, max.get(), datum, auth.getName()));
+
+			return "redirect:/zeige?vid=" + v.getId();
+		}
+
+		return "neue";
+	}
+
+	@RequestMapping("/besuch")
+	public String neuerBesuch(@RequestParam Long vid, Model model) {
+		Optional<Veranstaltung> v = vservice.getVeranstaltungById(vid);
+
+		if (v.isPresent()) {
+			model.addAttribute("vid", v.get().getId());
+			model.addAttribute("name", v.get().getName());
+
+			return "eintragen";
+		}
+
+		model.addAttribute("error", "Veranstaltung nicht gefunden");
+
+		return home(model);
+	}
+
+	@RequestMapping("/besuchMitCode")
+	public String besuchMitCode(@RequestParam Long vid, @CookieValue(value="email", required=false) String email, Model model, HttpServletResponse response) {		
+		if (email == null) {
+			model.addAttribute("vid", vid);
+			return "eintragen";
+		}
+
+		return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);	
+	}
+
+	@PostMapping("/senden")
+	public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue="false") boolean saveMail, Model model,
+			@RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) {
+
+		model.addAttribute("vid", vid);
+
+		if (referer != null && (referer.contains("/besuch") || referer.contains("/senden") || referer.contains("/besuchMitCode")) ) {
+			if (email.isEmpty()) {
+				model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
+			} else {
+				Optional<Veranstaltung> vo = vservice.getVeranstaltungById(vid);
+
+				if (!vo.isPresent()) {
+					model.addAttribute("error", "Veranstaltung nicht gefunden.");
+					model.addAttribute("email", email);
+				} else {
+					int besucherZahl = vservice.getBesucherAnzahl(vid);
+					Veranstaltung v = vo.get();
+
+					if (besucherZahl >= v.getRaumkapazitaet()) {
+						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
+					} else {
+						Besucher b = vservice.getBesucherByEmail(email);
+
+						if (b == null) {
+							b = new Besucher(email);
+							b = vservice.speichereBesucher(b);
+						}
+
+						VeranstaltungsBesuch vb = new VeranstaltungsBesuch(v, b);
+						vb = vservice.speichereBesuch(vb);
+						model.addAttribute("message", "Ihre Mail-Adresse wurde gespeichert. Danke für Ihre Unterstützung!");
+
+						Cookie c = new Cookie("email", email);
+						c.setMaxAge(saveMail? 60 * 60 * 24 * 365 * 5 : 0);
+						c.setPath("/");
+						response.addCookie(c);
+					}
+				}
+			}
+
+			return neuerBesuch(vid, model);
+		}
+
+		return "eintragen";
+	}
+
+	@RequestMapping("/veranstaltungen")
+	public String veranstaltungenAnzeigen(Model model) {
+		Collection<Veranstaltung> veranstaltungen = vservice.findeAlleVeranstaltungen();
+		model.addAttribute("veranstaltungen", veranstaltungen);
+
+		return "veranstaltungsliste";
+	}
+
+	@RequestMapping("/zeige")
+	public String zeigeVeranstaltung(@RequestParam Long vid, Model model) {
+		Optional<Veranstaltung> v = vservice.getVeranstaltungById(vid);
+
+		if (v.isPresent()) {
+			model.addAttribute("veranstaltung", v.get());
+			model.addAttribute("teilnehmerzahl", vservice.getBesucherAnzahl(vid));
+
+			return "veranstaltung";
+		}
+
+		model.addAttribute("error", "Veranstaltung nicht gefunden!");
+
+		return home(model);
+	}
+
+	@RequestMapping("/suchen")
+	public String kontakteFinden(@RequestParam String email, Model model) {
+		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+
+		model.addAttribute("kranker", email);
+		model.addAttribute("kontakte", kontakte);
+
+		return "kontaktliste";
+	}
+
+	@RequestMapping("/download")
+	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) {
+		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+
+		response.setHeader("Content-disposition", "attachment; filename=kontaktliste.xls");
+		response.setContentType("application/vnd.ms-excel");
+
+		try(OutputStream out = response.getOutputStream()) {
+			util.excelErzeugen(kontakte, email).write(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+			// TODO: wie kann man dem User Bescheid geben, falls doch mal etwas schief gehen sollte?
+		}
+	}
+
+	// zum Testen ggf. wieder aktivieren
+	//	@RequestMapping("/loeschen")
+	//	public String kontakteLoeschen(Model model) {
+	//		vservice.loescheAlteBesuche();
+	//		model.addAttribute("message", "Alte Kontakte gelöscht!");
+	//
+	//		return "index";
+	//	}
+
+	@RequestMapping("/neuVer")
+	public String neu() {
+		return "neue";
+	}
+
+	@RequestMapping("/suche")
+	public String suche() {
+		return "suche";
+	}
+
+	@RequestMapping("/login")
+	public String login() {
+		return "login";
+	}
+
+	@RequestMapping("/datenschutz")
+	public String datenschutz() {
+		return "datenschutz";
+	}
+
+	// ------------
+	// ErrorControllerImpl
+	@RequestMapping("/error")
+	public String handleError(HttpServletRequest request, Model model) {
+		Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+
+		if (status != null) {
+			int code = Integer.parseInt(status.toString());
+
+			if (code == HttpStatus.FORBIDDEN.value())
+				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
+			else
+				model.addAttribute("error", "Fehler-Code: " + status.toString());
+		} else {
+			model.addAttribute("error", "Unbekannter Fehler!");
+		}
+
+		return home(model);
+	}
+
+	@Override
+	public String getErrorPath() {
+		return null;
+	}
+
+}
