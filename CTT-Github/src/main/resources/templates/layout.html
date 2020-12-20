@@ -58,6 +58,17 @@
         
       </div>
     </nav>
+    
+    <div id="checkin-bar" hidden class="mb-4" style="position: fixed; height: 32px; width: 100%; background-color: #f7d986; margin-top: -25px; margin-left: -15px;">
+	     <form action="/abmelden">
+	        <input type="hidden" id="besucherEmail" name="besucherEmail" th:value="${besucherEmail}"/>
+	        <div style="float:right")>
+	        	<p>Aus dem zuletzt eingecheckten Raum<button type="submit" class="btn btn-link link-secondary mt-n1 ml-n2">abmelden</button></p>
+	        </div>
+	    </form>
+   	</div>
+   	
+   	<div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
       
     <main role="main" class="container float-left">    
 	   	<p th:if="${message}" class="alert alert-info" style="color: blue" th:text="${message}"></p>
@@ -86,18 +97,27 @@
 	</footer>
 	
 	<script>
-	window.onload=cookieBanner();
-	
-	function cookieBanner() {
-  		 if (!document.cookie.includes('CookiesAccepted'))
-    	 	document.getElementById("cookieBanner").removeAttribute("hidden");
-	}
-	
-	function setBannerCookie() {
-		  var d = new Date();
-		  d.setTime(d.getTime() + (5*365*24*60*60*1000));
-		  document.cookie = "CookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+		window.onload=cookieBanner();
+		window.onload=showCheckin();
+		
+		function cookieBanner() {
+	  		 if (!document.cookie.includes('cookiesAccepted'))
+	    	 	document.getElementById("cookieBanner").removeAttribute("hidden");
 		}
+		
+		function setBannerCookie() {
+			  var d = new Date();
+			  d.setTime(d.getTime() + (5*365*24*60*60*1000));
+			  document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+		}
+		
+		function showCheckin() {
+	  		 if (document.cookie.includes('checked-into') && document.cookie.includes('email')) {
+	    	 	document.getElementById("checkin-bar").removeAttribute("hidden");
+	    	 	document.getElementById("spacer").removeAttribute("hidden");
+	  		 }
+		}
+		
 	</script>
 
 </body>

@@ -8,17 +8,17 @@
 </head>
 
 <body>
+
 <div layout:fragment="content">
 
-    <div th:unless="${autoAbmeldung == ''}" class="row border border-warning">
-        <p>Sie wurden automatisch aus der Veranstaltung <span th:text="${autoAbmeldung}"></span> abgemeldet.
+    <div th:unless="${autoAbmeldung == ''}">
+        <p class="alert alert-info">Sie wurden automatisch aus der Veranstaltung <span th:text="${autoAbmeldung}"></span> abgemeldet.
             Bitte melden Sie sich in Zukunft manuell von Veranstaltungen ab.</p>
     </div>
 
 	<p>Bitte denken Sie daran, sich beim Verlassen des Raums wieder abzumelden.</p>
 	
     <form action="/abmelden">
-        <input type="hidden" id="veranstaltungId" name="veranstaltungId" th:value="${veranstaltungId}"/>
         <input type="hidden" id="besucherEmail" name="besucherEmail" th:value="${besucherEmail}"/>
         <div class="row">
             <div class="col-sm-2">
@@ -27,6 +27,7 @@
         </div>
     </form>
 </div>
+
 </body>
 
 </html>

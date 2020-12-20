@@ -18,8 +18,8 @@ public class VeranstaltungsBesuchService {
     @Autowired
     private VeranstaltungsBesuchRepository repoVeranstaltungsBesuche;
 
-    public void abmelden(Besucher besucher, Veranstaltung veranstaltung, @NotNull Date ende) {
-        repoVeranstaltungsBesuche.besucherAbmelden(besucher.getEmail(), veranstaltung.getId(), ende);
+    private void abmelden(Besucher besucher, Veranstaltung veranstaltung, @NotNull Date ende) {
+        repoVeranstaltungsBesuche.besucherAbmelden(besucher.getEmail(), ende);
     }
 
     /**
@@ -32,15 +32,14 @@ public class VeranstaltungsBesuchService {
     }
 
     /**
-     * Meldet den Besucher aus allen angemeldeten Prüfung ab.
+     * Meldet den Besucher aus allen angemeldeten Veranstaltungen ab.
      * @param besucher Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
     @Transactional
     public List<VeranstaltungsBesuch> besucherAbmelden(Besucher besucher, Date ende) {
         List<VeranstaltungsBesuch> veranstaltungsBesuche = getNichtAbgemeldeteBesuche(besucher);
-        for (VeranstaltungsBesuch besuch:
-                veranstaltungsBesuche) {
+        for (VeranstaltungsBesuch besuch: veranstaltungsBesuche) {
             abmelden(besucher, besuch.getVeranstaltung(), ende);
         }
 

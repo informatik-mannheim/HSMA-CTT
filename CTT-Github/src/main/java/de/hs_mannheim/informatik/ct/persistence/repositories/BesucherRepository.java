@@ -14,6 +14,8 @@ public interface BesucherRepository extends JpaRepository<Besucher, String> {
 //					+ "and not b2.Besucher_Email = ?1", nativeQuery = true)
 //	Collection<String> findeKontakteFuer(String email);
 	
+	// TODO hier müssen noch die Abmeldungen berücksichtigt werden!
+	
 	// Besucher der gleichen Veranstaltung in einem definierbaren Zeitintervall
 	// Und auch der Gesuchte selbst wird zurückgegeben, damit man sieht, wann er in welcher Veranstaltung war
 	@Query(value = "SELECT DISTINCT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO("

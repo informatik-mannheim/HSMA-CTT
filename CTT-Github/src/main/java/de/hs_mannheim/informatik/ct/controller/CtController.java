@@ -232,20 +232,49 @@ public class CtController implements ErrorController {
 	@RequestMapping("/angemeldet")
 	public String angemeldet(
 			@RequestParam String email, @RequestParam long veranstaltungId, 
-			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model) {
+			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) {
 
+		Optional<Veranstaltung> v = vservice.getVeranstaltungById(veranstaltungId);
+
+		if (!v.isPresent()) {
+			model.addAttribute("error", "Veranstaltung nicht gefunden!");
+			return "index";
+		}
+		
 		model.addAttribute("besucherEmail", email);
 		model.addAttribute("veranstaltungId", veranstaltungId);
 		model.addAttribute("autoAbmeldung", autoAbmeldung.orElse(""));
 
 		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
+		
+		Cookie c = new Cookie("checked-into", v.get().getName());
+		c.setMaxAge(60 * 60 * 8);
+		c.setPath("/");
+		response.addCookie(c);
 
 		return "angemeldet";
 	}
 
 	@RequestMapping("/abmelden")
-	public String abmelden(@RequestParam(name = "besucherEmail") String besucherEmail,@RequestParam(name = "veranstaltungId") long veranstaltungId, Model model){
-		veranstaltungsBesuchService.abmelden(vservice.getBesucherByEmail(besucherEmail),vservice.getVeranstaltungById(veranstaltungId).get(),new Date());
+	public String abmelden(@RequestParam(name = "besucherEmail", required = false) String besucherEmail, 
+								Model model, HttpServletRequest request, HttpServletResponse response, @CookieValue("email") String mailInCookie) {
+		
+		// TODO: ich denke, wir müssen das Speichern der Mail im Cookie zur Pflicht machen, wenn wir den Logout über die Leiste oben machen wollen?
+		// Oder wir versuchen es mit einer Session-Variablen?
+		
+		if (besucherEmail == null || besucherEmail.length() == 0) {
+			if (mailInCookie != null && mailInCookie.length() > 0)
+				besucherEmail = mailInCookie;
+			else
+				return "index";
+		}
+			
+		veranstaltungsBesuchService.besucherAbmelden(vservice.getBesucherByEmail(besucherEmail), new Date());
+
+		Cookie c = new Cookie("checked-into", "");
+		c.setMaxAge(0);
+		c.setPath("/");
+		response.addCookie(c);
 
 		return "abgemeldet";
 	}
