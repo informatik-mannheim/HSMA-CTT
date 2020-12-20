@@ -9,20 +9,26 @@ import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @IdClass(VeranstaltungsBesuchPK.class)
+@Getter
 @NoArgsConstructor
 public class VeranstaltungsBesuch {
+
 
 	@Column(name="timestamp", updatable = false)
 	private Date wann = new Date();
 
+	@Column
+	private Date ende;
+
 	@Id
 	@Column(name = "veranstaltung_id")
 	private long veranstaltungId;
-	
+
 	@ManyToOne
 	@MapsId("veranstaltungId")
 	private Veranstaltung veranstaltung;
@@ -30,7 +36,7 @@ public class VeranstaltungsBesuch {
 	@Id
 	@Column(name = "besucher_email")
 	private String besucherEmail;
-	
+
 	@ManyToOne
 	@MapsId("besucherEmail")
 	private Besucher besucher;
@@ -38,7 +44,7 @@ public class VeranstaltungsBesuch {
 	public VeranstaltungsBesuch(Veranstaltung v, Besucher b) {
 		this.veranstaltung = v;
 		this.besucher = b;
-		
+
 		this.veranstaltungId = v.getId();
 		this.besucherEmail = b.getEmail();
 	}

@@ -1,9 +1,12 @@
-package de.hs_mannheim.informatik.ct.persistence;
+package de.hs_mannheim.informatik.ct.persistence.services;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,7 +24,7 @@ public class VeranstaltungsService {
 	private BesucherRepository repoB;
 	@Autowired
 	private VeranstaltungsBesuchRepository repoVB;
-	
+
 	public Veranstaltung speichereVeranstaltung(Veranstaltung entity) {
 		return repoV.save(entity);
 	}
@@ -58,7 +61,7 @@ public class VeranstaltungsService {
 	
 	public Collection<Veranstaltung> findeAlleHeutigenVeranstaltungen() {
 		Long time = new Date().getTime();
-		return repoV.findAllFromGivenDate(new Date(time - time % (24 * 60 * 60 * 1000)));
+		return repoV.findByDatumGreaterThan(new Date(time - time % (24 * 60 * 60 * 1000)));
 	}
 	
 //	@Scheduled(cron = "0 * * * * *")	// jede Minute

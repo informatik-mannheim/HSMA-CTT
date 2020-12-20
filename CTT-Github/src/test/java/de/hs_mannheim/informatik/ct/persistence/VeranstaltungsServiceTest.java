@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsRepository;
+import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
 import org.apache.xmlbeans.impl.tool.XSTCTester.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

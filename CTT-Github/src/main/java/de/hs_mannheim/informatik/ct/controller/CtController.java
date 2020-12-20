@@ -2,8 +2,11 @@ package de.hs_mannheim.informatik.ct.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
@@ -24,17 +27,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Veranstaltung;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
-import de.hs_mannheim.informatik.ct.persistence.VeranstaltungsService;
+import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsBesuchService;
+import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
 
 @Controller
 public class CtController implements ErrorController {
 	@Autowired
 	private VeranstaltungsService vservice;
+
+	@Autowired
+	private VeranstaltungsBesuchService veranstaltungsBesuchService;
 
 	@Autowired
 	private Utilities util;
@@ -68,7 +78,7 @@ public class CtController implements ErrorController {
 		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
-			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, max.get(), datum, auth.getName()));
+			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, new Room("test", max.get()), datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
 		}
@@ -93,7 +103,7 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/besuchMitCode")
-	public String besuchMitCode(@RequestParam Long vid, @CookieValue(value="email", required=false) String email, Model model, HttpServletResponse response) {		
+	public String besuchMitCode(@RequestParam Long vid, @CookieValue(value="email", required=false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException {
 		if (email == null) {
 			model.addAttribute("vid", vid);
 			return "eintragen";
@@ -104,12 +114,12 @@ public class CtController implements ErrorController {
 
 	@PostMapping("/senden")
 	public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue="false") boolean saveMail, Model model,
-			@RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) {
+			@RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException {
 
 		model.addAttribute("vid", vid);
 
 		if (referer != null && (referer.contains("/besuch") || referer.contains("/senden") || referer.contains("/besuchMitCode")) ) {
-			if (email.isEmpty()) {
+			if (email.isEmpty() || !util.checkMailAdressSyntax(email)) {
 				model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
 			} else {
 				Optional<Veranstaltung> vo = vservice.getVeranstaltungById(vid);
@@ -131,20 +141,41 @@ public class CtController implements ErrorController {
 							b = vservice.speichereBesucher(b);
 						}
 
+						Optional<String> autoAbmeldung = Optional.empty();
+						List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche = veranstaltungsBesuchService.besucherAbmelden(b, new Date());
+
+						if(nichtAbgemeldeteBesuche.size() > 0) {
+							autoAbmeldung = Optional.ofNullable(nichtAbgemeldeteBesuche.get(0).getVeranstaltung().getName());
+							// TODO: Warning in server console falls mehr als eine Veranstaltung abgemeldet wurde,
+							//  da das eigentlich nicht möglich ist
+						}
+
 						VeranstaltungsBesuch vb = new VeranstaltungsBesuch(v, b);
 						vb = vservice.speichereBesuch(vb);
-						model.addAttribute("message", "Ihre Mail-Adresse wurde gespeichert. Danke für Ihre Unterstützung!");
 
-						Cookie c = new Cookie("email", email);
-						c.setMaxAge(saveMail? 60 * 60 * 24 * 365 * 5 : 0);
-						c.setPath("/");
-						response.addCookie(c);
-					}
-				}
-			}
+						if (saveMail) {
+							Cookie c = new Cookie("email", email);
+							c.setMaxAge(60 * 60 * 24 * 365 * 5);
+							c.setPath("/");
+							response.addCookie(c);
+						}
 
-			return neuerBesuch(vid, model);
-		}
+						UriComponents uriComponents = UriComponentsBuilder.newInstance()
+								.path("/angemeldet")
+								.queryParam("email", b.getEmail())
+								.queryParam("veranstaltungId", v.getId())
+								.queryParamIfPresent("autoAbmeldung", autoAbmeldung)
+								.build()
+								.encode(StandardCharsets.UTF_8);
+
+						return "redirect:" + uriComponents.toUriString();
+					} // endif Platz im Raum
+					
+				} // endif Veranstaltung existiert
+				
+			} // endif nicht leere Mail-Adresse
+			
+		} // endif referer korrekt?
 
 		return "eintragen";
 	}
@@ -196,6 +227,27 @@ public class CtController implements ErrorController {
 			e.printStackTrace();
 			// TODO: wie kann man dem User Bescheid geben, falls doch mal etwas schief gehen sollte?
 		}
+	}
+
+	@RequestMapping("/angemeldet")
+	public String angemeldet(
+			@RequestParam String email, @RequestParam long veranstaltungId, 
+			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model) {
+
+		model.addAttribute("besucherEmail", email);
+		model.addAttribute("veranstaltungId", veranstaltungId);
+		model.addAttribute("autoAbmeldung", autoAbmeldung.orElse(""));
+
+		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
+
+		return "angemeldet";
+	}
+
+	@RequestMapping("/abmelden")
+	public String abmelden(@RequestParam(name = "besucherEmail") String besucherEmail,@RequestParam(name = "veranstaltungId") long veranstaltungId, Model model){
+		veranstaltungsBesuchService.abmelden(vservice.getBesucherByEmail(besucherEmail),vservice.getVeranstaltungById(veranstaltungId).get(),new Date());
+
+		return "abgemeldet";
 	}
 
 	// zum Testen ggf. wieder aktivieren

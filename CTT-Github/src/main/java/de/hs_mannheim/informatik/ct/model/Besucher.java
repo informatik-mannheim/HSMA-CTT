@@ -17,7 +17,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class Besucher {
 	@Id
@@ -34,5 +33,12 @@ public class Besucher {
 	
 	public void addVeranstaltungsBesuch(VeranstaltungsBesuch vb) {
 		besuche.add(vb);
+	}
+
+	@Override
+	public String toString() {
+		return "Besucher{" +
+				"email='" + email + '\'' +
+				'}';
 	}
 }

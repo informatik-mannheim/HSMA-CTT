@@ -19,7 +19,7 @@
 		
 		<div th:if="!${#lists.isEmpty(kontakte)}">
 			
-			<p>Hier sind die Kontakte f&uuml;r <span th:text="${kranker}"></span>. Besuche des/der Betroffenen selbst sind jeweils rot hinterlegt.
+			<p>Hier sind die Kontakte f&uuml;r <span th:text="${kranker}" style="background-color: #fae1dc"></span>. Besuche des/der Betroffenen selbst sind jeweils rot hinterlegt.
 			   Zur Weitergabe an das Gesundheitsamt können die Daten <a th:href="@{/download(email=${kranker})}">hier als Excel-Datei</a>
 			   heruntergeladen werden.</p>
 		

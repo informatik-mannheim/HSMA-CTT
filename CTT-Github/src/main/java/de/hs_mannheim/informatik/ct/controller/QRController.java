@@ -1,22 +1,28 @@
 package de.hs_mannheim.informatik.ct.controller;
 
-import de.hs_mannheim.informatik.ct.model.Veranstaltung;
-import de.hs_mannheim.informatik.ct.persistence.VeranstaltungsService;
-import net.glxn.qrgen.core.image.ImageType;
-import net.glxn.qrgen.javase.QRCode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Optional;
+import de.hs_mannheim.informatik.ct.model.Veranstaltung;
+import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 
 @RestController
 @RequestMapping("QRCodes")

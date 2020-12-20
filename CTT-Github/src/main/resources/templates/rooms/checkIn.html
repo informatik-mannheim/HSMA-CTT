@@ -1,0 +1,61 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Anwesenheit eintragen</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="border border-secondary p-2">
+        <h5 class="mb-4">Willkommen in Raum <span th:text="${name}">name</span></h5>
+
+        <p>Bitte geben Sie hier Ihre Mail-Adresse ein, um ggf. eine Kontaktverfolgung zu ermöglichen.</p>
+
+        <form id="form" action="#" th:action="@{checkIn}" th:object="${visitData}" method="post">
+            <input type="hidden" id="rid" name="rid" th:field="*{roomId}"/>
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+
+            <div class="row form-group">
+                <label class="col-sm-2" for="email">EMail: *</label>
+                <input class="col-sm-4" type="email" id="email" name="email" size="32"  th:field="*{visitorEmail}" required autofocus/>
+
+                <input class="col-sm-1 ml-3 mt-n1" type="checkbox" id="saveMail" name="saveMail" checked>
+                <label class="col-sm-5 ml-n4" for="saveMail">Mail-Adresse für nächstes Mal im Browser speichern</label>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-info">Absenden</button>
+                </div>
+                <p><small><i>* = notwendige Eingabe</i></small></p>
+            </div>
+        </form>
+    </div>
+    <script>
+        const storage = window.localStorage;
+        const storedEmail = storage.getItem('email');
+        const emailField = document.getElementById('email');
+        const saveEmailCheckBox = document.getElementById('saveMail');
+
+        document.getElementById('form').addEventListener('submit', (ev) => {
+            try {
+                if(saveEmailCheckBox.checked) {
+                    storage.setItem('email', emailField.value);
+                }
+            } catch(error) {
+                // iOS Safari may throw in private mode
+            }
+        });
+
+        if(storedEmail !== null) {
+            emailField.value = storedEmail;
+        }
+    </script>
+</div>
+</body>
+</html>

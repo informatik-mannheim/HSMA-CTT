@@ -1,8 +1,7 @@
 package de.hs_mannheim.informatik.ct.persistence;
 
-import java.util.Collection;
-import java.util.Date;
-
+import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
 import org.apache.xmlbeans.impl.tool.XSTCTester.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,10 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.Veranstaltung;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import java.util.Collection;
+import java.util.Date;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -29,10 +26,11 @@ public class BesucherRepositoryTest extends TestCase {
     private final Besucher besucher1 = new Besucher("12345@stud.hs-mannheim.de");
     private final Besucher besucher2 = new Besucher("13337@stud.hs-mannheim.de");
     private final Besucher besucher3 = new Besucher("77777@stud.hs-mannheim.de");
-    
+
     private void befuelleDatenbank() {
-        Veranstaltung veranstaltung1 = new Veranstaltung("PR1", 2, new Date(), "Herr Müller");
-        Veranstaltung veranstaltung2 = new Veranstaltung("PR2", 20, new Date(), "Frau Meier");
+        Room room = new Room("A008", 2);
+        Veranstaltung veranstaltung1 = new Veranstaltung("PR1", room, new Date(), "Herr Müller");
+        Veranstaltung veranstaltung2 = new Veranstaltung("PR2", room, new Date(), "Frau Meier");
 
         entityManager.persist(veranstaltung1);
         entityManager.persist(veranstaltung2);
@@ -52,8 +50,8 @@ public class BesucherRepositoryTest extends TestCase {
 
     @Test
     public void findeKontakteFuer() {
-    	befuelleDatenbank();
-    	
+        befuelleDatenbank();
+
         Collection<VeranstaltungsBesuchDTO> kontakte = besucherRepository.findeKontakteFuer(besucher1.getEmail());
         Assertions.assertEquals(kontakte.size(), 2);
         Assertions.assertTrue(kontakte.stream().allMatch(besuch ->

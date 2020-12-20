@@ -1,4 +1,4 @@
-package de.hs_mannheim.informatik.ct.persistence;
+package de.hs_mannheim.informatik.ct.persistence.repositories;
 
 import java.util.Collection;
 
