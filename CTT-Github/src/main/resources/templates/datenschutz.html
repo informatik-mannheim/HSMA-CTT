@@ -5,6 +5,28 @@
 
 <head>
 <title>Datenschutzerkl&auml;rung</title>
+    <script type="text/javascript"> <!--
+    function UnCryptMailto( s )
+    {
+        var n = 0;
+        var r = "";
+        for( var i = 0; i < s.length; i++)
+        {
+            n = s.charCodeAt( i );
+            if( n >= 8364 )
+            {
+                n = 128;
+            }
+            r += String.fromCharCode( n - 1 );
+        }
+        return r;
+    }
+
+    function linkTo_UnCryptMailto( s )
+    {
+        location.href=UnCryptMailto( s );
+    }
+    // --> </script>
 </head>
 
 <body>
@@ -14,7 +36,7 @@
 		
 		<p><b>Das Internetangebot wird herausgegeben von</b><br />Hochschule Mannheim<br />Paul-Wittsack-Straße 10<br />68163 Mannheim
 		<br /><span class="u-icon--link-phone">+49 621 292-6111</span><br /><span class="u-icon--link-fax">+49 621 292-6420</span>
-		<br /><a href="/datenschutzerklaerung.html" class="mailicon">info@hs-mannheim.de</a></p>
+		<br /><a href="javascript:linkTo_UnCryptMailto('nbjmup;jogpAit.nbooifjn/ef');" class="mailicon">info [at] hs-mannheim [dot] de</a></p>
 		
 		<p>Verantwortliche Stelle im Sinne der Datenschutzgesetze, insbesondere der EU-Datenschutzgrundverordnung (DSGVO), ist:&nbsp; 
 		<br />Prof. Dr. Astrid Hedtke-Becker, Rektorin </p><h5>Geltungsbereich</h5>
