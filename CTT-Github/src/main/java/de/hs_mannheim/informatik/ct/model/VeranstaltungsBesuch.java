@@ -48,5 +48,9 @@ public class VeranstaltungsBesuch {
 		this.veranstaltungId = v.getId();
 		this.besucherEmail = b.getEmail();
 	}
+	
+	public void setEnde(Date ende) {
+		this.ende = ende;
+	}
 
 }

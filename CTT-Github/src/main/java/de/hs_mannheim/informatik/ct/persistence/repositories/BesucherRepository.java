@@ -14,16 +14,18 @@ public interface BesucherRepository extends JpaRepository<Besucher, String> {
 //					+ "and not b2.Besucher_Email = ?1", nativeQuery = true)
 //	Collection<String> findeKontakteFuer(String email);
 	
-	// TODO hier müssen noch die Abmeldungen berücksichtigt werden!
+	// TODO: nochmal überlegen wenn jemand noch angemeldet ist, wird er in einer Veranstaltung nicht als Kontakt gefunden.
+	// Das sollte aber in der Praxis kein Problem sein, da eine Verfolgung ja ohnehin erst Tage später gemacht wird.
 	
 	// Besucher der gleichen Veranstaltung in einem definierbaren Zeitintervall
 	// Und auch der Gesuchte selbst wird zurückgegeben, damit man sieht, wann er in welcher Veranstaltung war
 	@Query(value = "SELECT DISTINCT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO("
-			+ "b2.besucherEmail, v.id, v.name, b2.wann, ABS(DATEDIFF('MINUTE', b1.wann, b2.wann))) "
+			+ "b2.besucherEmail, v.id, v.name, b2.wann, b2.ende, ABS(DATEDIFF('MINUTE', b1.wann, b2.wann))) "
 			+ "FROM de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch b1, "
 			+ "de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch b2, "
 			+ "de.hs_mannheim.informatik.ct.model.Veranstaltung v where "
-			+ "b1.besucherEmail = ?1 and b1.veranstaltungId = b2.veranstaltungId "
-			+ "and b2.veranstaltungId = v.id and ABS(DATEDIFF('MINUTE', b1.wann, b2.wann)) <= 100 order by b2.wann desc")
+			+ "b1.besucherEmail = ?1 and b1.veranstaltungId = b2.veranstaltungId and b2.veranstaltungId = v.id "
+			+ "and b1.wann <= b2.ende and b2.wann <= b1.ende "
+			+ "order by b2.wann desc")
 	Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(String email);
 }

@@ -1,7 +1,8 @@
 package de.hs_mannheim.informatik.ct.persistence;
 
-import de.hs_mannheim.informatik.ct.model.*;
-import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
+import java.util.Collection;
+import java.util.Date;
+
 import org.apache.xmlbeans.impl.tool.XSTCTester.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Collection;
-import java.util.Date;
+import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.Veranstaltung;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -42,9 +48,14 @@ public class BesucherRepositoryTest extends TestCase {
         entityManager.persist(besucher1);
         entityManager.persist(besucher2);
         entityManager.persist(besucher3);
+        
+        besuch1.setEnde(new Date());
+        besuch2.setEnde(new Date());
+        
         entityManager.persist(besuch1);
         entityManager.persist(besuch2);
         entityManager.persist(besuch3);
+        
         entityManager.flush();
     }
 
@@ -53,10 +64,10 @@ public class BesucherRepositoryTest extends TestCase {
         befuelleDatenbank();
 
         Collection<VeranstaltungsBesuchDTO> kontakte = besucherRepository.findeKontakteFuer(besucher1.getEmail());
-        Assertions.assertEquals(kontakte.size(), 2);
+        Assertions.assertEquals(2, kontakte.size());
         Assertions.assertTrue(kontakte.stream().allMatch(besuch ->
                 besuch.getBesucherEmail().equals(besucher1.getEmail()) ||
-                        besuch.getBesucherEmail().equals(besucher2.getEmail())
+                besuch.getBesucherEmail().equals(besucher2.getEmail())
         ));
     }
 }

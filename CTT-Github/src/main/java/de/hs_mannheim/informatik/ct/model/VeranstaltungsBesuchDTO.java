@@ -13,5 +13,6 @@ public class VeranstaltungsBesuchDTO implements Serializable {
 	private long veranstaltungsId;
 	private String veranstaltungsName;
 	private Date timestamp;
+	private Date endzeit;
 	private int diffInMin;
 }

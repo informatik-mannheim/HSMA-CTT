@@ -53,6 +53,7 @@ public class VeranstaltungsServiceTest extends TestCase {
         int veranstaltungsId = 42;
         String veranstaltungsName = "PR1";
         Date kontaktDate = new Date();
+        Date endDate = new Date();
 
         Collection<VeranstaltungsBesuchDTO> kontakteOf1 = new ArrayList<>();
         kontakteOf1.add(new VeranstaltungsBesuchDTO(
@@ -60,6 +61,7 @@ public class VeranstaltungsServiceTest extends TestCase {
                 veranstaltungsId,
                 veranstaltungsName,
                 kontaktDate,
+                endDate,
                 10));
 
         Collection<VeranstaltungsBesuchDTO> kontakteOf2 = new ArrayList<>();
@@ -68,6 +70,7 @@ public class VeranstaltungsServiceTest extends TestCase {
                 veranstaltungsId,
                 veranstaltungsName,
                 kontaktDate,
+                endDate,
                 10));
 
         Mockito.when(besucherRepo.findeKontakteFuer(besucher1.getEmail()))

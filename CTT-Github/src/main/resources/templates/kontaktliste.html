@@ -29,6 +29,7 @@
 					<th>Mailadresse</th>
 					<th>Veranstaltung</th>
 					<th>Anmeldezeit</th>
+					<th>Abmeldezeit</th>
 					<th>Zeitlicher Abstand</th>
 				</tr>
 				</thead>
@@ -37,6 +38,7 @@
 					<td th:text="${kontakt.besucherEmail}"/>
 					<td th:text="${kontakt.veranstaltungsName}" />
 					<td>am <span th:text="|${#dates.format(kontakt.timestamp, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
+					<td>am <span th:text="|${#dates.format(kontakt.endzeit, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
 					<td th:text ="|${kontakt.diffInMin} Minute${kontakt.diffInMin != 1 ? 'n' : ''}|" />
 				</tr>
 			</table>
