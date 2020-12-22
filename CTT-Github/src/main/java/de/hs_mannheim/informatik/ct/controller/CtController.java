@@ -78,7 +78,9 @@ public class CtController implements ErrorController {
 		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
-			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, new Room("test", max.get()), datum, auth.getName()));
+			// TODO irgendwas stimmt mit der ManyToOne-Relation von Veranstaltung zu Raum noch nicht
+			// das Math.random ist ein übler Workaround
+			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, new Room("test" + (int)(Math.random() * 10000000), max.get()), datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
 		}
