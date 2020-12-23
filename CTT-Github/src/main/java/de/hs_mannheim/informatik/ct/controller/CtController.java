@@ -14,6 +14,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -47,6 +48,9 @@ public class CtController implements ErrorController {
 	private VeranstaltungsBesuchService veranstaltungsBesuchService;
 
 	@Autowired
+	private RoomService roomService;
+
+	@Autowired
 	private Utilities util;
 
 	@Value("${server.port}")
@@ -78,9 +82,8 @@ public class CtController implements ErrorController {
 		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
-			// TODO irgendwas stimmt mit der ManyToOne-Relation von Veranstaltung zu Raum noch nicht
-			// das Math.random ist ein übler Workaround
-			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, new Room("test" + (int)(Math.random() * 10000000), max.get()), datum, auth.getName()));
+			Room defaultRoom = roomService.saveRoom(new Room("test", max.get()));
+			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, defaultRoom, datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
 		}

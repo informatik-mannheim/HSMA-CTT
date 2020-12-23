@@ -18,7 +18,7 @@ public class Veranstaltung {
     private Long id;
 
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne(cascade = CascadeType.ALL)
     private Room room;
     private Date datum = new Date();
     private String angelegtVon;
