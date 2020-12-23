@@ -249,7 +249,7 @@ public class CtController implements ErrorController {
 
 		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
 		
-		Cookie c = new Cookie("checked-into", v.get().getName());
+		Cookie c = new Cookie("checked-into", "" + v.get().getId());	// Achtung, Cookies erlauben keine Sonderzeichen (inkl. Whitespaces)!
 		c.setMaxAge(60 * 60 * 8);
 		c.setPath("/");
 		response.addCookie(c);
