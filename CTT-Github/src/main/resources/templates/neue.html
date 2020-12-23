@@ -26,7 +26,7 @@
 		  <div class="form-group row">
 		  	<label class="col-md-2 col-form-label" for="datum">Datum: *</label>
 		  	<div class="col-md-2">
-		  		<input type="date" name="datum" id="datum" th:value="${#dates.format(#dates.createNow(), 'dd/MMM/yyyy')}" required>	
+		  		<input type="date" name="datum" id="datum" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required>	
 		  	</div>
 		  	<label class="col-md-2 col-form-label"for="datum">Anfangszeit: *</label>
 		  	<div class="col-md-1">
