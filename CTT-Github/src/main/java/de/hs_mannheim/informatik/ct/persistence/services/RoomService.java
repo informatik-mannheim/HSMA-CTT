@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class RoomService {
@@ -22,6 +23,11 @@ public class RoomService {
 
     public Room saveRoom(@NonNull Room room) {
         return roomsRepo.save(room);
+    }
+
+    @NonNull
+    public List<Room> all() {
+        return roomsRepo.findAll();
     }
 
     public void ImportFromCSV(BufferedReader csv) {
