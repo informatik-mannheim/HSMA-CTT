@@ -108,6 +108,10 @@ public class RoomController {
         return "rooms/importCompleted";
     }
 
+    public static String getRoomCheckinPath(Room room) {
+        return "r/" + room.getId();
+    }
+
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Room not found")
     public static class RoomNotFoundException extends RuntimeException {
     }
