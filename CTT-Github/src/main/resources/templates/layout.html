@@ -109,6 +109,7 @@
 			  var d = new Date();
 			  d.setTime(d.getTime() + (5*365*24*60*60*1000));
 			  document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+			  document.getElementById("cookieBanner").setAttribute("hidden", true);
 		}
 		
 		function showCheckin() {
