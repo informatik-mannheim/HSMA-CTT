@@ -1,0 +1,25 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{rooms/layout}">
+
+<head>
+    <title th:text="${'Raum ' + roomData.roomName + ' ist voll'}">Check-In</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h1 class="content-headers" style="margin-bottom: 0;">Raum voll</h1>
+    <p th:text="${'Leider ist der Raum ' + roomData.roomName + ' momentan voll (Maximal: ' + roomData.maxCapacity + ' Personen). Bitte betreten Sie ihn nicht!'}">
+        Leider ist der Raum momentan voll. Bitte betreten Sie ihn nicht!</p>
+    <div class="icon-container">
+        <div class="icon-background no-access"></div>
+    </div>
+    <p>Bereits in diesem Raum angemeldet?</p>
+    <p>
+        <a class="button" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden</a>
+    </p>
+
+</div>
+</body>
+</html>
