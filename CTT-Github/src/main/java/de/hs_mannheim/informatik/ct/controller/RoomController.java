@@ -80,7 +80,7 @@ public class RoomController {
             visitData = new RoomVisit.Data(visit, currentVisitCount);
             model.addAttribute("visitData", visitData);
 
-            return "rooms/CheckedIn";
+            return "rooms/checkedIn";
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
