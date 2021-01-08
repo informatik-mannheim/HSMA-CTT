@@ -140,9 +140,7 @@ public class RoomController {
     @PostMapping("/import")
     public String roomTableImport(@RequestParam("file") MultipartFile file) {
         try (InputStream is = file.getInputStream()) {
-            roomService.ImportFromCSV(
-                    new BufferedReader(
-                            new InputStreamReader(is, StandardCharsets.UTF_8)));
+            roomService.ImportFromCSV(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
         } catch (IOException e) {
             e.printStackTrace();
         }
