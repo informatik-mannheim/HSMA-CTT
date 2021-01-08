@@ -25,8 +25,8 @@
     <h1 class="content-headers checkout-only" style="margin-bottom: 0;">Check-Out</h1>
     <p class="checkin-only"
        th:text="${'Geben Sie Ihre E-Mail-Adresse an um sich in Raum ' + roomData.roomName + ' einzuchecken.'}">Geben Sie Ihre
-        E-Mail-Adresse an um sich einzuchecken.</p>
-    <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an um sich aus vorherigen Räumen auszuchecken.
+        E-Mail-Adresse an, um sich einzuchecken.</p>
+    <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um sich aus vorherigen Räumen auszuchecken.
     </p>
     <p class="checkin-only">Raumabmeldung vergessen?
         <a class="button no-js" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden </a>
@@ -64,7 +64,7 @@
                     <select id="email-postfix" name="email-postfix">
                         <option value="student">@stud.hs-mannheim.de</option>
                         <option value="internal">@hs-mannheim.de</option>
-                        <option value="external">Extern</option>
+                        <option value="external">Andere/Extern</option>
                     </select>
                 </div>
                 <div class="form-row checkin-only">
