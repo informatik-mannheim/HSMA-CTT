@@ -20,17 +20,12 @@
 
 <body>
 <div layout:fragment="content" th:object="${visitData}">
-
     <h1 class="content-headers checkin-only" style="margin-bottom: 0;">Check-In</h1>
     <h1 class="content-headers checkout-only" style="margin-bottom: 0;">Check-Out</h1>
     <p class="checkin-only"
        th:text="${'Geben Sie Ihre E-Mail-Adresse an um sich in Raum ' + roomData.roomName + ' einzuchecken.'}">Geben Sie Ihre
         E-Mail-Adresse an, um sich einzuchecken.</p>
     <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um sich aus vorherigen Räumen auszuchecken.
-    </p>
-    <p class="checkin-only">Raumabmeldung vergessen?
-        <a class="button no-js" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden </a>
-        <button class="js-enabled" id="checkout-button">Abmelden</button>
     </p>
     <div style="width: 30em; max-width: 100%;" class="content">
         <h3 class="content-headers">E-Mail-Adresse</h3>
@@ -89,6 +84,10 @@
             </div>
         </div>
     </div>
+    <p class="checkin-only">Raumabmeldung vergessen?
+        <a class="button no-js" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden </a>
+        <button class="js-enabled" id="checkout-button">Abmelden</button>
+    </p>
 </div>
 </body>
 </html>

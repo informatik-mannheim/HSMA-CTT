@@ -43,6 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Change the form layout to allow the user to checkout of a previous room
     document.getElementById("checkout-button").addEventListener("click", () => doSignOut());
 
+    // E-Mail input validation
+    emailText.addEventListener("keypress", (ev) => {
+        if(emailText.type === "number") {
+            // For anything that's not a number prevent the input
+            if(/\D/.test(ev.key)) {
+                ev.preventDefault()
+            }
+        }
+    });
+
     function postFixChanged(postfix) {
         switch (postfix) {
             case "student":
