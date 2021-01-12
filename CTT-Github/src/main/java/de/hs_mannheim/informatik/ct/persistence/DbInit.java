@@ -17,6 +17,7 @@ public class DbInit implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		roomsRepo.save(new Room("A007a", 3));
 		roomsRepo.save(new Room("test", 12));
+		roomsRepo.save(new Room("A210", 19));
 	}
 
 }
