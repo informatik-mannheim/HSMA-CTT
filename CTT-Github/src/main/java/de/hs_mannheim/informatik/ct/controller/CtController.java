@@ -14,7 +14,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -36,10 +35,13 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Veranstaltung;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsBesuchService;
 import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class CtController implements ErrorController {
 	@Autowired
 	private VeranstaltungsService vservice;
@@ -321,7 +323,9 @@ public class CtController implements ErrorController {
 
 		if (status != null) {
 			int code = Integer.parseInt(status.toString());
-
+			log.error("Web ErrorCode: " + code);
+			log.error("URL:" +  request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString());
+			
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
 			else
