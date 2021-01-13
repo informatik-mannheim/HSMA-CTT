@@ -6,6 +6,7 @@ import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -40,9 +41,13 @@ public class RoomController {
             throw new RoomNotFoundException();
         }
 
-        RoomVisit.Data visitData = new RoomVisit.Data();
-        visitData.setRoomId(room.get().getName());
-        model.addAttribute("visitData", visitData);
+        if (roomVisitService.isRoomFull(room.get())) {
+            return "forward:roomFull/" + room.get().getId();
+        }
+
+        Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("roomData", roomData);
+        model.addAttribute("visitData", new RoomVisit.Data(roomData));
         return "rooms/checkIn";
     }
 
@@ -65,12 +70,17 @@ public class RoomController {
         model.addAttribute("autoCheckout", autoCheckoutValue);
 
         if (room.isPresent()) {
-            RoomVisit visit = roomVisitService.visitRoom(visitor, room.get());
+            if (roomVisitService.isRoomFull(room.get())) {
+                return "forward:roomFull/" + room.get().getId();
+            }
 
-            visitData = new RoomVisit.Data(visit);
+            val visit = roomVisitService.visitRoom(visitor, room.get());
+            val currentVisitCount = roomVisitService.getVisitorCount(room.get());
+
+            visitData = new RoomVisit.Data(visit, currentVisitCount);
             model.addAttribute("visitData", visitData);
 
-            return "rooms/roomVisitCheckedIn";
+            return "rooms/checkedIn";
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -87,7 +97,39 @@ public class RoomController {
 
         roomVisitService.checkOutVisitor(visitor.get());
 
-        return "redirect:/";
+        return "redirect:/r/checkedOut";
+    }
+
+    @GetMapping("/{roomId}/checkOut")
+    public String checkoutPage(@PathVariable String roomId, Model model) {
+        Optional<Room> room = roomService.findByName(roomId);
+        if (!room.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+
+        Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("roomData", roomData);
+        model.addAttribute("visitData", new RoomVisit.Data(roomData));
+
+        // The check-in page can handle both check-in and checkout with a css toggle
+        model.addAttribute("checkout", true);
+        return "rooms/checkIn";
+    }
+
+    @RequestMapping("/roomFull/{roomId}")
+    public String roomFull(@PathVariable String roomId, Model model) {
+        Optional<Room> room = roomService.findByName(roomId);
+        if (!room.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+
+        model.addAttribute("roomData", new Room.Data(room.get()));
+        return "rooms/full";
+    }
+
+    @GetMapping("/checkedOut")
+    public String checkedOutPage() {
+        return "rooms/checkedOut";
     }
 
     @GetMapping("/import")
@@ -98,9 +140,7 @@ public class RoomController {
     @PostMapping("/import")
     public String roomTableImport(@RequestParam("file") MultipartFile file) {
         try (InputStream is = file.getInputStream()) {
-            roomService.ImportFromCSV(
-                    new BufferedReader(
-                            new InputStreamReader(is, StandardCharsets.UTF_8)));
+            roomService.ImportFromCSV(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
         } catch (IOException e) {
             e.printStackTrace();
         }

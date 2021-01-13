@@ -15,10 +15,10 @@ import java.util.List;
 public class RoomVisitService {
 
     @Autowired
-    private RoomVisitRepository roomsRepo;
+    private RoomVisitRepository roomVisitRepository;
 
     public RoomVisit visitRoom(Besucher visitor, Room room) {
-        return roomsRepo.save(new RoomVisit(visitor, room, new Date()));
+        return roomVisitRepository.save(new RoomVisit(visitor, room, new Date()));
     }
 
     /**
@@ -32,7 +32,7 @@ public class RoomVisitService {
         List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
         notSignedOutVisits.forEach((visit) -> {
             visit.setEnd(new Date());
-            roomsRepo.save(visit);
+            roomVisitRepository.save(visit);
         });
 
         return notSignedOutVisits;
@@ -40,6 +40,14 @@ public class RoomVisitService {
 
     @NonNull
     public List<RoomVisit> getCheckedInRoomVisits(@NonNull Besucher visitor) {
-        return roomsRepo.findNotCheckedOutVisits(visitor);
+        return roomVisitRepository.findNotCheckedOutVisits(visitor);
+    }
+
+    public int getVisitorCount(@NonNull Room room) {
+        return roomVisitRepository.getRoomVisitorCount(room);
+    }
+
+    public boolean isRoomFull(@NonNull Room room) {
+        return getVisitorCount(room) >= room.getMaxCapacity();
     }
 }
