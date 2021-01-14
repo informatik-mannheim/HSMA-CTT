@@ -39,3 +39,11 @@ Ansonsten ist alles noch eher rudimentär und mit Vorsicht zu genießen!
 Neu dabei ist ein Dockerfile zur Erstellung eines Dockercontainers. Ebenfalls aus dem Projektordner wie folgt aufrufbar (erfordert natürlich einen laufenden Docker Daemon): docker build -f Dockerfile -t ct .
 
 Danach dann kann der Container mit docker run -p 8080:8080 -t ct aus geführt werden.
+
+
+### Räume
+QRCode für einen Raum generieren: http://localhost:8080/QRCodes/room/A007a (localhost ggf. durch Servernamen ersetzen, ebenso wie den Port)
+QRCodes für alle Räume: http://localhost:8080/printout/rooms
+In einen Raum einchecken: http://localhost:8080/r/Aula (geht bei Auto-Checkin dann automatisch)
+Testweise zum Deaktivieren eines Auto-Checkings ?noautosignin=1 an die vorige Raum-URL anhängen
+
