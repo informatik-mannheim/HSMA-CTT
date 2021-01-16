@@ -64,7 +64,15 @@ public class RoomController {
                 // TODO: Logging: Log a warning because a visitor was checked into multiple rooms at once.
             }
 
-            autoCheckoutValue = notCheckedOutVisits.get(0).getRoom().getName();
+            val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
+            autoCheckoutValue = checkedOutRoom.getName();
+
+            // If the user is automatically checked out of the same room they're trying to check into,
+            // show them the checked out page instead (Auto checkout after scanning room qr code twice)
+            if (room.isPresent() &&
+                    room.get().getId().equals(checkedOutRoom.getId())) {
+                return "forward:checkedOut/";
+            }
         }
 
         model.addAttribute("autoCheckout", autoCheckoutValue);
@@ -127,7 +135,7 @@ public class RoomController {
         return "rooms/full";
     }
 
-    @GetMapping("/checkedOut")
+    @RequestMapping("/checkedOut")
     public String checkedOutPage() {
         return "rooms/checkedOut";
     }
