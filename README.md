@@ -45,6 +45,7 @@ Danach dann kann der Container mit docker run -p 8080:8080 -t ct aus geführt we
 QRCode für einen Raum generieren: http://localhost:8080/QRCodes/room/A007a (localhost ggf. durch Servernamen ersetzen, ebenso wie den Port)
 
 QRCodes für alle Räume: http://localhost:8080/printout/rooms
+  (dazu muss eine Datei namens formTemplate.pdf in templates/printout vorhanden sein)
 
 In einen Raum einchecken: http://localhost:8080/r/Aula (geht bei Auto-Checkin dann automatisch)
 
