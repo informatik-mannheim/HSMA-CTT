@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show content that requires JavaScript to function
     showJSEnabled();
 
+    // Check if auto sign-in is enabled and if so, sign in
+    autoSignIn();
+
     // Setup the initial drop-down selection and handle the drop down event
     postFixChanged(postfixDropDown.value);
     postfixDropDown.addEventListener("change", (event) => {
@@ -32,9 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const combinedEmail = getFullEmail();
 
         if(autoSignIn.checked) {
-            storage.setItem('email', combinedEmail);
+            storage.setItem("email", combinedEmail);
         } else {
-            storage.removeItem('email');
+            storage.removeItem("email");
         }
 
         document.getElementById("submit-form-email-checkout").value = combinedEmail;
@@ -79,12 +82,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showJSEnabled() {
-        document.querySelectorAll(".no-js").forEach((elem) => elem.classList.add("hidden"))
-        document.querySelectorAll(".js-enabled").forEach((elem) => elem.classList.remove("js-enabled"))
+        document.querySelectorAll(".no-js").forEach((elem) => elem.classList.add("hidden"));
+        document.querySelectorAll(".js-enabled").forEach((elem) => elem.classList.remove("js-enabled"));
     }
 
     function doSignOut() {
-        document.querySelectorAll(".checkin-only").forEach((elem) => elem.classList.add("hidden"))
-        document.querySelectorAll(".checkout-only").forEach((elem) => elem.classList.remove("checkout-only"))
+        document.querySelectorAll(".checkin-only").forEach((elem) => elem.classList.add("hidden"));
+        document.querySelectorAll(".checkout-only").forEach((elem) => elem.classList.remove("checkout-only"));
+    }
+
+    function autoSignIn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const noAutoSignInParam = urlParams.get('noautosignin');
+        const storedEmail = storage.getItem("email");
+        if(storedEmail !== null && !noAutoSignInParam) {
+            document.getElementById("submit-form-email").value = storedEmail;
+            document.getElementById("submit-form").submit();
+        }
     }
 });
