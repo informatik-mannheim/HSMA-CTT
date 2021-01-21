@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.Period;
 
 
 /**
@@ -17,9 +18,10 @@ public class ScheduledMaintenanceController {
     @Autowired
     private RoomVisitService roomVisitService;
     @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
+
     public void doMaintenance() {
         signOutAllVisitors(LocalTime.parse("18:00:00"));
-        deleteExpiredVisitRecords(Duration.ofDays(30));
+        deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
 
     public void signOutAllVisitors(LocalTime forcedEndTime) {
@@ -28,7 +30,7 @@ public class ScheduledMaintenanceController {
         }
     }
 
-    public void deleteExpiredVisitRecords(Duration recordLifeTime) {
+    public void deleteExpiredVisitRecords(Period recordLifeTime) {
         roomVisitService.deleteExpiredRecords(recordLifeTime);
     }
 }

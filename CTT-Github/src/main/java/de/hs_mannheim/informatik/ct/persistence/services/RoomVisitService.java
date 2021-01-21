@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static de.hs_mannheim.informatik.ct.util.TimeUtil.*;
 
 @Service
 public class RoomVisitService {
@@ -53,19 +56,24 @@ public class RoomVisitService {
         val notCheckedOut = roomVisitRepository.findNotCheckedOutVisits();
         val updatedVisits = notCheckedOut
                 .stream()
-                .peek((roomVisit -> {
+                .map((roomVisit -> {
                     val startTime = convertToLocalTime(roomVisit.getStart());
                     val startDate = convertToLocalDate(roomVisit.getStart());
 
-                    if(startTime.isBefore(forcedVisitEndTime)) {
+                    if (startTime.isBefore(forcedVisitEndTime)) {
                         val endDate = startDate.atTime(forcedVisitEndTime);
                         roomVisit.setEnd(convertToDate(endDate));
-                    } else if(startDate.isBefore(LocalDate.now())){
+                    } else if (startDate.isBefore(LocalDate.now())) {
                         // Visit started yesterday after forced sign-out time, sign-out at midnight yesterday instead
                         val endDate = startDate.atTime(LocalTime.parse("23:59:59"));
                         roomVisit.setEnd(convertToDate(endDate));
+                    } else {
+                        return null;
                     }
+
+                    return roomVisit;
                 }))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         roomVisitRepository.saveAll(updatedVisits);
@@ -79,24 +87,8 @@ public class RoomVisitService {
         return getVisitorCount(room) >= room.getMaxCapacity();
     }
 
-    public void deleteExpiredRecords(Duration recordLifeTime) {
+    public void deleteExpiredRecords(Period recordLifeTime) {
         val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
         roomVisitRepository.deleteByEndBefore(convertToDate(oldestAllowedRecord));
-    }
-
-    private LocalDate convertToLocalDate(Date date) {
-        return date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-    }
-
-    private LocalTime convertToLocalTime(Date date) {
-        return date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime();
-    }
-
-    private Date convertToDate(LocalDateTime dateTime) {
-        return java.sql.Timestamp.valueOf(dateTime);
     }
 }

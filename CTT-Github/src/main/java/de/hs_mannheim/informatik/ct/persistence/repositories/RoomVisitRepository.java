@@ -35,5 +35,5 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
             "WHERE visit.end is null")
     List<RoomVisit> findNotCheckedOutVisits();
 
-    void deleteByEndBefore(Date convertToDate);
+    void deleteByEndBefore(Date end);
 }
