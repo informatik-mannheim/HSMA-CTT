@@ -25,4 +25,15 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
             "FROM RoomVisit visit " +
             "WHERE visit.room = :room and visit.end is null ")
     int getRoomVisitorCount(@Param(value = "room") Room room);
+
+    /**
+     * Finds all visitors that haven't checked out yet.
+     * @return All visitors that haven't checked out yet.
+     */
+    @Query("SELECT visit " +
+            "FROM RoomVisit visit " +
+            "WHERE visit.end is null")
+    List<RoomVisit> findNotCheckedOutVisits();
+
+    void deleteByEndBefore(Date convertToDate);
 }
