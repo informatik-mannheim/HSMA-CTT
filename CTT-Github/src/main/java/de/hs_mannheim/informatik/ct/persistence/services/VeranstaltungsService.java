@@ -64,12 +64,6 @@ public class VeranstaltungsService {
 		return repoV.findByDatumGreaterThan(new Date(time - time % (24 * 60 * 60 * 1000)));
 	}
 	
-//	@Scheduled(cron = "0 * * * * *")	// jede Minute
-	@Scheduled(cron = "0 55 2 * * *")	// um 2:55 Uhr
-	public void loescheAlteBesuche() {
-		repoVB.loescheAlteBesuche();
-	}
-	
 	public int getBesucherAnzahl(long id) {
 		return repoVB.getVisitorCountById(id);
 	}

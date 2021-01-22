@@ -1,26 +1,31 @@
-package de.hs_mannheim.informatik.ct.controller;
+package de.hs_mannheim.informatik.ct.util;
 
-import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Controller;
-
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.Period;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 
 
 /**
  * Schedules maintenance queries such as signing out visitors at the end of the day and deleting expired personal data
  */
-@Controller
-public class ScheduledMaintenanceController {
+@Component
+public class ScheduledMaintenanceTasks {
     @Autowired
     private RoomVisitService roomVisitService;
-    @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
-
+    
+	@Autowired
+	private VeranstaltungsBesuchRepository repoVB;
+    
+ //   @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
+	@Scheduled(cron = "0 55 3 * * *")	// 3:55 AM
     public void doMaintenance() {
-        signOutAllVisitors(LocalTime.parse("18:00:00"));
+        signOutAllVisitors(LocalTime.parse("21:00:00"));
         deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
 
@@ -33,4 +38,9 @@ public class ScheduledMaintenanceController {
     public void deleteExpiredVisitRecords(Period recordLifeTime) {
         roomVisitService.deleteExpiredRecords(recordLifeTime);
     }
+    
+	@Scheduled(cron = "0 55 2 * * *")	// 2:55 AM
+	public void loescheAlteBesuche() {
+		repoVB.loescheAlteBesuche();
+	}
 }

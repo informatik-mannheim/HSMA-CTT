@@ -16,7 +16,7 @@ public interface VeranstaltungsBesuchRepository extends JpaRepository<Veranstalt
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM veranstaltungs_besuch WHERE DATEDIFF('DAY', timestamp, NOW()) >= 1", nativeQuery = true)
+    @Query(value = "DELETE FROM veranstaltungs_besuch WHERE DATEDIFF('WEEK', timestamp, NOW()) >= 4", nativeQuery = true)
     void loescheAlteBesuche();
     // TODO Hier muss DAY im Produktivbetrieb auf MONTH gesetzt werden bzw. auf 4 WEEK
 
