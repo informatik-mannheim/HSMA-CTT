@@ -3,6 +3,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Besucher;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class RoomVisitService {
     /**
      * Checks the visitor out from all currently checked-in visits and returns the visits.
      * Their should usually be only one checked in visit at a time.
+     *
      * @param visitor The visitor who is checked out of their visits.
      * @return The rooms the visitor was checked into.
      */
@@ -49,5 +51,9 @@ public class RoomVisitService {
 
     public boolean isRoomFull(@NonNull Room room) {
         return getVisitorCount(room) >= room.getMaxCapacity();
+    }
+
+    public List<RoomVisitContact> getVisitorContacts(@NonNull Besucher visitor) {
+        return roomVisitRepository.findVisitsWithContact(visitor);
     }
 }

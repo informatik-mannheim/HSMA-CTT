@@ -1,19 +1,9 @@
 package de.hs_mannheim.informatik.ct.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.persistence.services.*;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -22,23 +12,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.Veranstaltung;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsBesuchService;
-import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -51,6 +41,12 @@ public class CtController implements ErrorController {
 
 	@Autowired
 	private RoomService roomService;
+
+	@Autowired
+	private RoomVisitService roomVisitService;
+
+	@Autowired
+	private VisitorService visitorService;
 
 	@Autowired
 	private Utilities util;
@@ -213,7 +209,13 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/suchen")
 	public String kontakteFinden(@RequestParam String email, Model model) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+		val target = visitorService.findVisitorByEmail(email);
+		if(!target.isPresent()) {
+			// TODO: Improve and unify exception handling
+			throw new RoomController.VisitorNotFoundException();
+		}
+
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
 
 		model.addAttribute("kranker", email);
 		model.addAttribute("kontakte", kontakte);
@@ -221,9 +223,16 @@ public class CtController implements ErrorController {
 		return "kontaktliste";
 	}
 
+
+
 	@RequestMapping("/download")
 	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+		val target = visitorService.findVisitorByEmail(email);
+		if(!target.isPresent()) {
+			throw new RoomController.VisitorNotFoundException();
+		}
+
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
 
 		response.setHeader("Content-disposition", "attachment; filename=kontaktliste.xls");
 		response.setContentType("application/vnd.ms-excel");
@@ -342,4 +351,24 @@ public class CtController implements ErrorController {
 		return null;
 	}
 
+	private Collection<VeranstaltungsBesuchDTO> getContacts(Besucher target) {
+		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(target.getEmail());
+		val roomContacts = roomVisitService.getVisitorContacts(target);
+
+		roomContacts
+				.stream()
+				.map((contact) -> new VeranstaltungsBesuchDTO(
+						contact.getContact().getVisitor().getEmail(),
+						Integer.MAX_VALUE,
+						contact.getContact().getRoom().getName(),
+						contact.getContact().getStart(),
+						contact.getContact().getEnd(),
+						(int) Math.abs(Duration.between(
+								contact.getContact().getStart().toInstant(),
+								contact.getTarget().getStart().toInstant())
+								.toMinutes())
+				))
+				.forEach(kontakte::add);
+		return kontakte;
+	}
 }
