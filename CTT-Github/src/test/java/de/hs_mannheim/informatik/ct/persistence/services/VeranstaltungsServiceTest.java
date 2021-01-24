@@ -1,13 +1,10 @@
-package de.hs_mannheim.informatik.ct.persistence;
+package de.hs_mannheim.informatik.ct.persistence.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
+import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
 import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsRepository;
-import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
 import org.apache.xmlbeans.impl.tool.XSTCTester.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,8 +19,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -35,7 +33,7 @@ public class VeranstaltungsServiceTest extends TestCase {
             return new VeranstaltungsService();
         }
     }
-    
+
     @Autowired
     private VeranstaltungsService veranstaltungsService;
 
