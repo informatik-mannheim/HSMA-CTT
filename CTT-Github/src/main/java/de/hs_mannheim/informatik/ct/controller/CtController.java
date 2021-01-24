@@ -211,8 +211,9 @@ public class CtController implements ErrorController {
 	public String kontakteFinden(@RequestParam String email, Model model) {
 		val target = visitorService.findVisitorByEmail(email);
 		if(!target.isPresent()) {
-			// TODO: Improve and unify exception handling
-			throw new RoomController.VisitorNotFoundException();
+			model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
+			
+			return "suche";
 		}
 
 		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
@@ -222,8 +223,6 @@ public class CtController implements ErrorController {
 
 		return "kontaktliste";
 	}
-
-
 
 	@RequestMapping("/download")
 	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) {
