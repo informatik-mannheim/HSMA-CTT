@@ -1,5 +1,21 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
+import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
+import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDate;
+import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import de.hs_mannheim.informatik.ct.model.Besucher;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
@@ -7,16 +23,6 @@ import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.NonNull;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static de.hs_mannheim.informatik.ct.util.TimeUtil.*;
 
 @Service
 public class RoomVisitService {
@@ -88,7 +94,6 @@ public class RoomVisitService {
 		return getVisitorCount(room) >= room.getMaxCapacity();
 	}
 
-
 	public void deleteExpiredRecords(Period recordLifeTime) {
 		val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
 		roomVisitRepository.deleteByEndBefore(convertToDate(oldestAllowedRecord));
@@ -97,4 +102,5 @@ public class RoomVisitService {
 	public List<RoomVisitContact> getVisitorContacts(@NonNull Besucher visitor) {
 		return roomVisitRepository.findVisitsWithContact(visitor);
 	}
+
 }
