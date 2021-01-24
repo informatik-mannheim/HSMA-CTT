@@ -15,12 +15,12 @@ import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 	@Query("SELECT visit " +
 			"FROM RoomVisit visit " +
-			"WHERE visit.visitor = :visitor and visit.end is null")
+			"WHERE visit.visitor = :visitor and visit.endDate is null")
 	List<RoomVisit> findNotCheckedOutVisits(@Param(value = "visitor") Besucher visitor);
 
 	@Query("SELECT COUNT (visit) " +
 			"FROM RoomVisit visit " +
-			"WHERE visit.room = :room and visit.end is null ")
+			"WHERE visit.room = :room and visit.endDate is null ")
 	int getRoomVisitorCount(@Param(value = "room") Room room);
 
 	/**
@@ -29,19 +29,19 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 	 */
 	@Query("SELECT visit " +
 			"FROM RoomVisit visit " +
-			"WHERE visit.end is null")
+			"WHERE visit.endDate is null")
 	List<RoomVisit> findNotCheckedOutVisits();
 
-	void deleteByEndBefore(Date end);
+	void deleteByEndDateBefore(Date endDate);
 
 	@Query("SELECT NEW de.hs_mannheim.informatik.ct.model.RoomVisitContact(visitTarget, visitOther) " +
 			"FROM RoomVisit visitTarget," +
 			"RoomVisit visitOther " +
 			"WHERE visitTarget.visitor = :visitor AND " +
 			"visitTarget.room = visitOther.room AND " +
-			"visitTarget.start <= visitOther.end AND " +
-			"visitOther.start <= visitTarget.end " +
-			"ORDER BY visitTarget.start")
+			"visitTarget.startDate <= visitOther.endDate AND " +
+			"visitOther.startDate <= visitTarget.endDate " +
+			"ORDER BY visitTarget.startDate")
 	List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Besucher visitor);
 	
 }

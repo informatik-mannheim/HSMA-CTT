@@ -89,7 +89,7 @@ class RoomVisitServiceTest {
 
         val autoSignOutCandidates =
                 expected.stream()
-                        .peek((roomVisit -> roomVisit.setEnd(null)))
+                        .peek((roomVisit -> roomVisit.setEndDate(null)))
                         .collect(Collectors.toList());
 
         // Sign in today after auto sign-in time
@@ -122,7 +122,7 @@ class RoomVisitServiceTest {
         Mockito.verify(
                 roomVisitRepository,
                 Mockito.times(1)
-        ).deleteByEndBefore(dateCaptor.capture());
+        ).deleteByEndDateBefore(dateCaptor.capture());
 
         val actualDate = convertToLocalDateTime(dateCaptor.getValue());
         val expectedDate = LocalDateTime.now().minusWeeks(4);
