@@ -1,18 +1,16 @@
 package de.hs_mannheim.informatik.ct.persistence.repositories;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import de.hs_mannheim.informatik.ct.model.Besucher;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
+import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 
 
 public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
@@ -36,4 +34,14 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
     List<RoomVisit> findNotCheckedOutVisits();
 
     void deleteByEndBefore(Date end);
+    
+    @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.RoomVisitContact(visitTarget, visitOther) " +
+            "FROM RoomVisit visitTarget," +
+            "RoomVisit visitOther " +
+            "WHERE visitTarget.visitor = :visitor AND " +
+            "visitTarget.room = visitOther.room AND " +
+            "visitTarget.start <= visitOther.end AND " +
+            "visitOther.start <= visitTarget.end " +
+            "ORDER BY visitTarget.start")
+    List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Besucher visitor);
 }
