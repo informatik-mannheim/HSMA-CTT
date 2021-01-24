@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ctt
+      - SPRING_DATASOURCE_USERNAME=XXbPWmwdRW
+      - SPRING_DATASOURCE_PASSWORD=grEtwOBI4E
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_H2_CONSOLE_ENABLED=false
+      - SERVER_TOMCAT_ACCESSLOG_ENABLED=false
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=XXbPWmwdRW
+      - POSTGRES_PASSWORD=grEtwOBI4E
+      - POSTGRES_DB=ctt
