@@ -14,7 +14,6 @@ public class VisitorService {
     @Autowired
     private BesucherRepository visitorRepo;
 
-
     public Optional<Besucher> findVisitorByEmail(String email){
         return visitorRepo.findById(email);
     }

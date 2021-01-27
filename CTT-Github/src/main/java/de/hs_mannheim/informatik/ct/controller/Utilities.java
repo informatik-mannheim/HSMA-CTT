@@ -73,7 +73,7 @@ public class Utilities {
 		rows++;
 		row = sheet.createRow(rows++);
 		int col = 0;
-		for (String titel : new String[] {"EMail-Adresse", "Veranstaltung", "Anmeldezeit", "Zeitlicher Abstand"}) {
+		for (String titel : new String[] {"EMail-Adresse", "Raum/Veranstaltung", "Anmeldezeit", "Zeitlicher Abstand"}) {
 			cell = row.createCell(col);
 			cell.setCellValue(titel);
 			cell.setCellStyle(csbo);
@@ -93,8 +93,7 @@ public class Utilities {
 			}
 		}
 
-		rows++;
-		row = sheet.createRow(rows++);
+		row = sheet.createRow(rows + 1);
 		cell = row.createCell(0);
 		cell.setCellValue("Erstellt mit CTT, dem Corona Tracking Tool der Hochschule Mannheim");
 		cell.setCellStyle(csit);

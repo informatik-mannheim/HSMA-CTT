@@ -23,4 +23,21 @@ public class Room {
     public String getId() {
         return getName();
     }
+
+    @lombok.Data
+    @NoArgsConstructor
+    public static class Data {
+        @NonNull
+        private String roomName;
+        @NonNull
+        private String roomId;
+        @NonNull
+        private int maxCapacity;
+
+        public Data(Room room) {
+            roomName = room.getName();
+            roomId = room.getId();
+            maxCapacity = room.getMaxCapacity();
+        }
+    }
 }

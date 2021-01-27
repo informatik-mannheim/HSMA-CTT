@@ -188,6 +188,21 @@
 			<version>4.1.2</version>
 		</dependency>
 
+		<!-- PDF Engine for QR-Code print-outs-->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13.2</version>
+		</dependency>
+
+		<!-- Test Framework -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-junit</artifactId>
+			<version>2.0.0.0</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Überschreiben der älteren Versionen (von anderen Dependencies importiert), 
 			die eine Vulnerability haben -->
 		<dependency>
@@ -207,7 +222,6 @@
 			<artifactId>batik-svggen</artifactId>
 			<version>1.13</version>
 		</dependency>
-
 	</dependencies>
 
 </project>
