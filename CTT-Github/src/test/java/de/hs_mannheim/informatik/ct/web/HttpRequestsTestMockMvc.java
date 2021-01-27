@@ -56,13 +56,18 @@ public class HttpRequestsTestMockMvc {
     @Transactional
     public void getCorrectViewNames() throws Exception {
         this.mockMvc.perform(get("/")).andExpect(MockMvcResultMatchers.view().name("index"));
+        this.mockMvc.perform(get("/r/import")).andExpect(MockMvcResultMatchers.view().name("rooms/roomImport"));
     }
 
 
 
+    //TODO: Wie kann ich hier Räume vorher anlegen, damit die Tests auch dann richtig auswerten? TestEntityManager? Geht das überhaupt auf dem Weblayer?
+
     @Test
-    public void getCorrectRoomView() throws Exception {
+    public void getCorrectRoomViews() throws Exception {
         this.mockMvc.perform(get("/r/A008")).andExpect(MockMvcResultMatchers.view().name("rooms/checkIn"));
+        this.mockMvc.perform(get("/r/roomFull/A008")).andExpect(MockMvcResultMatchers.view().name("rooms/full"));
+
     }
 
 
