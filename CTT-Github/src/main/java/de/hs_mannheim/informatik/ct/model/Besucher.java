@@ -24,7 +24,7 @@ public class Besucher {
 	
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	@OneToMany(mappedBy = "veranstaltungId", cascade = {CascadeType.ALL})
+	@OneToMany(cascade = {CascadeType.ALL})
 	private List<VeranstaltungsBesuch> besuche = new ArrayList<>();
 
 	public Besucher(String email) {

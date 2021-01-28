@@ -18,8 +18,8 @@ public class VeranstaltungsBesuchDTO implements Serializable {
 	private int diffInMin;
 
 	public VeranstaltungsBesuchDTO(VeranstaltungsBesuch target, VeranstaltungsBesuch other) {
-		besucherEmail = target.getBesucherEmail();
-		veranstaltungsId = target.getVeranstaltungId();
+		besucherEmail = target.getBesucher().getEmail();
+		veranstaltungsId = target.getVeranstaltung().getId();
 		veranstaltungsName = target.getVeranstaltung().getName();
 		timestamp = other.getWann();
 		endzeit = other.getEnde();
