@@ -12,9 +12,22 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_H2_CONSOLE_ENABLED=false
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=false
+    restart: always
   db:
     image: postgres:13-alpine
     environment:
       - POSTGRES_USER=XXbPWmwdRW
       - POSTGRES_PASSWORD=grEtwOBI4E
       - POSTGRES_DB=ctt
+    restart: always
+  proxy:
+    image: nginx:1-alpine
+    depends_on:
+      - app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs/:/etc/ssl/certs/:ro
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
