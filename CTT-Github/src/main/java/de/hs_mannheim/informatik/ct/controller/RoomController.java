@@ -1,20 +1,5 @@
 package de.hs_mannheim.informatik.ct.controller;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.RoomVisit;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
-import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +7,30 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import lombok.val;
 
 @Controller
 @RequestMapping("r")
@@ -35,7 +44,11 @@ public class RoomController {
 
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
-    public String checkIn(@PathVariable String roomId, Model model) {
+    public String checkIn(@PathVariable String roomId, Model model, HttpServletRequest request) {
+    	// get roomId from form on landing page (index.html)
+    	if ("noId".equals(roomId) && request.getParameter("roomId") != null)
+    		roomId = request.getParameter("roomId");
+    	
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -48,6 +61,7 @@ public class RoomController {
         Room.Data roomData = new Room.Data(room.get());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
+        
         return "rooms/checkIn";
     }
 
