@@ -123,6 +123,75 @@ input[type=number].email {
     -moz-appearance:textfield;
 }
 
+.email {
+    font-size: 1em;
+}
+
+.tmp-element {
+    visibility: hidden;
+    white-space: pre;
+}
+
+input[type=radio][name='email-postfix'] {
+    margin: 0 0 10px;
+    font-size: 16px;
+    line-height: 24px;
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 36px;
+    height: 20px;
+    opacity: 0;
+    z-index: 0;
+}
+
+label.radio-label {
+    position: relative;
+    margin: 0 0 10px;
+    font-size: 16px;
+    line-height: 32px;
+    display: block;
+    padding: 0 0 0 32px;
+    cursor: pointer;
+}
+
+label.radio-label::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+    border: 2px solid #111;
+    border-radius: 14px;
+    z-index: 1;
+    transition: border-color 0.28s cubic-bezier(.4, 0, .2, 1);
+    box-sizing: border-box;
+}
+
+label.radio-label::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 5px;
+    width: 14px;
+    height: 14px;
+    background-color: #22376f;
+    border-radius: 50%;
+    z-index: 2;
+    transform: scale(0, 0);
+    transition: transform 0.28s cubic-bezier(.4, 0, .2, 1);
+    box-sizing: border-box;
+}
+
+input[type=radio][name='email-postfix']:checked + label.radio-label::before {
+    border-color: #22376f;
+}
+input[type=radio][name='email-postfix']:checked + label.radio-label::after {
+    transform: scale(1, 1);
+}
+
 a:link {
     color: #3f65c4;
 }
@@ -183,9 +252,7 @@ a.button {
 
 .form-row > input, .form-row > select {
     height: 100%;
-    box-sizing: border-box;
 }
-
 
 footer {
     background-color: #00000040;

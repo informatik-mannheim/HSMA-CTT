@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.localStorage;
     const emailText = document.getElementById("email-text");
-    const postfixDropDown = document.getElementById("email-postfix");
+    const emailLabel = document.getElementById("email-text-label");
+    const postFixRadioButtons = document.querySelectorAll("input[type=radio][name='email-postfix']");
     let emailPostfix = null;
 
     // Show content that requires JavaScript to function
@@ -10,11 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check if auto sign-in is enabled and if so, sign in
     autoSignIn();
 
-    // Setup the initial drop-down selection and handle the drop down event
-    postFixChanged(postfixDropDown.value);
-    postfixDropDown.addEventListener("change", (event) => {
-        postFixChanged(event.target.value);
-    })
+    // Setup the initial radio selection and handle the change event
+    postFixRadioButtons.forEach(radio => {
+        radio.addEventListener('change', () => postFixChanged())
+    });
+    postFixChanged();
 
     // Inject the actual email into the final form submitted to the server
     document.getElementById("submit-form").addEventListener("submit", () => {
@@ -51,12 +52,26 @@ document.addEventListener("DOMContentLoaded", () => {
         if(emailText.type === "number") {
             // For anything that's not a number prevent the input
             if(/\D/.test(ev.key)) {
-                ev.preventDefault()
+                ev.preventDefault();
             }
         }
     });
 
-    function postFixChanged(postfix) {
+    // Resize email input field to fit user input
+    resizeEmailInput();
+    emailText.addEventListener("input", () => {
+        resizeEmailInput();
+    })
+
+    function postFixChanged() {
+        let postfix = null;
+        for (const radio of postFixRadioButtons) {
+            if(radio.checked) {
+                postfix = radio.value;
+                break;
+            }
+        }
+
         switch (postfix) {
             case "student":
                 emailText.placeholder = "Matrikelnummer";
@@ -75,6 +90,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailPostfix = null;
                 break;
         }
+
+        if(emailPostfix !== null) {
+            emailLabel.textContent = emailPostfix;
+        } else {
+            emailLabel.textContent = "";
+        }
+
+        resizeEmailInput();
     }
 
     function getFullEmail() {
@@ -99,5 +122,23 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("submit-form-email").value = storedEmail;
             document.getElementById("submit-form").submit();
         }
+    }
+
+    function resizeEmailInput() {
+        let inputText = 0;
+        if(emailText.value == "") {
+            inputText = emailText.placeholder;
+        } else {
+            inputText = emailText.value;
+        }
+
+        const tmpWidthMeasure = document.createElement("span");
+        tmpWidthMeasure.className = "tmp-element email";
+        tmpWidthMeasure.innerHTML = inputText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        document.body.appendChild(tmpWidthMeasure);
+        const inputWidth = tmpWidthMeasure.getBoundingClientRect().width;
+        document.body.removeChild(tmpWidthMeasure);
+
+        emailText.style.width = inputWidth + "px";
     }
 });

@@ -54,13 +54,24 @@
         <div class="js-enabled">
             <form name="input-form">
                 <div class="form-row">
-                    <input style="flex-grow: 1;" id="email-text" name="email" type="number" class="email"
+                    <h5>Anmeldung als</h5>
+                </div>
+                <div class="form-row">
+                    <input type="radio" id="email-postfix-student" value="student" name="email-postfix" checked>
+                    <label class="radio-label" for="email-postfix-student">Student:innen</label>
+                </div>
+                <div class="form-row">
+                    <input type="radio" id="email-postfix-internal" value="internal" name="email-postfix">
+                    <label class="radio-label" for="email-postfix-internal">Mitarbeiter:innen</label>
+                </div>
+                <div class="form-row">
+                    <input type="radio" id="email-postfix-external" value="external" name="email-postfix">
+                    <label class="radio-label" for="email-postfix-external">Andere/Extern</label>
+                </div>
+                <div class="form-row">
+                    <input id="email-text" name="email" type="number" class="email"
                            placeholder="Matrikelnummer" value="" required>
-                    <select id="email-postfix" name="email-postfix">
-                        <option value="student">@stud.hs-mannheim.de</option>
-                        <option value="internal">@hs-mannheim.de</option>
-                        <option value="external">Andere/Extern</option>
-                    </select>
+                    <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
                 <div class="form-row checkin-only">
                     <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox">
