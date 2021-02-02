@@ -44,10 +44,10 @@ public class RoomController {
 
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
-    public String checkIn(@PathVariable String roomId, Model model, HttpServletRequest request) {
+    public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
     	// get roomId from form on landing page (index.html)
-    	if ("noId".equals(roomId) && request.getParameter("roomId") != null)
-    		roomId = request.getParameter("roomId");
+    	if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
+    		roomId = roomIdFromRequest.get();
     	
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
