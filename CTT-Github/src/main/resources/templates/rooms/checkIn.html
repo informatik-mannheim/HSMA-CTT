@@ -28,7 +28,7 @@
     <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um sich aus vorherigen Räumen auszuchecken.
     </p>
     <div style="width: 30em; max-width: 100%;" class="content">
-        <h3 class="content-headers">E-Mail-Adresse</h3>
+        <h3 class="content-headers">Anmeldung als ...</h3>
         <div class="no-js">
             <form class="checkin-only" action="#" th:action="@{checkIn}" method="POST" name="submit-form">
                 <div class="form-row">
@@ -54,23 +54,19 @@
         <div class="js-enabled">
             <form name="input-form">
                 <div class="form-row">
-                    <h5>Anmeldung als</h5>
-                </div>
-                <div class="form-row">
                     <input type="radio" id="email-postfix-student" value="student" name="email-postfix" checked>
-                    <label class="radio-label" for="email-postfix-student">Student:innen</label>
+                    <label class="radio-label" for="email-postfix-student">Student:in</label>
                 </div>
                 <div class="form-row">
                     <input type="radio" id="email-postfix-internal" value="internal" name="email-postfix">
-                    <label class="radio-label" for="email-postfix-internal">Mitarbeiter:innen</label>
+                    <label class="radio-label" for="email-postfix-internal">Mitarbeiter:in</label>
                 </div>
                 <div class="form-row">
                     <input type="radio" id="email-postfix-external" value="external" name="email-postfix">
-                    <label class="radio-label" for="email-postfix-external">Andere/Extern</label>
+                    <label class="radio-label" for="email-postfix-external">Externe/Gäste</label>
                 </div>
                 <div class="form-row">
-                    <input id="email-text" name="email" type="number" class="email"
-                           placeholder="Matrikelnummer" value="" required>
+                    <input id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer" value="" required>
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
                 <div class="form-row checkin-only">
