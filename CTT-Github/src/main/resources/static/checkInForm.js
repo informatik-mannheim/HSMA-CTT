@@ -57,12 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Resize email input field to fit user input
-    resizeEmailInput();
-    emailText.addEventListener("input", () => {
-        resizeEmailInput();
-    })
-
     function postFixChanged() {
         let postfix = null;
         for (const radio of postFixRadioButtons) {
@@ -96,8 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             emailLabel.textContent = "";
         }
-
-        resizeEmailInput();
     }
 
     function getFullEmail() {
@@ -123,22 +115,5 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("submit-form").submit();
         }
     }
-
-    function resizeEmailInput() {
-        let inputText = 0;
-        if(emailText.value == "") {
-            inputText = emailText.placeholder;
-        } else {
-            inputText = emailText.value;
-        }
-
-        const tmpWidthMeasure = document.createElement("span");
-        tmpWidthMeasure.className = "tmp-element email";
-        tmpWidthMeasure.innerHTML = inputText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        document.body.appendChild(tmpWidthMeasure);
-        const inputWidth = tmpWidthMeasure.getBoundingClientRect().width;
-        document.body.removeChild(tmpWidthMeasure);
-
-        emailText.style.width = inputWidth + "px";
-    }
+    
 });
