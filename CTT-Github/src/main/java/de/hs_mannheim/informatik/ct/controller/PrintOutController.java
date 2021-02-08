@@ -1,7 +1,8 @@
 package de.hs_mannheim.informatik.ct.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
+import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -11,11 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.itextpdf.text.DocumentException;
-
-import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import lombok.val;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("printout")
@@ -37,11 +34,11 @@ public class PrintOutController {
 
     @GetMapping(value = "/rooms")
     public ResponseEntity<StreamingResponseBody> getRoomPrintout(HttpServletRequest request) {
-        val outFileName = "QR Codes.pdf";
+        val outFileName = "QR Codes.docx";
 
         StreamingResponseBody responseBody = outputStream -> {
             try {
-                contentService.writeRoomsPrintoutPDF(
+                contentService.writeRoomsPrintOutDocx(
                         roomService.all(),
                         outputStream,
                         room -> utilities.getUriToLocalPath(
@@ -49,7 +46,7 @@ public class PrintOutController {
                                 request
                         )
                 );
-            } catch (DocumentException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         };
