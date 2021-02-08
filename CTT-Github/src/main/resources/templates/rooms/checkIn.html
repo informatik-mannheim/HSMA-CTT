@@ -4,7 +4,7 @@
       layout:decorate="~{rooms/layout}">
 
 <head>
-    <title th:text="${'Check-In Raum ' + roomData.roomName}">Check-In</title>
+    <title th:text="${'Check-in Raum ' + roomData.roomName}">Check-in</title>
     <script src='/checkInForm.js'></script>
     <style th:if="${checkout}">
         .checkin-only {
@@ -20,13 +20,13 @@
 
 <body>
 <div layout:fragment="content" th:object="${visitData}">
-    <h1 class="content content-headers checkin-only" style="margin-bottom: 0;">Check-In</h1>
-    <h1 class="content content-headers checkout-only" style="margin-bottom: 0;">Check-Out</h1>
+    <h1 class="content content-headers checkin-only" style="margin-bottom: 0;">Check-in</h1>
+    <h1 class="content content-headers checkout-only" style="margin-bottom: 0;">Check-out</h1>
    
     <p class="checkin-only"
        th:text="${'Bitte machen Sie die folgenden Angaben, um sich in Raum ' + roomData.roomName + ' einzuchecken.'}">Geben Sie Ihre
         E-Mail-Adresse an, um sich einzuchecken.</p>
-    <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um bestehende Check-Ins zu beenden.
+    <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um bestehende Check-ins zu beenden.
     </p>
     
     <div style="width: 30em; max-width: 100%;" class="content">
@@ -39,7 +39,7 @@
                     <input type="hidden" name="rid" th:field="*{roomId}" />
                 </div>
                 <div class="form-row">
-                    <input style="margin-left: 24px" type="submit" value="Check-In">
+                    <input style="margin-left: 24px" type="submit" value="Check-in">
                 </div>
             </form>
                  
@@ -76,7 +76,7 @@
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
                     <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox">
-                    <label for="email-auto-sign-in">Für künftigen automatischen Check-In speichern</label>
+                    <label for="email-auto-sign-in">Für künftigen automatischen Check-in speichern</label>
                 </div>
             </form>
             
@@ -84,7 +84,7 @@
              
             <div class="form-row checkin-only" style="margin-left: 24px;">
                 <form action="#" th:action="@{checkIn}" method="POST" id="submit-form" name="submit-form">
-                    <input style="margin-left: 0" type="submit" value="Check-In">
+                    <input style="margin-left: 0" type="submit" value="Check-in">
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value="">
                     <input type="hidden" name="rid" th:field="*{roomId}" />
                 </form>
@@ -102,7 +102,7 @@
         <hr style="color: #cccccc; margin-top: 32px;" />
         
         <div class="checkin-only" style="margin-top: 32px;">
-	       	<h3 class="content-headers">Oder nur vorherigen Check-In beenden?</h3>
+	       	<h3 class="content-headers">Oder nur vorherigen Check-in beenden?</h3>
 	 
 	        <a class="button no-js" style="margin-left: 24px;" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden...</a>
 	        <button class="js-enabled" style="margin-left: 24px;" id="checkout-button">Abmelden...</button>
