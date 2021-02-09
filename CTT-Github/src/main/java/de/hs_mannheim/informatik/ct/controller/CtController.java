@@ -137,10 +137,10 @@ public class CtController implements ErrorController {
 					if (besucherZahl >= v.getRaumkapazitaet()) {
 						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
 					} else {
-						Besucher b = vservice.getBesucherByEmail(email);
+						Visitor b = vservice.getBesucherByEmail(email);
 
 						if (b == null) {
-							b = new Besucher(email);
+							b = new Visitor(email);
 							b = vservice.speichereBesucher(b);
 						}
 
@@ -350,7 +350,7 @@ public class CtController implements ErrorController {
 		return null;
 	}
 
-	private Collection<VeranstaltungsBesuchDTO> getContacts(Besucher target) {
+	private Collection<VeranstaltungsBesuchDTO> getContacts(Visitor target) {
 		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(target.getEmail());
 		val roomContacts = roomVisitService.getVisitorContacts(target);
 

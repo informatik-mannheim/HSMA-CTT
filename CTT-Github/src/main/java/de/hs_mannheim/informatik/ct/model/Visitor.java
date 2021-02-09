@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Besucher {
+public class Visitor {
 	@Id
 	private String email;
 	
@@ -27,7 +27,7 @@ public class Besucher {
 	@OneToMany(cascade = {CascadeType.ALL})
 	private List<VeranstaltungsBesuch> besuche = new ArrayList<>();
 
-	public Besucher(String email) {
+	public Visitor(String email) {
 		this.email = email;
 	}
 	

@@ -28,13 +28,12 @@ public class VeranstaltungsBesuch {
 	private Veranstaltung veranstaltung;
 
 	@ManyToOne
-	@JoinColumn
-	@NonNull
-	private Besucher besucher;
+	@MapsId("besucherEmail")
+	private Visitor visitor;
 
-	public VeranstaltungsBesuch(Veranstaltung v, Besucher b) {
+	public VeranstaltungsBesuch(Veranstaltung v, Visitor b) {
 		this.veranstaltung = v;
-		this.besucher = b;
+		this.visitor = b;
 	}
 	
 	public void setEnde(Date ende) {

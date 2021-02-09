@@ -4,14 +4,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import de.hs_mannheim.informatik.ct.persistence.repositories.BesucherRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Veranstaltung;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
@@ -21,7 +20,7 @@ public class VeranstaltungsService {
 	@Autowired
 	private VeranstaltungsRepository repoV;
 	@Autowired
-	private BesucherRepository repoB;
+	private VisitorRepository repoB;
 	@Autowired
 	private VeranstaltungsBesuchRepository repoVB;
 
@@ -37,8 +36,8 @@ public class VeranstaltungsService {
 		return repoVB.save(vb);
 	}
 
-	public Besucher getBesucherByEmail(String email) {
-		Optional<Besucher> opt = repoB.findById(email);
+	public Visitor getBesucherByEmail(String email) {
+		Optional<Visitor> opt = repoB.findById(email);
 		
 		if (!opt.isPresent()) 
 			return null; 
@@ -46,7 +45,7 @@ public class VeranstaltungsService {
 		return repoB.findById(email).get();
 	}
 
-	public Besucher speichereBesucher(Besucher b) {
+	public Visitor speichereBesucher(Visitor b) {
 		return repoB.save(b);
 	}
 

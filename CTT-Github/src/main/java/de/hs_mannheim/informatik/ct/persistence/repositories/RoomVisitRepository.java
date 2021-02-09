@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
@@ -16,7 +16,7 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 	@Query("SELECT visit " +
 			"FROM RoomVisit visit " +
 			"WHERE visit.visitor = :visitor and visit.endDate is null")
-	List<RoomVisit> findNotCheckedOutVisits(@Param(value = "visitor") Besucher visitor);
+	List<RoomVisit> findNotCheckedOutVisits(@Param(value = "visitor") Visitor visitor);
 
 	@Query("SELECT COUNT (visit) " +
 			"FROM RoomVisit visit " +
@@ -41,7 +41,7 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 			"visitTarget.room = visitOther.room AND " +
 			"visitTarget.startDate <= visitOther.endDate AND " +
 			"visitOther.startDate <= visitTarget.endDate " +
-			"ORDER BY visitTarget.startDate")
-	List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Besucher visitor);
+			"ORDER BY visitTarget.start")
+	List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 	
 }

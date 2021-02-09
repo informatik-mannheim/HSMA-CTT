@@ -1,7 +1,7 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
 import com.sun.istack.NotNull;
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Veranstaltung;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
@@ -18,29 +18,29 @@ public class VeranstaltungsBesuchService {
     @Autowired
     private VeranstaltungsBesuchRepository repoVeranstaltungsBesuche;
 
-    private void abmelden(Besucher besucher, Veranstaltung veranstaltung, @NotNull Date ende) {
-        repoVeranstaltungsBesuche.besucherAbmelden(besucher.getEmail(), ende);
+    private void abmelden(Visitor visitor, Veranstaltung veranstaltung, @NotNull Date ende) {
+        repoVeranstaltungsBesuche.besucherAbmelden(visitor.getEmail(), ende);
     }
 
     /**
      * Holt alle Besuche eines Besuchers, bei denen er sich noch nicht abgemeldet hat. Normalerweise sollte das nur höchstens einer sein.
-     * @param besucher Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
+     * @param visitor Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
-    public List<VeranstaltungsBesuch> getNichtAbgemeldeteBesuche(Besucher besucher) {
-        return repoVeranstaltungsBesuche.nichtAbgemeldeteBesuche(besucher.getEmail());
+    public List<VeranstaltungsBesuch> getNichtAbgemeldeteBesuche(Visitor visitor) {
+        return repoVeranstaltungsBesuche.nichtAbgemeldeteBesuche(visitor.getEmail());
     }
 
     /**
      * Meldet den Besucher aus allen angemeldeten Veranstaltungen ab.
-     * @param besucher Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
+     * @param visitor Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
     @Transactional
-    public List<VeranstaltungsBesuch> besucherAbmelden(Besucher besucher, Date ende) {
-        List<VeranstaltungsBesuch> veranstaltungsBesuche = getNichtAbgemeldeteBesuche(besucher);
+    public List<VeranstaltungsBesuch> besucherAbmelden(Visitor visitor, Date ende) {
+        List<VeranstaltungsBesuch> veranstaltungsBesuche = getNichtAbgemeldeteBesuche(visitor);
         for (VeranstaltungsBesuch besuch: veranstaltungsBesuche) {
-            abmelden(besucher, besuch.getVeranstaltung(), ende);
+            abmelden(visitor, besuch.getVeranstaltung(), ende);
         }
 
         return veranstaltungsBesuche;

@@ -40,7 +40,7 @@ public class Veranstaltung {
         this.id = id;
     }
 
-    public void addBesucher(Besucher b) {
+    public void addBesucher(Visitor b) {
         VeranstaltungsBesuch vb = new VeranstaltungsBesuch(this, b);
         besuche.add(vb);
         b.addVeranstaltungsBesuch(vb);

@@ -1,6 +1,6 @@
 package de.hs_mannheim.informatik.ct.persistence.repositories;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.util.TimeUtil;
@@ -32,8 +32,8 @@ public class RoomVisitRepositoryTest {
         assertThat(entityManager, notNullValue());
 
         val roomVisits = new ArrayList<RoomVisit>();
-        val expiredVisitor = new Besucher("expired");
-        val notExpiredVisitor = new Besucher("not-expired");
+        val expiredVisitor = new Visitor("expired");
+        val notExpiredVisitor = new Visitor("not-expired");
 
         // Absolutely not expired
         roomVisits.add(RoomVisitHelper.generateVisit(
