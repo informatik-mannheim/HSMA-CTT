@@ -1,6 +1,6 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.val;
@@ -70,7 +70,7 @@ class RoomVisitServiceTest {
 
         val yesterday = LocalDate.now().minusDays(1);
         val forcedEndTime = LocalTime.parse("18:00:00");
-        val visitor = new Besucher("1");
+        val visitor = new Visitor("1");
         // No sign out yesterday
         expected.add(generateVisit(
                 visitor,

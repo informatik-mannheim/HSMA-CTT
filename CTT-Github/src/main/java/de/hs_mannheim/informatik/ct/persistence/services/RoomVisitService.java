@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
@@ -30,7 +30,7 @@ public class RoomVisitService {
 	@Autowired
 	private RoomVisitRepository roomVisitRepository;
 
-	public RoomVisit visitRoom(Besucher visitor, Room room) {
+	public RoomVisit visitRoom(Visitor visitor, Room room) {
 		return roomVisitRepository.save(new RoomVisit(visitor, room, new Date()));
 	}
 
@@ -42,7 +42,7 @@ public class RoomVisitService {
 	 * @return The rooms the visitor was checked into.
 	 */
 	@NonNull
-	public List<RoomVisit> checkOutVisitor(@NonNull Besucher visitor) {
+	public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
 		List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
 		notSignedOutVisits.forEach((visit) -> {
 			visit.setEndDate(new Date());
@@ -53,7 +53,7 @@ public class RoomVisitService {
 	}
 
 	@NonNull
-	public List<RoomVisit> getCheckedInRoomVisits(@NonNull Besucher visitor) {
+	public List<RoomVisit> getCheckedInRoomVisits(@NonNull Visitor visitor) {
 		return roomVisitRepository.findNotCheckedOutVisits(visitor);
 	}
 
@@ -99,7 +99,7 @@ public class RoomVisitService {
 		roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
 	}
 
-	public List<RoomVisitContact> getVisitorContacts(@NonNull Besucher visitor) {
+	public List<RoomVisitContact> getVisitorContacts(@NonNull Visitor visitor) {
 		return roomVisitRepository.findVisitsWithContact(visitor);
 	}
 
