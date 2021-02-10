@@ -55,7 +55,7 @@ public class VisitorRepositoryTest {
     public void findeKontakteFuer() {
         befuelleDatenbank();
 
-        Collection<VeranstaltungsBesuchDTO> kontakte = visitorRepository.findeKontakteFuer(visitor1.getEmail());
+        Collection<VeranstaltungsBesuchDTO> kontakte = visitorRepository.findContactsFor(visitor1.getEmail());
         Assertions.assertEquals(2, kontakte.size());
         Assertions.assertTrue(kontakte.stream().allMatch(besuch ->
                 besuch.getBesucherEmail().equals(visitor1.getEmail()) ||

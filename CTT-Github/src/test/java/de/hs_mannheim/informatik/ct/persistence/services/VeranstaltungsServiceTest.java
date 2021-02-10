@@ -71,9 +71,9 @@ public class VeranstaltungsServiceTest extends TestCase {
                 endDate,
                 10));
 
-        Mockito.when(besucherRepo.findeKontakteFuer(visitor1.getEmail()))
+        Mockito.when(besucherRepo.findContactsFor(visitor1.getEmail()))
                 .thenReturn(kontakteOf1);
-        Mockito.when(besucherRepo.findeKontakteFuer(visitor2.getEmail()))
+        Mockito.when(besucherRepo.findContactsFor(visitor2.getEmail()))
                 .thenReturn(kontakteOf2);
     }
 
@@ -82,7 +82,7 @@ public class VeranstaltungsServiceTest extends TestCase {
         String infectedEmail = "13337@stud.hs-mannheim.de";
         Collection<VeranstaltungsBesuchDTO> kontakte = veranstaltungsService.findeKontakteFuer(infectedEmail);
 
-        Mockito.verify(besucherRepo, Mockito.times(1)).findeKontakteFuer(infectedEmail);
+        Mockito.verify(besucherRepo, Mockito.times(1)).findContactsFor(infectedEmail);
 
         Assertions.assertEquals(kontakte.size(), 1);
         VeranstaltungsBesuchDTO kontakt = kontakte.iterator().next();

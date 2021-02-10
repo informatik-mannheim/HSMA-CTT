@@ -41,7 +41,7 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 			"visitTarget.room = visitOther.room AND " +
 			"visitTarget.startDate <= visitOther.endDate AND " +
 			"visitOther.startDate <= visitTarget.endDate " +
-			"ORDER BY visitTarget.start")
+			"ORDER BY visitTarget.startDate")
 	List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 	
 }

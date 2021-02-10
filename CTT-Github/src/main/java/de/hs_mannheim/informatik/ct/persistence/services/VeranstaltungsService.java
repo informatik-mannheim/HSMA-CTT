@@ -50,7 +50,7 @@ public class VeranstaltungsService {
 	}
 
 	public Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(String email) {
-		return repoB.findeKontakteFuer(email);
+		return repoB.findContactsFor(email);
 	}
 
 	public Collection<Veranstaltung> findeAlleVeranstaltungen() {

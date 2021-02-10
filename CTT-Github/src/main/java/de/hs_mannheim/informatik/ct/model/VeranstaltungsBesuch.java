@@ -36,6 +36,8 @@ public class VeranstaltungsBesuch {
 	public VeranstaltungsBesuch(Veranstaltung v, Visitor b) {
 		this.veranstaltung = v;
 		this.visitor = b;
+
+		this.id = new VeranstaltungsBesuchPK(v.getId(), b.getEmail());
 	}
 	
 	public void setEnde(Date ende) {

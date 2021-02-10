@@ -23,10 +23,10 @@ public interface VisitorRepository extends JpaRepository<Visitor, String> {
 	@Query("SELECT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO(visitTarget, visitOther)" +
 			"FROM VeranstaltungsBesuch visitTarget, " +
 			"VeranstaltungsBesuch visitOther " +
-			"WHERE visitTarget.besucher.email = :email " +
+			"WHERE visitTarget.visitor.email = :email " +
 			"AND visitTarget.veranstaltung.id = visitOther.veranstaltung.id " +
 			"AND visitTarget.wann <= visitOther.ende " +
 			"AND visitOther.wann <= visitTarget.ende " +
 			"ORDER BY visitOther.wann DESC")
-	Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(@Param(value = "email") String email);
+	Collection<VeranstaltungsBesuchDTO> findContactsFor(@Param(value = "email") String email);
 }
