@@ -1,6 +1,7 @@
 package de.hs_mannheim.informatik.ct.controller;
 
 import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -122,7 +123,7 @@ public class CtController implements ErrorController {
 		model.addAttribute("vid", vid);
 
 		if (referer != null && (referer.contains("/besuch") || referer.contains("/senden") || referer.contains("/besuchMitCode")) ) {
-			if (email.isEmpty() || !util.checkMailAdressSyntax(email)) {
+			if (email.isEmpty()) {
 				model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
 			} else {
 				Optional<Veranstaltung> vo = vservice.getVeranstaltungById(vid);
@@ -137,7 +138,12 @@ public class CtController implements ErrorController {
 					if (besucherZahl >= v.getRaumkapazitaet()) {
 						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
 					} else {
-						Visitor b = visitorService.findOrCreateVisitor(email);
+						Visitor b = null;
+						try {
+							b = visitorService.findOrCreateVisitor(email);
+						} catch (InvalidEmailException e) {
+							model.addAttribute("error", "Ungültige Mail-Adresse");
+						}
 
 						Optional<String> autoAbmeldung = Optional.empty();
 						List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche = veranstaltungsBesuchService.besucherAbmelden(b, new Date());
