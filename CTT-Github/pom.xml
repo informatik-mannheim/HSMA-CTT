@@ -199,6 +199,13 @@
 			<version>5.5.13.2</version>
 		</dependency>
 
+		<!-- Email validation -->
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.7</version>
+		</dependency>
+
 		<!-- Test Framework -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
