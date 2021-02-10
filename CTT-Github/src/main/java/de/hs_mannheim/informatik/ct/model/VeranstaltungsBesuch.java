@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -12,9 +13,9 @@ import lombok.NonNull;
 @Getter
 @NoArgsConstructor
 public class VeranstaltungsBesuch {
-	@Id
-	@GeneratedValue
-	private long id;
+	@EmbeddedId
+	@Getter(value = AccessLevel.NONE)
+	private VeranstaltungsBesuchPK id;
 
 	@Column(name="timestamp", updatable = false)
 	private Date wann = new Date();
@@ -23,12 +24,13 @@ public class VeranstaltungsBesuch {
 	private Date ende;
 
 	@ManyToOne
-	@JoinColumn
+	@MapsId("veranstaltungsId")
 	@NonNull
 	private Veranstaltung veranstaltung;
 
 	@ManyToOne
-	@MapsId("besucherEmail")
+	@MapsId("visitorEmail")
+	@NonNull
 	private Visitor visitor;
 
 	public VeranstaltungsBesuch(Veranstaltung v, Visitor b) {
@@ -39,5 +41,4 @@ public class VeranstaltungsBesuch {
 	public void setEnde(Date ende) {
 		this.ende = ende;
 	}
-
 }

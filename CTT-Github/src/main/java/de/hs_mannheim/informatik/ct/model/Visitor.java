@@ -21,18 +21,9 @@ import lombok.ToString;
 public class Visitor {
 	@Id
 	private String email;
-	
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	@OneToMany(cascade = {CascadeType.ALL})
-	private List<VeranstaltungsBesuch> besuche = new ArrayList<>();
 
 	public Visitor(String email) {
 		this.email = email;
-	}
-	
-	public void addVeranstaltungsBesuch(VeranstaltungsBesuch vb) {
-		besuche.add(vb);
 	}
 
 	@Override
