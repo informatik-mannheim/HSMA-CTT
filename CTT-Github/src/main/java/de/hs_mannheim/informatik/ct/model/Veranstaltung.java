@@ -30,11 +30,6 @@ public class Veranstaltung {
         this.angelegtVon = angelegtVon;
     }
 
-    public Veranstaltung(Long id, String name, Room room, Date datum, String angelegtVon) {
-        this(name, room, datum, angelegtVon);
-        this.id = id;
-    }
-
     public int getRaumkapazitaet() {
         return room.getMaxCapacity();
     }

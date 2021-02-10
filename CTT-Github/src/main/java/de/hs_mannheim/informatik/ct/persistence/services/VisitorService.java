@@ -15,7 +15,7 @@ public class VisitorService {
     private VisitorRepository visitorRepo;
 
     public Optional<Visitor> findVisitorByEmail(String email){
-        return visitorRepo.findById(email);
+        return visitorRepo.findByEmail(email);
     }
 
     @Transactional

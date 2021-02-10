@@ -3,16 +3,9 @@ package de.hs_mannheim.informatik.ct.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Getter
@@ -20,6 +13,11 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Visitor {
 	@Id
+	@GeneratedValue
+	private Long id;
+
+	@Column(unique = true)
+	@NonNull
 	private String email;
 
 	public Visitor(String email) {
@@ -28,7 +26,7 @@ public class Visitor {
 
 	@Override
 	public String toString() {
-		return "Besucher{" +
+		return "{" +
 				"email='" + email + '\'' +
 				'}';
 	}

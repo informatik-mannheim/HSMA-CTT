@@ -29,15 +29,15 @@ public class VeranstaltungsBesuch {
 	private Veranstaltung veranstaltung;
 
 	@ManyToOne
-	@MapsId("visitorEmail")
+	@MapsId("visitorId")
 	@NonNull
 	private Visitor visitor;
 
-	public VeranstaltungsBesuch(Veranstaltung v, Visitor b) {
-		this.veranstaltung = v;
-		this.visitor = b;
+	public VeranstaltungsBesuch(Veranstaltung veranstaltung, Visitor visitor) {
+		this.veranstaltung = veranstaltung;
+		this.visitor = visitor;
 
-		this.id = new VeranstaltungsBesuchPK(v.getId(), b.getEmail());
+		this.id = new VeranstaltungsBesuchPK(veranstaltung, visitor);
 	}
 	
 	public void setEnde(Date ende) {

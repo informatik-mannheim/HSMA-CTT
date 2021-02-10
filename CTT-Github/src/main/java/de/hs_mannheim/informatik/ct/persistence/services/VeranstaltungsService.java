@@ -36,19 +36,6 @@ public class VeranstaltungsService {
 		return repoVB.save(vb);
 	}
 
-	public Visitor getBesucherByEmail(String email) {
-		Optional<Visitor> opt = repoB.findById(email);
-		
-		if (!opt.isPresent()) 
-			return null; 
-		
-		return repoB.findById(email).get();
-	}
-
-	public Visitor speichereBesucher(Visitor b) {
-		return repoB.save(b);
-	}
-
 	public Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(String email) {
 		return repoB.findContactsFor(email);
 	}
