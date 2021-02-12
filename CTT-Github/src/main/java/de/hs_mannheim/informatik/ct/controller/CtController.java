@@ -360,11 +360,11 @@ public class CtController implements ErrorController {
 						contact.getContact().getVisitor().getEmail(),
 						Integer.MAX_VALUE,
 						contact.getContact().getRoom().getName(),
-						contact.getContact().getStart(),
-						contact.getContact().getEnd(),
+						contact.getContact().getStartDate(),
+						contact.getContact().getEndDate(),
 						(int) Math.abs(Duration.between(
-								contact.getContact().getStart().toInstant(),
-								contact.getTarget().getStart().toInstant())
+								contact.getContact().getStartDate().toInstant(),
+								contact.getTarget().getStartDate().toInstant())
 								.toMinutes())
 				))
 				.forEach(kontakte::add);

@@ -45,7 +45,7 @@ public class RoomVisitService {
 	public List<RoomVisit> checkOutVisitor(@NonNull Besucher visitor) {
 		List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
 		notSignedOutVisits.forEach((visit) -> {
-			visit.setEnd(new Date());
+			visit.setEndDate(new Date());
 			roomVisitRepository.save(visit);
 		});
 
@@ -64,16 +64,16 @@ public class RoomVisitService {
 		val updatedVisits = notCheckedOut
 				.stream()
 				.map((roomVisit -> {
-					val startTime = convertToLocalTime(roomVisit.getStart());
-					val startDate = convertToLocalDate(roomVisit.getStart());
+					val startTime = convertToLocalTime(roomVisit.getStartDate());
+					val startDate = convertToLocalDate(roomVisit.getStartDate());
 
 					if (startTime.isBefore(forcedVisitEndTime)) {
 						val endDate = startDate.atTime(forcedVisitEndTime);
-						roomVisit.setEnd(convertToDate(endDate));
+						roomVisit.setEndDate(convertToDate(endDate));
 					} else if (startDate.isBefore(LocalDate.now())) {
 						// Visit started yesterday after forced sign-out time, sign-out at midnight yesterday instead
 						val endDate = startDate.atTime(LocalTime.parse("23:59:59"));
-						roomVisit.setEnd(convertToDate(endDate));
+						roomVisit.setEndDate(convertToDate(endDate));
 					} else {
 						return null;
 					}
@@ -96,7 +96,7 @@ public class RoomVisitService {
 
 	public void deleteExpiredRecords(Period recordLifeTime) {
 		val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
-		roomVisitRepository.deleteByEndBefore(convertToDate(oldestAllowedRecord));
+		roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
 	}
 
 	public List<RoomVisitContact> getVisitorContacts(@NonNull Besucher visitor) {

@@ -66,7 +66,7 @@ public class RoomVisitRepositoryTest {
         roomVisitRepository.saveAll(roomVisits);
         entityManager.flush();
 
-        roomVisitRepository.deleteByEndBefore(TimeUtil.convertToDate(LocalDateTime.now().minusWeeks(4)));
+        roomVisitRepository.deleteByEndDateBefore(TimeUtil.convertToDate(LocalDateTime.now().minusWeeks(4)));
 
         assertThat(roomVisitRepository.findAll(),
                 everyItem(hasProperty("visitor", equalTo(notExpiredVisitor))));

@@ -1,0 +1,5 @@
+# Ignore everything expect pom and src to avoid long docker context copy
+/*
+/*/
+!src/
+!pom.xml

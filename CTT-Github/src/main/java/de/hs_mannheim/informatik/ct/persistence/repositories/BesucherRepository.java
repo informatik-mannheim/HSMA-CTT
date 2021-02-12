@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import de.hs_mannheim.informatik.ct.model.Besucher;
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import org.springframework.data.repository.query.Param;
 
 public interface BesucherRepository extends JpaRepository<Besucher, String> {
 //	@Query(value = "SELECT DISTINCT b2.Besucher_Email FROM Veranstaltungs_Besuch b1, Veranstaltungs_Besuch b2 where "
@@ -19,13 +20,13 @@ public interface BesucherRepository extends JpaRepository<Besucher, String> {
 	
 	// Besucher der gleichen Veranstaltung in einem definierbaren Zeitintervall
 	// Und auch der Gesuchte selbst wird zurückgegeben, damit man sieht, wann er in welcher Veranstaltung war
-	@Query(value = "SELECT DISTINCT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO("
-			+ "b2.besucherEmail, v.id, v.name, b2.wann, b2.ende, ABS(DATEDIFF('MINUTE', b1.wann, b2.wann))) "
-			+ "FROM de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch b1, "
-			+ "de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch b2, "
-			+ "de.hs_mannheim.informatik.ct.model.Veranstaltung v where "
-			+ "b1.besucherEmail = ?1 and b1.veranstaltungId = b2.veranstaltungId and b2.veranstaltungId = v.id "
-			+ "and b1.wann <= b2.ende and b2.wann <= b1.ende "
-			+ "order by b2.wann desc")
-	Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(String email);
+	@Query("SELECT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO(visitTarget, visitOther)" +
+			"FROM VeranstaltungsBesuch visitTarget, " +
+			"VeranstaltungsBesuch visitOther " +
+			"WHERE visitTarget.besucher.email = :email " +
+			"AND visitTarget.veranstaltung.id = visitOther.veranstaltung.id " +
+			"AND visitTarget.wann <= visitOther.ende " +
+			"AND visitOther.wann <= visitTarget.ende " +
+			"ORDER BY visitOther.wann DESC")
+	Collection<VeranstaltungsBesuchDTO> findeKontakteFuer(@Param(value = "email") String email);
 }

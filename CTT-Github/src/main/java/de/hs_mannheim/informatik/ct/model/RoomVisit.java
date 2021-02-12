@@ -21,21 +21,21 @@ public class RoomVisit {
     private long id;
 
     @Column(updatable = false)
-    private Date start;
+    private Date startDate;
 
     @Column
     @Setter
-    private Date end = null;
+    private Date endDate = null;
 
     @ManyToOne
     @JoinColumn
     @NonNull
     private Besucher visitor;
 
-    public RoomVisit(Besucher visitor, Room room, Date start) {
+    public RoomVisit(Besucher visitor, Room room, Date startDate) {
         this.visitor = visitor;
         this.room = room;
-        this.start = start;
+        this.startDate = startDate;
     }
 
     @lombok.Data
@@ -48,8 +48,8 @@ public class RoomVisit {
         private int roomCapacity;
         private int currentVisitorCount;
         private String visitorEmail;
-        private Date start = null;
-        private Date end = null;
+        private Date startDate = null;
+        private Date endDate = null;
 
         public Data(RoomVisit visit, int currentVisitorCount) {
             this.roomId = visit.room.getId();
@@ -58,8 +58,8 @@ public class RoomVisit {
 
             this.visitorEmail = visit.visitor.getEmail();
             this.currentVisitorCount = currentVisitorCount;
-            this.start = visit.start;
-            this.end = visit.end;
+            this.startDate = visit.startDate;
+            this.endDate = visit.endDate;
         }
 
         public Data(Room.Data roomData) {
