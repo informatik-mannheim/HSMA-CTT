@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 @Configuration
@@ -25,14 +27,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("user").password("{noop}user").roles("USER");
-		auth.inMemoryAuthentication().withUser("prof").password("{noop}prof").roles("PROF");
-		auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("PROF","ADMIN");
+		auth.inMemoryAuthentication().withUser("user").password(passwordEncoder().encode("ctt-user21")).roles("USER");
+		auth.inMemoryAuthentication().withUser("prof").password(passwordEncoder().encode("ctt-user21")).roles("PROF");
+		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("ctt-admin21")).roles("PROF","ADMIN");
+				
+		auth.inMemoryAuthentication().withUser("k.albert@hs-mannheim.de").password("$2a$10$GTSP6jJBQD58zd3RQz62zeHIGfCEjMp7Lcjg77jkXh.zbvT9qBKCa").roles("PROF","ADMIN");
 	}
 	
 	@Bean
 	public SpringSecurityDialect springSecurityDialect() {
 	    return new SpringSecurityDialect();
+	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
 	}
 
 }
