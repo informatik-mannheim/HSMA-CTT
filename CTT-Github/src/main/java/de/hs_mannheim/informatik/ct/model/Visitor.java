@@ -27,8 +27,6 @@ public class Visitor {
 
 	@Override
 	public String toString() {
-		return "{" +
-				"email='" + email + '\'' +
-				'}';
+		return "{email='" + email + "'}";
 	}
 }
