@@ -40,6 +40,8 @@ Neu dabei ist ein Dockerfile zur Erstellung eines Dockercontainers. Ebenfalls au
 
 Danach dann kann der Container mit docker run -p 8080:8080 -t ct aus geführt werden.
 
+Neu: Zum Testen mit nginx-Proxy reicht docker-compose up (ggf. -- build) auszuführen, das Image wird dann automatisch gebaut. Danach kommt man über localhost drauf, also über Standardports 443 und 80 (wird umgeleitet auf https -> 443).
+
 
 ### Räume
 QRCode für einen Raum generieren: http://localhost:8080/QRCodes/room/A007a (localhost ggf. durch Servernamen ersetzen, ebenso wie den Port)
