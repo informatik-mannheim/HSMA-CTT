@@ -8,8 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -24,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
@@ -68,7 +66,7 @@ public class RoomController {
     @PostMapping("/checkIn")
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) {
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
-        Besucher visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
+        Visitor visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
 
         List<RoomVisit> notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
@@ -111,7 +109,7 @@ public class RoomController {
 
     @PostMapping("/checkOut")
     public String checkOut(@ModelAttribute RoomVisit.Data visitData) {
-        Optional<Besucher> visitor = visitorService.findVisitorByEmail(visitData.getVisitorEmail());
+        Optional<Visitor> visitor = visitorService.findVisitorByEmail(visitData.getVisitorEmail());
 
         if (!visitor.isPresent()) {
             throw new VisitorNotFoundException();

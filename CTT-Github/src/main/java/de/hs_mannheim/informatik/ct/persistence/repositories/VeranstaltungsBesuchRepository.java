@@ -26,11 +26,11 @@ public interface VeranstaltungsBesuchRepository extends JpaRepository<Veranstalt
     @Transactional
     @Query("UPDATE VeranstaltungsBesuch vb " +
             "SET vb.ende = :ende " +
-            "WHERE vb.besucher.email =:besucherEmail AND vb.ende is null")
+            "WHERE vb.visitor.email =:besucherEmail AND vb.ende is null")
     void besucherAbmelden(@Param(value = "besucherEmail") String besucherEmail, @Param(value = "ende") Date ende);
 
     @Query("SELECT vb " +
             "FROM VeranstaltungsBesuch vb " +
-            "WHERE vb.besucher.email = :besucherEmail and vb.ende is null")
+            "WHERE vb.visitor.email = :besucherEmail and vb.ende is null")
     List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche(@Param(value = "besucherEmail") String besucherEmail);
 }
