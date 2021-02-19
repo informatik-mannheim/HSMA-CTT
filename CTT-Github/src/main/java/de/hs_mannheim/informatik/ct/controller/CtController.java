@@ -137,12 +137,7 @@ public class CtController implements ErrorController {
 					if (besucherZahl >= v.getRaumkapazitaet()) {
 						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
 					} else {
-						Besucher b = vservice.getBesucherByEmail(email);
-
-						if (b == null) {
-							b = new Besucher(email);
-							b = vservice.speichereBesucher(b);
-						}
+						Visitor b = visitorService.findOrCreateVisitor(email);
 
 						Optional<String> autoAbmeldung = Optional.empty();
 						List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche = veranstaltungsBesuchService.besucherAbmelden(b, new Date());
@@ -283,8 +278,9 @@ public class CtController implements ErrorController {
 			else
 				return "index";
 		}
-			
-		veranstaltungsBesuchService.besucherAbmelden(vservice.getBesucherByEmail(besucherEmail), new Date());
+
+		visitorService.findVisitorByEmail(besucherEmail)
+				.ifPresent(value -> veranstaltungsBesuchService.besucherAbmelden(value, new Date()));
 
 		Cookie c = new Cookie("checked-into", "");
 		c.setMaxAge(0);
@@ -350,7 +346,7 @@ public class CtController implements ErrorController {
 		return null;
 	}
 
-	private Collection<VeranstaltungsBesuchDTO> getContacts(Besucher target) {
+	private Collection<VeranstaltungsBesuchDTO> getContacts(Visitor target) {
 		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(target.getEmail());
 		val roomContacts = roomVisitService.getVisitorContacts(target);
 

@@ -30,9 +30,9 @@ public class RoomVisit {
     @ManyToOne
     @JoinColumn
     @NonNull
-    private Besucher visitor;
+    private Visitor visitor;
 
-    public RoomVisit(Besucher visitor, Room room, Date startDate) {
+    public RoomVisit(Visitor visitor, Room room, Date startDate) {
         this.visitor = visitor;
         this.room = room;
         this.startDate = startDate;

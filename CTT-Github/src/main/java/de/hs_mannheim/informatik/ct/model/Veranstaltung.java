@@ -23,27 +23,11 @@ public class Veranstaltung {
     private Date datum = new Date();
     private String angelegtVon;
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    @OneToMany(cascade = {CascadeType.ALL})
-    private List<VeranstaltungsBesuch> besuche = new ArrayList<>();
-
     public Veranstaltung(String name, Room room, Date datum, String angelegtVon) {
         this.name = name;
         this.room = room;
         this.datum = datum;
         this.angelegtVon = angelegtVon;
-    }
-
-    public Veranstaltung(Long id, String name, Room room, Date datum, String angelegtVon) {
-        this(name, room, datum, angelegtVon);
-        this.id = id;
-    }
-
-    public void addBesucher(Besucher b) {
-        VeranstaltungsBesuch vb = new VeranstaltungsBesuch(this, b);
-        besuche.add(vb);
-        b.addVeranstaltungsBesuch(vb);
     }
 
     public int getRaumkapazitaet() {

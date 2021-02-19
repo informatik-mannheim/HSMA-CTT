@@ -14,16 +14,16 @@ import java.util.Date;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class BesucherRepositoryTest {
+public class VisitorRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
-    private BesucherRepository besucherRepository;
+    private VisitorRepository visitorRepository;
 
-    private final Besucher besucher1 = new Besucher("12345@stud.hs-mannheim.de");
-    private final Besucher besucher2 = new Besucher("13337@stud.hs-mannheim.de");
-    private final Besucher besucher3 = new Besucher("77777@stud.hs-mannheim.de");
+    private final Visitor visitor1 = new Visitor("12345@stud.hs-mannheim.de");
+    private final Visitor visitor2 = new Visitor("13337@stud.hs-mannheim.de");
+    private final Visitor visitor3 = new Visitor("77777@stud.hs-mannheim.de");
 
     private void befuelleDatenbank() {
         Room room = new Room("A008", 2);
@@ -33,13 +33,13 @@ public class BesucherRepositoryTest {
         entityManager.persist(veranstaltung1);
         entityManager.persist(veranstaltung2);
 
-        VeranstaltungsBesuch besuch1 = new VeranstaltungsBesuch(veranstaltung1, besucher1);
-        VeranstaltungsBesuch besuch2 = new VeranstaltungsBesuch(veranstaltung1, besucher2);
-        VeranstaltungsBesuch besuch3 = new VeranstaltungsBesuch(veranstaltung2, besucher3);
+        VeranstaltungsBesuch besuch1 = new VeranstaltungsBesuch(veranstaltung1, visitor1);
+        VeranstaltungsBesuch besuch2 = new VeranstaltungsBesuch(veranstaltung1, visitor2);
+        VeranstaltungsBesuch besuch3 = new VeranstaltungsBesuch(veranstaltung2, visitor3);
 
-        entityManager.persist(besucher1);
-        entityManager.persist(besucher2);
-        entityManager.persist(besucher3);
+        entityManager.persist(visitor1);
+        entityManager.persist(visitor2);
+        entityManager.persist(visitor3);
 
         besuch1.setEnde(new Date());
         besuch2.setEnde(new Date());
@@ -55,11 +55,11 @@ public class BesucherRepositoryTest {
     public void findeKontakteFuer() {
         befuelleDatenbank();
 
-        Collection<VeranstaltungsBesuchDTO> kontakte = besucherRepository.findeKontakteFuer(besucher1.getEmail());
+        Collection<VeranstaltungsBesuchDTO> kontakte = visitorRepository.findContactsFor(visitor1.getEmail());
         Assertions.assertEquals(2, kontakte.size());
         Assertions.assertTrue(kontakte.stream().allMatch(besuch ->
-                besuch.getBesucherEmail().equals(besucher1.getEmail()) ||
-                        besuch.getBesucherEmail().equals(besucher2.getEmail())
+                besuch.getBesucherEmail().equals(visitor1.getEmail()) ||
+                        besuch.getBesucherEmail().equals(visitor2.getEmail())
         ));
     }
 }
