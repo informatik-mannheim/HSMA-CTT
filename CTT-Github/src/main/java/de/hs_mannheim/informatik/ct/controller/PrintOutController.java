@@ -34,7 +34,7 @@ public class PrintOutController {
 
     @GetMapping(value = "/rooms")
     public ResponseEntity<StreamingResponseBody> getRoomPrintout(HttpServletRequest request) {
-        val outFileName = "QR Codes.docx";
+        val outFileName = "QRCodes.docx";
 
         StreamingResponseBody responseBody = outputStream -> {
             try {
