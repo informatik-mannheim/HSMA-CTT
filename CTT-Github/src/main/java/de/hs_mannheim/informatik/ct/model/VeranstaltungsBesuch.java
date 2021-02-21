@@ -2,45 +2,45 @@ package de.hs_mannheim.informatik.ct.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
+import javax.persistence.*;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
-@IdClass(VeranstaltungsBesuchPK.class)
+@Getter
 @NoArgsConstructor
 public class VeranstaltungsBesuch {
+	@EmbeddedId
+	@Getter(value = AccessLevel.NONE)
+	private VeranstaltungsBesuchPK id;
 
 	@Column(name="timestamp", updatable = false)
 	private Date wann = new Date();
 
-	@Id
-	@Column(name = "veranstaltung_id")
-	private long veranstaltungId;
-	
+	@Column
+	private Date ende;
+
 	@ManyToOne
-	@MapsId("veranstaltungId")
+	@MapsId("veranstaltungsId")
+	@NonNull
 	private Veranstaltung veranstaltung;
 
-	@Id
-	@Column(name = "besucher_email")
-	private String besucherEmail;
-	
 	@ManyToOne
-	@MapsId("besucherEmail")
-	private Besucher besucher;
+	@MapsId("visitorId")
+	@NonNull
+	private Visitor visitor;
 
-	public VeranstaltungsBesuch(Veranstaltung v, Besucher b) {
-		this.veranstaltung = v;
-		this.besucher = b;
-		
-		this.veranstaltungId = v.getId();
-		this.besucherEmail = b.getEmail();
+	public VeranstaltungsBesuch(Veranstaltung veranstaltung, Visitor visitor) {
+		this.veranstaltung = veranstaltung;
+		this.visitor = visitor;
+
+		this.id = new VeranstaltungsBesuchPK(veranstaltung, visitor);
 	}
-
+	
+	public void setEnde(Date ende) {
+		this.ende = ende;
+	}
 }

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,12 +17,23 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class Utilities {
+	@Value("${server.port}")
+	private String port;
+
+	@Value("${hostname}")
+	private String host;
+
 	Workbook excelErzeugen(Collection<VeranstaltungsBesuchDTO> kontakte, String email) {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("Kontaktliste");
@@ -61,7 +73,7 @@ public class Utilities {
 		rows++;
 		row = sheet.createRow(rows++);
 		int col = 0;
-		for (String titel : new String[] {"EMail-Adresse", "Veranstaltung", "Anmeldezeit", "Zeitlicher Abstand"}) {
+		for (String titel : new String[] {"EMail-Adresse", "Raum/Veranstaltung", "Anmeldezeit", "Zeitlicher Abstand"}) {
 			cell = row.createCell(col);
 			cell.setCellValue(titel);
 			cell.setCellStyle(csbo);
@@ -81,8 +93,7 @@ public class Utilities {
 			}
 		}
 
-		rows++;
-		row = sheet.createRow(rows++);
+		row = sheet.createRow(rows + 1);
 		cell = row.createCell(0);
 		cell.setCellValue("Erstellt mit CTT, dem Corona Tracking Tool der Hochschule Mannheim");
 		cell.setCellStyle(csit);
@@ -101,5 +112,20 @@ public class Utilities {
 		}
 
 		return datum;
+	}
+
+	/**
+	 * Converts a relative local path to an absolute URI
+	 * @param localPath Local path of the resource
+	 * @param request The request is used to differentiate between http/https. Should be moved to setting!
+	 * @return An absolute URI to the given resource
+	 */
+	public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
+		 return UriComponentsBuilder.newInstance()
+				.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+				.host(host)
+				.port(port)
+				.path(localPath)
+				.build();
 	}
 }

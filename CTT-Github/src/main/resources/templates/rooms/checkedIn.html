@@ -1,0 +1,24 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{rooms/layout}">
+
+<head>
+    <title th:text="${'Check-in Raum ' + visitData.roomName}">Check-in</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h1 class="content-headers" style="margin-bottom: 0;">Eingecheckt!</h1>
+    <p th:text="${'Raum ' + visitData.roomName + ' ist mit ' +  visitData.currentVisitorCount + ' von ' + visitData.roomCapacity + ' erlaubten Personen gefüllt.'}">
+    <div class="icon-container">
+        <div class="icon-background checkmark"></div>
+    </div>
+    <p>Bitte beim Verlassen des Raums auch an das Abmelden denken.</p>
+    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post">
+        <input type="hidden" th:field="*{visitorEmail}">
+        <input style="margin-left: 0" type="submit" value="Abmelden">
+    </form>
+</div>
+</body>
+</html>

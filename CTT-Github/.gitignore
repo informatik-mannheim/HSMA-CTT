@@ -19,7 +19,6 @@ log/
 target/
 
 #self
-qrcodes/
 database.mv.db
 /database.trace.db
 /privat/

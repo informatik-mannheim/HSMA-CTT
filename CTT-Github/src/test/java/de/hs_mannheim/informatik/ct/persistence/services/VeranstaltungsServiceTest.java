@@ -1,9 +1,10 @@
-package de.hs_mannheim.informatik.ct.persistence;
+package de.hs_mannheim.informatik.ct.persistence.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsRepository;
 import org.apache.xmlbeans.impl.tool.XSTCTester.TestCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,8 +19,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -31,44 +33,47 @@ public class VeranstaltungsServiceTest extends TestCase {
             return new VeranstaltungsService();
         }
     }
-    
+
     @Autowired
     private VeranstaltungsService veranstaltungsService;
 
     @MockBean
     private VeranstaltungsRepository veranstaltungRepo;
     @MockBean
-    private BesucherRepository besucherRepo;
+    private VisitorRepository besucherRepo;
     @MockBean
     private VeranstaltungsBesuchRepository veranstaltungsBesucherRepo;
 
     @BeforeAll
     public void setUp() {
-        Besucher besucher1 = new Besucher("12345@stud.hs-mannheim.de");
-        Besucher besucher2 = new Besucher("13337@stud.hs-mannheim.de");
+        Visitor visitor1 = new Visitor("12345@stud.hs-mannheim.de");
+        Visitor visitor2 = new Visitor("13337@stud.hs-mannheim.de");
         int veranstaltungsId = 42;
         String veranstaltungsName = "PR1";
         Date kontaktDate = new Date();
+        Date endDate = new Date();
 
         Collection<VeranstaltungsBesuchDTO> kontakteOf1 = new ArrayList<>();
         kontakteOf1.add(new VeranstaltungsBesuchDTO(
-                besucher2.getEmail(),
+                visitor2.getEmail(),
                 veranstaltungsId,
                 veranstaltungsName,
                 kontaktDate,
+                endDate,
                 10));
 
         Collection<VeranstaltungsBesuchDTO> kontakteOf2 = new ArrayList<>();
         kontakteOf2.add(new VeranstaltungsBesuchDTO(
-                besucher1.getEmail(),
+                visitor1.getEmail(),
                 veranstaltungsId,
                 veranstaltungsName,
                 kontaktDate,
+                endDate,
                 10));
 
-        Mockito.when(besucherRepo.findeKontakteFuer(besucher1.getEmail()))
+        Mockito.when(besucherRepo.findContactsFor(visitor1.getEmail()))
                 .thenReturn(kontakteOf1);
-        Mockito.when(besucherRepo.findeKontakteFuer(besucher2.getEmail()))
+        Mockito.when(besucherRepo.findContactsFor(visitor2.getEmail()))
                 .thenReturn(kontakteOf2);
     }
 
@@ -77,7 +82,7 @@ public class VeranstaltungsServiceTest extends TestCase {
         String infectedEmail = "13337@stud.hs-mannheim.de";
         Collection<VeranstaltungsBesuchDTO> kontakte = veranstaltungsService.findeKontakteFuer(infectedEmail);
 
-        Mockito.verify(besucherRepo, Mockito.times(1)).findeKontakteFuer(infectedEmail);
+        Mockito.verify(besucherRepo, Mockito.times(1)).findContactsFor(infectedEmail);
 
         Assertions.assertEquals(kontakte.size(), 1);
         VeranstaltungsBesuchDTO kontakt = kontakte.iterator().next();
