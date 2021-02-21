@@ -17,14 +17,20 @@ ARG GID=1586
 
 ENTRYPOINT ["java","-jar","/usr/share/ctt/ctt.jar"]
 
-# Add a user and switch to it to avoid running the webserver as root
-RUN adduser -D -g "" -u $UID $UNAME $UNAME
-USER $UNAME
-
 WORKDIR /usr/share/ctt/
 
+# Add a user and switch to it to avoid running the webserver as root
+RUN adduser -D -g "" -u $UID $UNAME $UNAME \
+    && mkdir work \
+    && chown $UNAME:$UNAME work
+USER $UNAME
+
+
 # Add Maven dependencies
-COPY --from=MAVEN_BUILD target/lib/           /usr/share/ctt/lib/
+COPY --from=MAVEN_BUILD target/lib/           ./lib/
 
 # Add the service itself
-COPY --from=MAVEN_BUILD target/ctt-*-SNAPSHOT.jar /usr/share/ctt/ctt.jar
+COPY --from=MAVEN_BUILD target/ctt-*-SNAPSHOT.jar ./ctt.jar
+
+# Copy default templates into the container
+COPY templates/ ./templates/
