@@ -29,25 +29,21 @@ public class DocxTemplate<T> {
     private List<T> dataSource;
     private final TextTemplate<T> textFormatter;
     private final Function<T, byte[]> imageGenerator;
+    
     // The id attribute of wp:docPr tags has to be unique, but can be arbitrarily large
     private int uniqueID = 1000;
-    /**
-     * To differentiate our own unique id's from original we check their length as originals should be shorter than 4 digits.
-     */
+   
+    // To differentiate our own unique id's from original we check their length as originals should be shorter than 4 digits.
     private final int uniqueIDDigits = (int) Math.log10(uniqueID);
-
 
     // Precompile regex patterns used for filling the template
     private final Pattern docxImageReplacer = Pattern.compile("<a:blip r:embed=\"rId\\d\">");
     private final Pattern docxTextReplacer = Pattern.compile("(<w:t>.*)#(\\w)(.*</w:t>)");
+   
     // Regex templates for fixing errors in the resulting document
     private final Pattern docPrUniqueIdFix = Pattern.compile(String.format("<wp:docPr id=\"\\d{1,%d}\"", uniqueIDDigits));
 
-    public DocxTemplate(
-            File templateFile,
-            TextTemplate<T> textFormatter,
-            Function<T, byte[]> imageGenerator
-    ) {
+    public DocxTemplate(File templateFile, TextTemplate<T> textFormatter, Function<T, byte[]> imageGenerator) {
         this.templateFile = templateFile;
         this.textFormatter = textFormatter;
         this.imageGenerator = imageGenerator;
@@ -61,6 +57,7 @@ public class DocxTemplate<T> {
         this.dataSource = dataSource;
         addImagesToDocMedia();
         val templateBuffer = getTemplateBuffer();
+        
         // The section properties is at the end of body and sets headers, footers, etc.
         val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
 
@@ -104,16 +101,13 @@ public class DocxTemplate<T> {
     }
 
     private void applyTemplateToPage(int dataIndex, byte[] templateBuffer) throws IOException, XmlException {
-        try (val templateStream = new ByteArrayInputStream(templateBuffer)) {
-            val template = new XWPFDocument(templateStream);
-
+        try (val templateStream = new ByteArrayInputStream(templateBuffer); val template = new XWPFDocument(templateStream);) {
             for (XWPFParagraph paragraph : template.getParagraphs()) {
                 val templateXml = paragraph.getCTP().xmlText();
                 var paragraphXml = applyTemplateToXml(dataIndex, templateXml);
 
                 // Add paragraph with new XML
-                document.createParagraph()
-                        .getCTP().set(XmlObject.Factory.parse(paragraphXml));
+                document.createParagraph().getCTP().set(XmlObject.Factory.parse(paragraphXml));
             }
         }
     }

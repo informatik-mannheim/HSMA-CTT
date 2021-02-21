@@ -56,10 +56,7 @@ public class DynamicContentService {
 
         Function<Room, byte[]> qrGenerator = room -> getQRCodePNGImage(uriConverter.apply(room), 500, 500);
 
-        val templateGenerator = new DocxTemplate<>(
-                docxTemplatePath.toFile(),
-                textReplacer,
-                qrGenerator);
+        val templateGenerator = new DocxTemplate<>(docxTemplatePath.toFile(), textReplacer, qrGenerator);
 
         return templateGenerator.generate(rooms);
     }
