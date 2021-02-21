@@ -121,6 +121,7 @@ public class DocxTemplate<T> {
             // Group 2 contains the placeholder without the #
             val placeholder = match.group(2);
             val replacement = textFormatter.apply(data, placeholder);
+           
             // Save text and XML tags around the template placeholder (group 1 & 3)
             return match.group(1) + replacement + match.group(3);
         });
@@ -129,9 +130,9 @@ public class DocxTemplate<T> {
         templateXml = complexReplaceAll(templateXml, docxImageReplacer,
                 matchResult -> String.format("<a:blip r:embed=\"%s\">", imgIndex));
 
-
         templateXml = complexReplaceAll(templateXml, docPrUniqueIdFix,
                 matchResult -> String.format("<wp:docPr id=\"%d\"", uniqueID++));
+        
         return templateXml;
     }
 
