@@ -193,6 +193,10 @@ input[type=radio][name='email-postfix']:checked + label.radio-label::after {
     transform: scale(1, 1);
 }
 
+.error {
+    color: #b92222;
+}
+
 a:link {
     color: #3f65c4;
 }

@@ -18,11 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
     postFixChanged();
 
     // Inject the actual email into the final form submitted to the server
-    document.getElementById("submit-form").addEventListener("submit", () => {
+    document.getElementById("submit-form").addEventListener("submit", (ev) => {
         const autoSignIn = document.getElementById("email-auto-sign-in");
         const combinedEmail = getFullEmail();
 
-        if(autoSignIn.checked) {
+        if (!validateEmail(combinedEmail)) {
+            // Invalid email error
+            ev.preventDefault();
+            document.getElementById("invalid-email-error")
+                .classList.remove("hidden");
+            return;
+        }
+
+        if (autoSignIn.checked) {
             storage.setItem('email', combinedEmail);
         } else {
             storage.removeItem('email');
@@ -35,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const autoSignIn = document.getElementById("email-auto-sign-in");
         const combinedEmail = getFullEmail();
 
-        if(autoSignIn.checked) {
+        if (autoSignIn.checked) {
             storage.setItem("email", combinedEmail);
         } else {
             storage.removeItem("email");
@@ -49,9 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // E-Mail input validation
     emailText.addEventListener("keypress", (ev) => {
-        if(emailText.type === "number") {
+        if (emailText.type === "number") {
             // For anything that's not a number prevent the input
-            if(/\D/.test(ev.key)) {
+            if (/\D/.test(ev.key)) {
                 ev.preventDefault();
             }
         }
@@ -60,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function postFixChanged() {
         let postfix = null;
         for (const radio of postFixRadioButtons) {
-            if(radio.checked) {
+            if (radio.checked) {
                 postfix = radio.value;
                 break;
             }
@@ -85,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
         }
 
-        if(emailPostfix !== null) {
+        if (emailPostfix !== null) {
             emailLabel.textContent = emailPostfix;
         } else {
             emailLabel.textContent = "";
@@ -110,10 +118,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const noAutoSignInParam = urlParams.get('noautosignin');
         const storedEmail = storage.getItem("email");
-        if(storedEmail !== null && !noAutoSignInParam) {
+        if (storedEmail !== null && !noAutoSignInParam) {
             document.getElementById("submit-form-email").value = storedEmail;
             document.getElementById("submit-form").submit();
         }
     }
-    
+
+    // https://stackoverflow.com/a/46181
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
 });
