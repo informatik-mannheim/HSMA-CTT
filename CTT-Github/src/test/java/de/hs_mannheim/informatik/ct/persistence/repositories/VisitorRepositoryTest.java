@@ -75,6 +75,9 @@ public class VisitorRepositoryTest {
         ));
     }
 
+    /**
+     * Uses the repository to fetch a visitor and checks if the email gets correctly decrypted
+     */
     @Test
     public void readDecryptedViaRepo() {
         befuelleDatenbank();
@@ -83,6 +86,10 @@ public class VisitorRepositoryTest {
         Assertions.assertEquals(decryptedEmail, visitorOptional.get().getEmail());
     }
 
+    /**
+     * Gets all rows from the database and checks if the email can be read in clear text (it shouldn't)
+     *
+     */
     @Test
     public void readEncryptedViaJDBC() {
         String query = "SELECT * FROM  visitor";
@@ -92,7 +99,7 @@ public class VisitorRepositoryTest {
             while(rs.next()){
                 mapRet.put(rs.getString("ID"),rs.getString("EMAIL"));
             }
-            Assertions.assertEquals(false,mapRet.containsValue("987654321@stud.hs-mannheim.de"));
+            Assertions.assertEquals(false,mapRet.containsValue(decryptedEmail));
 
             return mapRet;
         });
