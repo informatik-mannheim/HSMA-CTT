@@ -1,6 +1,8 @@
 package de.hs_mannheim.informatik.ct.persistence.repositories;
 
 import de.hs_mannheim.informatik.ct.model.*;
+import org.hamcrest.Matchers;
+import org.hamcrest.junit.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +34,7 @@ public class VisitorRepositoryTest {
     private final Visitor visitor2 = new Visitor("13337@stud.hs-mannheim.de");
     private final Visitor visitor3 = new Visitor("77777@stud.hs-mannheim.de");
 
-    //visitors for encryption testing
+    //visitor for encryption testing
     private final String decryptedEmail = "987654321@stud.hs-mannheim.de";
     private final Visitor visitor4 = new Visitor(decryptedEmail);
 
@@ -87,24 +89,22 @@ public class VisitorRepositoryTest {
     }
 
     /**
-     * Gets all rows from the database and checks if the email can be read in clear text (it shouldn't)
-     *
+     * Gets all rows from the table visitor directly from the database and checks if the email can be read in clear text (it shouldn't)
      */
     @Test
     public void readEncryptedViaJDBC() {
+        befuelleDatenbank();
+
         String query = "SELECT * FROM  visitor";
 
-        jdbcTemplate.query(query, (ResultSetExtractor<Map>) rs -> {
-            HashMap<String,String> mapRet= new HashMap<String,String>();
-            while(rs.next()){
-                mapRet.put(rs.getString("ID"),rs.getString("EMAIL"));
+        jdbcTemplate.query(query, rs -> {
+            ArrayList<String> resultsList = new ArrayList<>();
+            while (rs.next()) {
+                resultsList.add(rs.getString("EMAIL"));
             }
-            Assertions.assertEquals(false,mapRet.containsValue(decryptedEmail));
-
-            return mapRet;
+            MatcherAssert.assertThat(resultsList.size(), Matchers.greaterThan(0));
+            Assertions.assertFalse(resultsList.contains(decryptedEmail));
         });
-
-
 
 
     }
