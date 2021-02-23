@@ -30,14 +30,18 @@ public class RoomService {
         return roomsRepo.findAll();
     }
 
-    public void ImportFromCSV(BufferedReader csv) {
+    //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
+    public void importFromCsv(BufferedReader csv){
         csv.lines()
                 .map((line) -> {
-                   String[] values = line.split(COMMA_DELIMITER);
-                   String roomName = values[0];
-                   int roomCapacity = Integer.parseInt(values[1]);
-                   return new Room(roomName, roomCapacity);
+                    String[] values = line.split(COMMA_DELIMITER);
+                    String building = values[0];
+                    String roomName = values[1];
+                    int roomCapacity = Integer.parseInt(values[2]);
+                    return new Room(roomName,building,roomCapacity);
                 })
                 .forEach(this::saveRoom);
     }
+
+
 }

@@ -17,7 +17,11 @@ public class Room {
     @NonNull
     private String name;
 
+    private String building;
+
     private int maxCapacity;
+
+
 
     public String getId() {
         return getName();
@@ -43,11 +47,14 @@ public class Room {
         private String roomId;
         @NonNull
         private int maxCapacity;
+        @NonNull
+        private String building;
 
         public Data(Room room) {
             roomName = room.getName();
             roomId = room.getId();
             maxCapacity = room.getMaxCapacity();
+            building = room.getBuilding();
         }
     }
 }

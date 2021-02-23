@@ -39,7 +39,7 @@ public class VisitorRepositoryTest {
     private final Visitor visitor4 = new Visitor(decryptedEmail);
 
     private void befuelleDatenbank() {
-        Room room = new Room("A008", 2);
+        Room room = new Room("A008","A", 2);
         Veranstaltung veranstaltung1 = new Veranstaltung("PR1", room, new Date(), "Herr Müller");
         Veranstaltung veranstaltung2 = new Veranstaltung("PR2", room, new Date(), "Frau Meier");
 

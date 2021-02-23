@@ -14,9 +14,9 @@ public class DbInit implements CommandLineRunner {
     // TODO: nur testweise für den Moment, später wieder entfernen
     @Override
     public void run(String... args) {
-        roomsRepo.save(new Room("A007a", 3));
-        roomsRepo.save(new Room("test", 12));
-        roomsRepo.save(new Room("A210", 19));
+        roomsRepo.save(new Room("A007a","A", 3));
+        roomsRepo.save(new Room("test","test", 12));
+        roomsRepo.save(new Room("A210","A", 19));
     }
 
 }
