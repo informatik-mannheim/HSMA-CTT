@@ -3,6 +3,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ public class VisitorService {
     @Transactional
     public Visitor findOrCreateVisitor(String email) {
         return findVisitorByEmail(email)
-                .orElse(
-                        visitorRepo.save(new Visitor(email)));
+                .orElseGet(() -> visitorRepo.save(new Visitor(email)));
     }
 }
