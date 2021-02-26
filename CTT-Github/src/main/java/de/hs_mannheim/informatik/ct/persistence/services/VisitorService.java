@@ -17,21 +17,19 @@ public class VisitorService {
     @Autowired
     private VisitorRepository visitorRepo;
 
-    public Optional<Visitor> findVisitorByEmail(String email){
+    public Optional<Visitor> findVisitorByEmail(String email) {
         return visitorRepo.findByEmail(email);
     }
 
     @Transactional
     public Visitor findOrCreateVisitor(String email) throws InvalidEmailException {
         val visitor = findVisitorByEmail(email);
-        if(visitor.isPresent()) {
+        if (visitor.isPresent()) {
             return visitor.get();
+        } else if (EmailValidator.getInstance().isValid(email)) {
+            return visitorRepo.save(new Visitor(email));
         } else {
-            if (EmailValidator.getInstance().isValid(email)) {
-                return visitorRepo.save(new Visitor(email));
-            } else {
-                throw new InvalidEmailException();
-            }
+            throw new InvalidEmailException();
         }
     }
 }
