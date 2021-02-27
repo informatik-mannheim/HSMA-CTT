@@ -27,9 +27,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("user").password(passwordEncoder().encode("ctt-user21")).roles("USER");
-		auth.inMemoryAuthentication().withUser("prof").password(passwordEncoder().encode("ctt-user21")).roles("PROF");
-		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("ctt-admin21")).roles("PROF","ADMIN");
+//		System.out.println("hash -> " + passwordEncoder().encode("passwordYouWannaEncode"));
+
+		auth.inMemoryAuthentication().withUser("user").password("$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u").roles("USER");
+		auth.inMemoryAuthentication().withUser("prof").password("$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u").roles("PROF");
+		auth.inMemoryAuthentication().withUser("admin").password("$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a").roles("PROF","ADMIN");
 				
 		auth.inMemoryAuthentication().withUser("k.albert@hs-mannheim.de").password("$2a$10$GTSP6jJBQD58zd3RQz62zeHIGfCEjMp7Lcjg77jkXh.zbvT9qBKCa").roles("PROF","ADMIN");
 	}
