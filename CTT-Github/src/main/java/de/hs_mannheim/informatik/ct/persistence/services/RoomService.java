@@ -31,17 +31,15 @@ public class RoomService {
     }
 
     //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
-    public void importFromCsv(BufferedReader csv){
+    public void importFromCsv(BufferedReader csv) {
         csv.lines()
                 .map((line) -> {
                     String[] values = line.split(COMMA_DELIMITER);
                     String building = values[0];
                     String roomName = values[1];
                     int roomCapacity = Integer.parseInt(values[2]);
-                    return new Room(roomName,building,roomCapacity);
+                    return new Room(roomName, building, roomCapacity);
                 })
                 .forEach(this::saveRoom);
     }
-
-
 }

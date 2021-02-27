@@ -21,7 +21,6 @@ public class Room {
     private int maxCapacity;
 
 
-
     public String getId() {
         return getName();
     }
