@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -66,7 +67,12 @@ public class RoomController {
     @PostMapping("/checkIn")
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) {
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
-        Visitor visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
+        Visitor visitor = null;
+        try {
+            visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
+        } catch (InvalidEmailException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
 
         List<RoomVisit> notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
@@ -160,7 +166,7 @@ public class RoomController {
     @PostMapping("/import")
     public String roomTableImport(@RequestParam("file") MultipartFile file) {
         try (InputStream is = file.getInputStream()) {
-            roomService.ImportFromCSV(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
+            roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
         } catch (IOException e) {
             e.printStackTrace();
         }

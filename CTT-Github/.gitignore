@@ -19,7 +19,6 @@ log/
 target/
 
 #self
-templates/**/*.pdf
 database.mv.db
 /database.trace.db
 /privat/
