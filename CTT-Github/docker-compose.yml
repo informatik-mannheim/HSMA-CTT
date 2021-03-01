@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   app:
-    build: .
+    image: docker.pkg.github.com/informatik-mannheim/hsma-ctt/ctt-app
     depends_on:
       - db
     environment:

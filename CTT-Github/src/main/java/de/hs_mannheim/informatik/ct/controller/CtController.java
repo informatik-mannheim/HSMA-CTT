@@ -81,7 +81,7 @@ public class CtController implements ErrorController {
 		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
-			Room defaultRoom = roomService.saveRoom(new Room("test", max.get()));
+			Room defaultRoom = roomService.saveRoom(new Room("test","test", max.get()));
 			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, defaultRoom, datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
