@@ -44,10 +44,10 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
-    	// get roomId from form on landing page (index.html)
-    	if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-    		roomId = roomIdFromRequest.get();
-    	
+        // get roomId from form on landing page (index.html)
+        if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
+            roomId = roomIdFromRequest.get();
+
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -60,7 +60,7 @@ public class RoomController {
         Room.Data roomData = new Room.Data(room.get());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
-        
+
         return "rooms/checkIn";
     }
 
@@ -178,8 +178,10 @@ public class RoomController {
         return "r/" + room.getId();
     }
 
+
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Room not found")
     public static class RoomNotFoundException extends RuntimeException {
+
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Visitor not found")

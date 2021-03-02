@@ -335,9 +335,15 @@ public class CtController implements ErrorController {
 			int code = Integer.parseInt(status.toString());
 			log.error("Web ErrorCode: " + code);
 			log.error("URL:" +  request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString());
+			if(request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
+				log.error("Der Raum konnte nicht gefunden werden");
+			}
 			
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
+			else if(request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
+				model.addAttribute("error", "Diesen Raum gibt es nicht");
+			}
 			else
 				model.addAttribute("error", "Fehler-Code: " + status.toString());
 		} else {
