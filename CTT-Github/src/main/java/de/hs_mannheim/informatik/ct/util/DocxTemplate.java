@@ -59,7 +59,6 @@ public class DocxTemplate<T> {
     // Precompile regex patterns used for filling the template
     private final Pattern docxImageReplacer = Pattern.compile("<a:blip r:embed=\"rId\\d\">");
     private final Pattern docxTextReplacer = Pattern.compile("(<w:t>.*)#(\\w)(.*</w:t>)");
-
     // Regex templates for fixing errors in the resulting document
     private final Pattern docPrUniqueIdFix = Pattern.compile(String.format("<wp:docPr id=\"\\d{1,%d}\"", uniqueIDDigits));
 
@@ -77,7 +76,6 @@ public class DocxTemplate<T> {
         this.dataSource = dataSource;
         addImagesToDocMedia();
         val templateBuffer = getTemplateBuffer();
-
         // The section properties is at the end of body and sets headers, footers, etc.
         val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
 
@@ -141,7 +139,6 @@ public class DocxTemplate<T> {
             // Group 2 contains the placeholder without the #
             val placeholder = match.group(2);
             val replacement = textFormatter.apply(data, placeholder);
-
             // Save text and XML tags around the template placeholder (group 1 & 3)
             return match.group(1) + replacement + match.group(3);
         });
@@ -152,7 +149,6 @@ public class DocxTemplate<T> {
 
         templateXml = complexReplaceAll(templateXml, docPrUniqueIdFix,
                 matchResult -> String.format("<wp:docPr id=\"%d\"", uniqueID++));
-
         return templateXml;
     }
 

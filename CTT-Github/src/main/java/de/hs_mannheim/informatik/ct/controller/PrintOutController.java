@@ -38,7 +38,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import javax.servlet.http.HttpServletRequest;
 
 
-
 @Controller
 @RequestMapping("printout")
 public class PrintOutController {
