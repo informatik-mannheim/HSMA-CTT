@@ -19,7 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 		.antMatchers("/", "/besuch", "/templates/datenschutz.html").permitAll()
 		.antMatchers("/neu", "/neuVer", "/veranstaltungen", "/templates/veranstaltungsliste.html").access("hasAnyRole('USER', 'PROF', 'ADMIN')")
-		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**","/r/import").access("hasRole('ADMIN')")
+		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**","/r/import","/printout/rooms").access("hasRole('ADMIN')")
 		.and().formLogin().loginPage("/login").permitAll()
 	    .and().csrf().ignoringAntMatchers("/h2-console/**")
 	    .and().headers().frameOptions().sameOrigin();	
