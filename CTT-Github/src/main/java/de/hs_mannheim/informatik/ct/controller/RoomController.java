@@ -164,9 +164,9 @@ public class RoomController {
 
     @PostMapping("/import")
     public String roomTableImport(@RequestParam("file") MultipartFile file, Model model) {
-        String allowedContentType = "application/vnd.ms-excel";
-        String fileContentType = file.getContentType();
-        if (fileContentType.equals(allowedContentType)) {
+        String fileName = file.getOriginalFilename();
+        String extension = fileName.substring(fileName.indexOf("."), fileName.length());
+        if (extension.equals(".csv")) {
             try (InputStream is = file.getInputStream()) {
                 roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
             } catch (IOException e) {
