@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
@@ -31,9 +32,30 @@ public class RoomVisitRepositoryTest {
     public void deleteExpiredVisits() {
         assertThat(entityManager, notNullValue());
 
-        val roomVisits = new ArrayList<RoomVisit>();
         val expiredVisitor = new Visitor("expired");
         val notExpiredVisitor = new Visitor("not-expired");
+        val roomVisits = generateExpirationTestData(expiredVisitor, notExpiredVisitor);
+
+        // Setup database
+        entityManager.persist(notExpiredVisitor);
+        entityManager.persist(expiredVisitor);
+        entityManager.persist(roomVisits.get(0).getRoom());
+        roomVisitRepository.saveAll(roomVisits);
+        entityManager.flush();
+
+        roomVisitRepository.deleteByEndDateBefore(TimeUtil.convertToDate(LocalDateTime.now().minusWeeks(4)));
+
+        assertThat(roomVisitRepository.findAll(),
+                everyItem(hasProperty("visitor", equalTo(notExpiredVisitor))));
+    }
+
+    /**
+     * Generates a list of room visits, some of which should be delete because they are after the expiration date for personal data.
+     * @param expiredVisitor The visitor used for visits that should be deleted
+     * @param notExpiredVisitor The vistor used for visits that are still valid
+     */
+    public static List<RoomVisit> generateExpirationTestData(Visitor expiredVisitor, Visitor notExpiredVisitor) {
+        val roomVisits = new ArrayList<RoomVisit>();
 
         // Absolutely not expired
         roomVisits.add(RoomVisitHelper.generateVisit(
@@ -59,16 +81,6 @@ public class RoomVisitRepositoryTest {
                 LocalDateTime.now().minusHours(1).minusWeeks(4).minusDays(1),
                 LocalDateTime.now().minusWeeks(4).minusDays(1)));
 
-        // Setup database
-        entityManager.persist(notExpiredVisitor);
-        entityManager.persist(expiredVisitor);
-        entityManager.persist(roomVisits.get(0).getRoom());
-        roomVisitRepository.saveAll(roomVisits);
-        entityManager.flush();
-
-        roomVisitRepository.deleteByEndDateBefore(TimeUtil.convertToDate(LocalDateTime.now().minusWeeks(4)));
-
-        assertThat(roomVisitRepository.findAll(),
-                everyItem(hasProperty("visitor", equalTo(notExpiredVisitor))));
+        return roomVisits;
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,17 @@ import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.NonNull;
 import lombok.val;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoomVisitService {
 
 	@Autowired
 	private RoomVisitRepository roomVisitRepository;
+
+	@Autowired
+	private VisitorRepository visitorRepository;
 
 	public RoomVisit visitRoom(Visitor visitor, Room room) {
 		return roomVisitRepository.save(new RoomVisit(visitor, room, new Date()));
@@ -94,9 +100,11 @@ public class RoomVisitService {
 		return getVisitorCount(room) >= room.getMaxCapacity();
 	}
 
+	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void deleteExpiredRecords(Period recordLifeTime) {
 		val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
 		roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
+		visitorRepository.removeVisitorsWithNoVisits();
 	}
 
 	public List<RoomVisitContact> getVisitorContacts(@NonNull Visitor visitor) {

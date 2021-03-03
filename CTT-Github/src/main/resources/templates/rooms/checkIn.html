@@ -80,8 +80,10 @@
                 </div>
             </form>
             
-             <h3 class="content-headers" style="margin-top: 32px;">3. Absenden</h3>
-             
+            <h3 class="content-headers" style="margin-top: 32px;">3. Absenden</h3>
+            <div id="invalid-email-error" class="form-row hidden error">
+                <h4 style="margin-left: 24px;">Ungültige E-Mail!</h4>
+            </div>
             <div class="form-row checkin-only" style="margin-left: 24px;">
                 <form action="#" th:action="@{checkIn}" method="POST" id="submit-form" name="submit-form">
                     <input style="margin-left: 0" type="submit" value="Check-in">
