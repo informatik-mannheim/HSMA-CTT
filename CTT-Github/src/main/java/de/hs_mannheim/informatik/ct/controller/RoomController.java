@@ -12,6 +12,7 @@ import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,6 +66,7 @@ public class RoomController {
     }
 
     @PostMapping("/checkIn")
+    @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) {
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
         Visitor visitor = null;

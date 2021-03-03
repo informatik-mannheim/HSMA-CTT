@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class RoomVisitHelper {
-    private static long fakeIdCounter = 0;
     private static final Room room = new Room("autoCheckOutTest","autoCheckOutTest", 20);
 
     public static RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
@@ -20,7 +19,7 @@ public class RoomVisitHelper {
 
         return new RoomVisit(
                 room,
-                fakeIdCounter++,
+                null,
                 TimeUtil.convertToDate(start),
                 endDate,
                 visitor
