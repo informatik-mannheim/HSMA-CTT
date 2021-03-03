@@ -18,7 +18,7 @@ public class RoomVisit {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     @Column(updatable = false)
     private Date startDate;

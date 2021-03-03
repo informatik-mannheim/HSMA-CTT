@@ -3,16 +3,14 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -48,6 +46,9 @@ class RoomVisitServiceTest {
 
     @MockBean
     private RoomVisitRepository roomVisitRepository;
+
+    @MockBean
+    private VisitorRepository visitorRepository;
 
     @Captor
     private ArgumentCaptor<List<RoomVisit>> roomVisitCaptor;
@@ -119,6 +120,10 @@ class RoomVisitServiceTest {
         roomVisitService.deleteExpiredRecords(Period.ofWeeks(4));
 
         val dateCaptor = ArgumentCaptor.forClass(Date.class);
+        Mockito.verify(
+                visitorRepository,
+                Mockito.times(1)
+        ).removeVisitorsWithNoVisits();
         Mockito.verify(
                 roomVisitRepository,
                 Mockito.times(1)
