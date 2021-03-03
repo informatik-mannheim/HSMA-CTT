@@ -11,7 +11,7 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 
 1. Add the current user to the `docker` group to use docker commands without sudo.
 1. Create a directory, preferably with permissions restricted to the root user. For our server we use `/var/local/ctt-app`, but any location is valid. All further instructions will be relative to this folder.  
-1. Create a certs directory and copy your key and certificate into the certs directory. The files should be named `app.key` and `app.pem` respectively. Make sure the key can only be accessed by the root user!
+1. Create a certs directory and copy your key, certificate, and the a file with the password for the key into the certs directory. The files should be named `app.key` and `app.pem` respectively. The file with the password must be linked in nginx.conf under server -> ssl_password_file. Make sure the key can only be accessed by the root user!
 1. Create a file named `.env`. It will contain deployment specific configuration:
 
     ``` conf
@@ -24,7 +24,8 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
     ```
 
 1. Copy the `docker-compose.yml` and `nginx.conf` files from the repository. Neither should require further customization, if possible use the `.env` for this purpose.
-1. Run `docker-compose pull && docker-compose up -d`. This will ensure that the newest images are pulled and containers restarted, if necessary.
+1. Run `docker-compose pull && docker-compose up -d`. This will ensure that the newest images are pulled and containers restarted, if necessary. The containers are configured to restart if anything breaks (cf. docker-compose.yml).
+1. To stop the server again use `docker-compose down`.
 
 ## Container Architecture
 
