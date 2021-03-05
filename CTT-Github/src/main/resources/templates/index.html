@@ -11,8 +11,10 @@
 	<div layout:fragment="content">
 		
 		<h4>Willkommen beim CTT, dem Corona Tracking Tool der Hochschule Mannheim.</h4>
-		<p>Ihre Daten werden zum Zwecke der Kontaktnachverfolgung datenschutzsicher aufbewahrt und nach 4 Wochen automatisch gel&ouml;scht.</p>
-		<p sec:authorize="isAnonymous()">Als Gastgeber loggen sich zur Anzeige der Seite mit dem QR-Code bitte <a href="/login"> hier ein</a>.</p>
+		<p>Ihre Daten werden lediglich zum Zwecke der vorgeschriebenen Kontaktnachverfolgung datenschutzsicher aufbewahrt und nach 4 Wochen 
+		   automatisch gel&ouml;scht. Zum <a href="https://www.hs-mannheim.de/die-hochschule/hochschule-mannheim/betrieb-unter-corona.html">Corona-Hygienekonzept</a> der Hochschule.</p>
+	
+		<hr />
 		
 		<form action="/r/noId" class="mb-3">
 			Zum <strong>manuellen Einchecken</strong> in einen Raum, geben Sie dessen Nummer bitte hier ein: 
@@ -20,9 +22,17 @@
 			 <button type="submit">Los...</button>
 		</form>
 		
-		<div th:replace="~{fragments/liste.html (welche='Heutige und zuk&uuml;nftige')}"></div>
-
-		<p>Zum <a href="https://www.hs-mannheim.de/die-hochschule/hochschule-mannheim/betrieb-unter-corona.html">Corona-Hygienekonzept</a> der Hochschule.</p>
+		<hr />
+		
+		<p>Um mit einem Mobilgerät in einen Raum einzuchecken, scannen Sie bitte den QR-Code an dessen Eingang mit einem QR-Code-Scanner ab und 
+		   öffnen dann die erkannte Webseite. (Bei modernen Geräten können QR-Codes oft bereits mit der Kamera-App gelesen werden.)
+		
+			<img src="example.png" width="360" style="float:right" class="mt-3"/> 
+		
+		</p>
+		
+		<hr />
+		
 	</div>
 </body>
 
