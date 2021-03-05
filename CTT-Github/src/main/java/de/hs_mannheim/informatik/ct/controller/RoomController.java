@@ -1,5 +1,23 @@
 package de.hs_mannheim.informatik.ct.controller;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +50,8 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
+
+
 @Controller
 @RequestMapping("r")
 public class RoomController {
@@ -45,9 +65,9 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
-        // get roomId from form on landing page (index.html)
-        if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-            roomId = roomIdFromRequest.get();
+    	// get roomId from form on landing page (index.html)
+    	if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
+    		roomId = roomIdFromRequest.get();
 
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {

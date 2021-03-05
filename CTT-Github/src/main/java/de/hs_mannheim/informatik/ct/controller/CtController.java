@@ -1,5 +1,23 @@
 package de.hs_mannheim.informatik.ct.controller;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import de.hs_mannheim.informatik.ct.model.*;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
@@ -30,6 +48,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @Controller
 @Slf4j
@@ -67,7 +87,7 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/neu")
-	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max, 
+	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
 			@RequestParam String zeit,	// TODO: schauen, ob das auch eleganter geht
 			Model model, Authentication auth, @RequestHeader(value = "Referer", required = false) String referer) {
@@ -113,7 +133,7 @@ public class CtController implements ErrorController {
 			return "eintragen";
 		}
 
-		return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);	
+		return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);
 	}
 
 	@PostMapping("/senden")
@@ -174,11 +194,11 @@ public class CtController implements ErrorController {
 
 						return "redirect:" + uriComponents.toUriString();
 					} // endif Platz im Raum
-					
+
 				} // endif Veranstaltung existiert
-				
+
 			} // endif nicht leere Mail-Adresse
-			
+
 		} // endif referer korrekt?
 
 		return "eintragen";
@@ -213,7 +233,7 @@ public class CtController implements ErrorController {
 		val target = visitorService.findVisitorByEmail(email);
 		if(!target.isPresent()) {
 			model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
-			
+
 			return "suche";
 		}
 
@@ -247,7 +267,7 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/angemeldet")
 	public String angemeldet(
-			@RequestParam String email, @RequestParam long veranstaltungId, 
+			@RequestParam String email, @RequestParam long veranstaltungId,
 			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) {
 
 		Optional<Veranstaltung> v = vservice.getVeranstaltungById(veranstaltungId);
@@ -256,13 +276,13 @@ public class CtController implements ErrorController {
 			model.addAttribute("error", "Veranstaltung nicht gefunden!");
 			return "index";
 		}
-		
+
 		model.addAttribute("besucherEmail", email);
 		model.addAttribute("veranstaltungId", veranstaltungId);
 		model.addAttribute("autoAbmeldung", autoAbmeldung.orElse(""));
 
 		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
-		
+
 		Cookie c = new Cookie("checked-into", "" + v.get().getId());	// Achtung, Cookies erlauben keine Sonderzeichen (inkl. Whitespaces)!
 		c.setMaxAge(60 * 60 * 8);
 		c.setPath("/");
@@ -272,12 +292,12 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/abmelden")
-	public String abmelden(@RequestParam(name = "besucherEmail", required = false) String besucherEmail, 
+	public String abmelden(@RequestParam(name = "besucherEmail", required = false) String besucherEmail,
 								Model model, HttpServletRequest request, HttpServletResponse response, @CookieValue("email") String mailInCookie) {
-		
+
 		// TODO: ich denke, wir müssen das Speichern der Mail im Cookie zur Pflicht machen, wenn wir den Logout über die Leiste oben machen wollen?
 		// Oder wir versuchen es mit einer Session-Variablen?
-		
+
 		if (besucherEmail == null || besucherEmail.length() == 0) {
 			if (mailInCookie != null && mailInCookie.length() > 0)
 				besucherEmail = mailInCookie;
@@ -338,7 +358,7 @@ public class CtController implements ErrorController {
 			if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
 				log.error("Der Raum konnte nicht gefunden werden");
 			}
-			
+
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
 			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
