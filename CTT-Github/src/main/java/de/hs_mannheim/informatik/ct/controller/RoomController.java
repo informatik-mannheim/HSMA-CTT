@@ -65,9 +65,9 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
-    	// get roomId from form on landing page (index.html)
-    	if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-    		roomId = roomIdFromRequest.get();
+        // get roomId from form on landing page (index.html)
+        if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
+            roomId = roomIdFromRequest.get();
 
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
@@ -186,13 +186,18 @@ public class RoomController {
     }
 
     @PostMapping("/import")
-    public String roomTableImport(@RequestParam("file") MultipartFile file) {
-        try (InputStream is = file.getInputStream()) {
-            roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String roomTableImport(@RequestParam("file") MultipartFile file, Model model) {
+        String fileName = file.getOriginalFilename();
+        String extension = fileName.substring(fileName.indexOf("."), fileName.length());
+        if (extension.equals(".csv")) {
+            try (InputStream is = file.getInputStream()) {
+                roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new InvalidFileUploadException();
         }
-
         return "rooms/importCompleted";
     }
 
@@ -208,5 +213,9 @@ public class RoomController {
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Visitor not found")
     public static class VisitorNotFoundException extends RuntimeException {
+    }
+
+    @ResponseStatus(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Not a .csv file")
+    public static class InvalidFileUploadException extends RuntimeException {
     }
 }
