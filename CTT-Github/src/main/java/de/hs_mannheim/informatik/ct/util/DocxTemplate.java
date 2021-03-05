@@ -1,5 +1,23 @@
 package de.hs_mannheim.informatik.ct.util;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,6 +40,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import lombok.val;
 import lombok.var;
 
+
+
 public class DocxTemplate<T> {
     private XWPFDocument document;
     private final File templateFile;
@@ -29,17 +49,17 @@ public class DocxTemplate<T> {
     private List<T> dataSource;
     private final TextTemplate<T> textFormatter;
     private final Function<T, byte[]> imageGenerator;
-    
+
     // The id attribute of wp:docPr tags has to be unique, but can be arbitrarily large
     private int uniqueID = 1000;
-   
+
     // To differentiate our own unique id's from original we check their length as originals should be shorter than 4 digits.
     private final int uniqueIDDigits = (int) Math.log10(uniqueID);
 
     // Precompile regex patterns used for filling the template
     private final Pattern docxImageReplacer = Pattern.compile("<a:blip r:embed=\"rId\\d\">");
     private final Pattern docxTextReplacer = Pattern.compile("(<w:t>.*)#(\\w)(.*</w:t>)");
-   
+
     // Regex templates for fixing errors in the resulting document
     private final Pattern docPrUniqueIdFix = Pattern.compile(String.format("<wp:docPr id=\"\\d{1,%d}\"", uniqueIDDigits));
 
@@ -57,7 +77,7 @@ public class DocxTemplate<T> {
         this.dataSource = dataSource;
         addImagesToDocMedia();
         val templateBuffer = getTemplateBuffer();
-        
+
         // The section properties is at the end of body and sets headers, footers, etc.
         val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
 
@@ -121,7 +141,7 @@ public class DocxTemplate<T> {
             // Group 2 contains the placeholder without the #
             val placeholder = match.group(2);
             val replacement = textFormatter.apply(data, placeholder);
-           
+
             // Save text and XML tags around the template placeholder (group 1 & 3)
             return match.group(1) + replacement + match.group(3);
         });
@@ -132,7 +152,7 @@ public class DocxTemplate<T> {
 
         templateXml = complexReplaceAll(templateXml, docPrUniqueIdFix,
                 matchResult -> String.format("<wp:docPr id=\"%d\"", uniqueID++));
-        
+
         return templateXml;
     }
 

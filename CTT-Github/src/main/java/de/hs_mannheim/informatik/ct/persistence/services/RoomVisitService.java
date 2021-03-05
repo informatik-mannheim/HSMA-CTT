@@ -1,5 +1,23 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
@@ -13,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +42,19 @@ import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.NonNull;
 import lombok.val;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+
 
 @Service
 public class RoomVisitService {
 
 	@Autowired
 	private RoomVisitRepository roomVisitRepository;
+
+	@Autowired
+	private VisitorRepository visitorRepository;
 
 	public RoomVisit visitRoom(Visitor visitor, Room room) {
 		return roomVisitRepository.save(new RoomVisit(visitor, room, new Date()));
@@ -94,9 +120,11 @@ public class RoomVisitService {
 		return getVisitorCount(room) >= room.getMaxCapacity();
 	}
 
+	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void deleteExpiredRecords(Period recordLifeTime) {
 		val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
 		roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
+		visitorRepository.removeVisitorsWithNoVisits();
 	}
 
 	public List<RoomVisitContact> getVisitorContacts(@NonNull Visitor visitor) {
