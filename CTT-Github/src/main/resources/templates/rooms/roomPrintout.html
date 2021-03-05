@@ -11,7 +11,7 @@
 
 <div layout:fragment="content">
     <div class="border border-secondary p-2">
-        <h5 class="mb-4">Raumlisten downloaden</h5>
+        <h5 class="mb-4">Raumschilder herunterladen</h5>
         <ul>
             <th:block th:each="building : ${buildings}">
                 <li><a th:href="@{rooms/{building}(building=${building})}" th:text="${'Gebäude ' + building + '.docx'}"></a></li>
