@@ -18,7 +18,11 @@ package de.hs_mannheim.informatik.ct.web;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,44 +30,81 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
+import java.util.Arrays;
 
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Value("${server_env:production}")
+    private String serverEnvironment;
+
+    @Value("${user_credentials:#{null}}")
+    private String credentialsEnv;
+
+    Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 		.antMatchers("/", "/besuch", "/templates/datenschutz.html").permitAll()
 		.antMatchers("/neu", "/neuVer", "/veranstaltungen", "/templates/veranstaltungsliste.html").access("hasAnyRole('USER', 'PROF', 'ADMIN')")
-		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**","/r/import","/printout/rooms").access("hasRole('ADMIN')")
+		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**", "/r/import", "/printout/rooms").access("hasRole('ADMIN')")
 		.and().formLogin().loginPage("/login").permitAll()
 	    .and().csrf().ignoringAntMatchers("/h2-console/**")
 	    .and().headers().frameOptions().sameOrigin();
 	}
 
-	@Autowired
-	public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
-//		System.out.println("hash -> " + passwordEncoder().encode("passwordYouWannaEncode"));
+    @Autowired
+    public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
+        if (isDevEnv()) {
+            logger.warn("Server is running in developer mode with default credentials!");
+            // Use plain text passwords for local development
+            auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
+            auth.inMemoryAuthentication().withUser("prof").password("prof").roles("PROF");
+            auth.inMemoryAuthentication().withUser("admin").password("admin").roles("PROF", "ADMIN");
+        } else {
+            if (credentialsEnv == null) {
+                throw new RuntimeException("No credentials passed as environment variable.");
+            }
 
-		auth.inMemoryAuthentication().withUser("user").password("$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u").roles("USER");
-		auth.inMemoryAuthentication().withUser("prof").password("$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u").roles("PROF");
-		auth.inMemoryAuthentication().withUser("admin").password("$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a").roles("PROF","ADMIN");
-				
-		auth.inMemoryAuthentication().withUser("k.albert@hs-mannheim.de").password("$2a$10$GTSP6jJBQD58zd3RQz62zeHIGfCEjMp7Lcjg77jkXh.zbvT9qBKCa").roles("PROF","ADMIN");
-	}
+            val userCredentials = credentialsEnv.split(";");
+            for (val credentials : userCredentials) {
+                val tokens = credentials.split(",");
+                val username = tokens[0];
+                val hashedPassword = tokens[1];
+                val roles = Arrays.copyOfRange(tokens, 2, tokens.length);
 
-	@Bean
-	public SpringSecurityDialect springSecurityDialect() {
-	    return new SpringSecurityDialect();
-	}
-	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-	    return new BCryptPasswordEncoder();
-	}
+                auth.inMemoryAuthentication()
+                        .withUser(username)
+                        .password(hashedPassword)
+                        .roles(roles);
+                logger.info("Added user " + username);
+            }
+        }
+    }
 
+    @Bean
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        if (isDevEnv()) {
+            // The plain passwords are only used in the dev environment
+            //noinspection deprecation
+            return NoOpPasswordEncoder.getInstance();
+        } else {
+            return new BCryptPasswordEncoder();
+        }
+    }
+
+    private boolean isDevEnv() {
+        return serverEnvironment.equals("dev");
+    }
 }
