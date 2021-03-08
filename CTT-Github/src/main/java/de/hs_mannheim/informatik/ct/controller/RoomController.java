@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
@@ -67,7 +68,7 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-            roomId = roomIdFromRequest.get();
+            roomId = roomIdFromRequest.get().toUpperCase(Locale.ROOT);
 
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
