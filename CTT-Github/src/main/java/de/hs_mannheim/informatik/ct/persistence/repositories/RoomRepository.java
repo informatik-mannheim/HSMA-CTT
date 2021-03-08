@@ -25,6 +25,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, String> {
 
@@ -37,6 +38,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
     @Query("SELECT DISTINCT room.buildingName " +
             "FROM Room room")
     List<String> getAllBuildings();
+
+    Optional<Room> findByNameIgnoreCase(String roomName);
 
     List<Room> findByBuildingName(String building);
 }

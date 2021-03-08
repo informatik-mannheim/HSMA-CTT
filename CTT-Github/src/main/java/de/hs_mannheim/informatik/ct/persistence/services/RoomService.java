@@ -38,7 +38,7 @@ public class RoomService {
     private RoomRepository roomsRepo;
 
     public Optional<Room> findByName(String roomName) {
-        return roomsRepo.findById(roomName);
+        return roomsRepo.findByNameIgnoreCase(roomName);
     }
 
     public Room saveRoom(@NonNull Room room) {

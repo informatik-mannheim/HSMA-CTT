@@ -68,7 +68,7 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-            roomId = roomIdFromRequest.get().toUpperCase(Locale.ROOT);
+            roomId = roomIdFromRequest.get();
 
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
