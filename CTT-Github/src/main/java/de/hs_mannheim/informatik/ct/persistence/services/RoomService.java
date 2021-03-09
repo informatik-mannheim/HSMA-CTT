@@ -23,6 +23,7 @@ import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
 import org.hibernate.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -40,7 +41,7 @@ public class RoomService {
     public Optional<Room> findByName(String roomName) {
         try {
             return roomsRepo.findByNameIgnoreCase(roomName);
-        } catch (Exception e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             return roomsRepo.findById(roomName);
         }
     }
