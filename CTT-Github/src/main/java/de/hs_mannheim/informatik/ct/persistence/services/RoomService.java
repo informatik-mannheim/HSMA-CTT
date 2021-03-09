@@ -21,13 +21,13 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
+import org.hibernate.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.util.Optional;
 import java.util.List;
-
 
 
 @Service
@@ -38,8 +38,13 @@ public class RoomService {
     private RoomRepository roomsRepo;
 
     public Optional<Room> findByName(String roomName) {
-        return roomsRepo.findByNameIgnoreCase(roomName);
+        try {
+            return roomsRepo.findByNameIgnoreCase(roomName);
+        } catch (Exception e) {
+            return roomsRepo.findById(roomName);
+        }
     }
+
 
     public Room saveRoom(@NonNull Room room) {
         return roomsRepo.save(room);
