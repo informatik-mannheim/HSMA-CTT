@@ -340,6 +340,11 @@ public class CtController implements ErrorController {
 		return "login";
 	}
 
+	@RequestMapping("/loaderio-d866ecc4db5e04078c0662da0f7c9b25.txt")
+	public String verify() {
+		return "verify.txt";
+	}
+
 	@RequestMapping("/datenschutz")
 	public String datenschutz() {
 		return "datenschutz";
