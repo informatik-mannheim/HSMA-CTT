@@ -27,13 +27,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @ExtendWith(SpringExtension.class)
@@ -58,23 +54,23 @@ public class VisitorRepositoryTest {
 
     private void befuelleDatenbank() {
         Room room = new Room("A008","A", 2);
-        Veranstaltung veranstaltung1 = new Veranstaltung("PR1", room, new Date(), "Herr Müller");
-        Veranstaltung veranstaltung2 = new Veranstaltung("PR2", room, new Date(), "Frau Meier");
+        Event event1 = new Event("PR1", room, new Date(), "Herr Müller");
+        Event event2 = new Event("PR2", room, new Date(), "Frau Meier");
 
-        entityManager.persist(veranstaltung1);
-        entityManager.persist(veranstaltung2);
+        entityManager.persist(event1);
+        entityManager.persist(event2);
 
-        VeranstaltungsBesuch besuch1 = new VeranstaltungsBesuch(veranstaltung1, visitor1);
-        VeranstaltungsBesuch besuch2 = new VeranstaltungsBesuch(veranstaltung1, visitor2);
-        VeranstaltungsBesuch besuch3 = new VeranstaltungsBesuch(veranstaltung2, visitor3);
+        EventVisit besuch1 = new EventVisit(event1, visitor1);
+        EventVisit besuch2 = new EventVisit(event1, visitor2);
+        EventVisit besuch3 = new EventVisit(event2, visitor3);
 
         entityManager.persist(visitor1);
         entityManager.persist(visitor2);
         entityManager.persist(visitor3);
         entityManager.persist(visitor4);
 
-        besuch1.setEnde(new Date());
-        besuch2.setEnde(new Date());
+        besuch1.setEndDate(new Date());
+        besuch2.setEndDate(new Date());
 
         entityManager.persist(besuch1);
         entityManager.persist(besuch2);

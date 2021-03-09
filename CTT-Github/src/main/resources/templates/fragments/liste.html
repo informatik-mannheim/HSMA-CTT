@@ -1,13 +1,13 @@
 <div class="border border-secondary pt-2 pl-2 pr-2 pb-n2 mb-3">
 	<h5 class="mb-4" th:text="|${welche} Veranstaltungen|"></h5>
 	
-	<div th:if="${#lists.isEmpty(veranstaltungen)}">
+	<div th:if="${#lists.isEmpty(events)}">
   			<p>In dieser Ansicht sind aktuell keine Veranstaltungen vorhanden. Eine neue Veranstaltung k&ouml;nnen Sie <a href="/neuVer">hier</a> anlegen.</p>
 	</div>
 
-	<input th:if="!${#lists.isEmpty(veranstaltungen)}" type="text" id="filter" onkeyup="myFilter()" placeholder="Tabelle nach Eingabe filtern..." size="24" autofocus />
+	<input th:if="!${#lists.isEmpty(events)}" type="text" id="filter" onkeyup="myFilter()" placeholder="Tabelle nach Eingabe filtern..." size="24" autofocus />
 
-	<table th:if="!${#lists.isEmpty(veranstaltungen)}" class="table table-hover mt-3" id="veranstaltungsliste">
+	<table th:if="!${#lists.isEmpty(events)}" class="table table-hover mt-3" id="veranstaltungsliste">
 		<thead class="table-info">
 		<tr>
 			<th>Veranstaltungsname</th>
@@ -16,18 +16,18 @@
 		</tr>
 		</thead>
 			
-		<tr th:each="veranstaltung: ${veranstaltungen}" onclick="javascript: window.location=this.children[0].children[0].href;">
+		<tr th:each="event: ${events}" onclick="javascript: window.location=this.children[0].children[0].href;">
 			
 			<td sec:authorize="isAnonymous()">
-				<a th:href="@{/besuch?vid={id}(id=${veranstaltung.id})}"><span th:text="${veranstaltung.name}"></span></a>
+				<a th:href="@{/besuch?vid={id}(id=${event.id})}"><span th:text="${event.name}"></span></a>
 			</td>
 			<td sec:authorize="isAuthenticated()">
-				<a th:href="@{/zeige?vid={id}(id=${veranstaltung.id})}"><span th:text="${veranstaltung.name}"></span></a>
+				<a th:href="@{/zeige?vid={id}(id=${event.id})}"><span th:text="${event.name}"></span></a>
 			</td>	
 			
-			<td>am <span th:text="|${#dates.format(veranstaltung.datum, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
+			<td>am <span th:text="|${#dates.format(event.datum, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
 			
-			<td><span th:text="${veranstaltung.raumkapazitaet}"></span> Personen</td>
+			<td><span th:text="${event.raumkapazitaet}"></span> Personen</td>
 		</tr>
 
 	</table>

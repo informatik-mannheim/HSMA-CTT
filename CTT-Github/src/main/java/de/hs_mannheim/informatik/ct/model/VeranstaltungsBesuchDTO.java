@@ -37,15 +37,15 @@ public class VeranstaltungsBesuchDTO implements Serializable {
 	private Date endzeit;
 	private int diffInMin;
 
-	public VeranstaltungsBesuchDTO(VeranstaltungsBesuch target, VeranstaltungsBesuch other) {
+	public VeranstaltungsBesuchDTO(EventVisit target, EventVisit other) {
 		besucherEmail = target.getVisitor().getEmail();
-		veranstaltungsId = target.getVeranstaltung().getId();
-		veranstaltungsName = target.getVeranstaltung().getName();
-		timestamp = other.getWann();
-		endzeit = other.getEnde();
+		veranstaltungsId = target.getEvent().getId();
+		veranstaltungsName = target.getEvent().getName();
+		timestamp = other.getStartDate();
+		endzeit = other.getEndDate();
 		diffInMin = (int) Math.abs(Duration.between(
-				other.getWann().toInstant(),
-				target.getWann().toInstant())
+				other.getStartDate().toInstant(),
+				target.getStartDate().toInstant())
 				.toMinutes());
 	}
 }
