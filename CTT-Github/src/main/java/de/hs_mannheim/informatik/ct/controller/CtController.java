@@ -1,16 +1,28 @@
 package de.hs_mannheim.informatik.ct.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.services.*;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -19,22 +31,43 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import de.hs_mannheim.informatik.ct.model.Besucher;
-import de.hs_mannheim.informatik.ct.model.Veranstaltung;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
-import de.hs_mannheim.informatik.ct.persistence.VeranstaltungsService;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+
 
 @Controller
+@Slf4j
 public class CtController implements ErrorController {
 	@Autowired
 	private VeranstaltungsService vservice;
+
+	@Autowired
+	private VeranstaltungsBesuchService veranstaltungsBesuchService;
+
+	@Autowired
+	private RoomService roomService;
+
+	@Autowired
+	private RoomVisitService roomVisitService;
+
+	@Autowired
+	private VisitorService visitorService;
 
 	@Autowired
 	private Utilities util;
@@ -54,7 +87,7 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/neu")
-	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max, 
+	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
 			@RequestParam String zeit,	// TODO: schauen, ob das auch eleganter geht
 			Model model, Authentication auth, @RequestHeader(value = "Referer", required = false) String referer) {
@@ -68,7 +101,8 @@ public class CtController implements ErrorController {
 		if (referer != null && (referer.endsWith("/neuVer") || referer.contains("neu?name="))) {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
-			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, max.get(), datum, auth.getName()));
+			Room defaultRoom = roomService.saveRoom(new Room("test","test", max.get()));
+			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, defaultRoom, datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
 		}
@@ -93,18 +127,18 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/besuchMitCode")
-	public String besuchMitCode(@RequestParam Long vid, @CookieValue(value="email", required=false) String email, Model model, HttpServletResponse response) {		
+	public String besuchMitCode(@RequestParam Long vid, @CookieValue(value="email", required=false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException {
 		if (email == null) {
 			model.addAttribute("vid", vid);
 			return "eintragen";
 		}
 
-		return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);	
+		return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);
 	}
 
 	@PostMapping("/senden")
 	public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue="false") boolean saveMail, Model model,
-			@RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) {
+			@RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException {
 
 		model.addAttribute("vid", vid);
 
@@ -124,27 +158,48 @@ public class CtController implements ErrorController {
 					if (besucherZahl >= v.getRaumkapazitaet()) {
 						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
 					} else {
-						Besucher b = vservice.getBesucherByEmail(email);
+						Visitor b = null;
+						try {
+							b = visitorService.findOrCreateVisitor(email);
+						} catch (InvalidEmailException e) {
+							model.addAttribute("error", "Ungültige Mail-Adresse");
+						}
 
-						if (b == null) {
-							b = new Besucher(email);
-							b = vservice.speichereBesucher(b);
+						Optional<String> autoAbmeldung = Optional.empty();
+						List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche = veranstaltungsBesuchService.besucherAbmelden(b, new Date());
+
+						if(nichtAbgemeldeteBesuche.size() > 0) {
+							autoAbmeldung = Optional.ofNullable(nichtAbgemeldeteBesuche.get(0).getVeranstaltung().getName());
+							// TODO: Warning in server console falls mehr als eine Veranstaltung abgemeldet wurde,
+							//  da das eigentlich nicht möglich ist
 						}
 
 						VeranstaltungsBesuch vb = new VeranstaltungsBesuch(v, b);
 						vb = vservice.speichereBesuch(vb);
-						model.addAttribute("message", "Ihre Mail-Adresse wurde gespeichert. Danke für Ihre Unterstützung!");
 
-						Cookie c = new Cookie("email", email);
-						c.setMaxAge(saveMail? 60 * 60 * 24 * 365 * 5 : 0);
-						c.setPath("/");
-						response.addCookie(c);
-					}
-				}
-			}
+						if (saveMail) {
+							Cookie c = new Cookie("email", email);
+							c.setMaxAge(60 * 60 * 24 * 365 * 5);
+							c.setPath("/");
+							response.addCookie(c);
+						}
 
-			return neuerBesuch(vid, model);
-		}
+						UriComponents uriComponents = UriComponentsBuilder.newInstance()
+								.path("/angemeldet")
+								.queryParam("email", b.getEmail())
+								.queryParam("veranstaltungId", v.getId())
+								.queryParamIfPresent("autoAbmeldung", autoAbmeldung)
+								.build()
+								.encode(StandardCharsets.UTF_8);
+
+						return "redirect:" + uriComponents.toUriString();
+					} // endif Platz im Raum
+
+				} // endif Veranstaltung existiert
+
+			} // endif nicht leere Mail-Adresse
+
+		} // endif referer korrekt?
 
 		return "eintragen";
 	}
@@ -175,7 +230,14 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/suchen")
 	public String kontakteFinden(@RequestParam String email, Model model) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+		val target = visitorService.findVisitorByEmail(email);
+		if(!target.isPresent()) {
+			model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
+
+			return "suche";
+		}
+
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
 
 		model.addAttribute("kranker", email);
 		model.addAttribute("kontakte", kontakte);
@@ -185,7 +247,12 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/download")
 	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(email);
+		val target = visitorService.findVisitorByEmail(email);
+		if(!target.isPresent()) {
+			throw new RoomController.VisitorNotFoundException();
+		}
+
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
 
 		response.setHeader("Content-disposition", "attachment; filename=kontaktliste.xls");
 		response.setContentType("application/vnd.ms-excel");
@@ -196,6 +263,57 @@ public class CtController implements ErrorController {
 			e.printStackTrace();
 			// TODO: wie kann man dem User Bescheid geben, falls doch mal etwas schief gehen sollte?
 		}
+	}
+
+	@RequestMapping("/angemeldet")
+	public String angemeldet(
+			@RequestParam String email, @RequestParam long veranstaltungId,
+			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) {
+
+		Optional<Veranstaltung> v = vservice.getVeranstaltungById(veranstaltungId);
+
+		if (!v.isPresent()) {
+			model.addAttribute("error", "Veranstaltung nicht gefunden!");
+			return "index";
+		}
+
+		model.addAttribute("besucherEmail", email);
+		model.addAttribute("veranstaltungId", veranstaltungId);
+		model.addAttribute("autoAbmeldung", autoAbmeldung.orElse(""));
+
+		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
+
+		Cookie c = new Cookie("checked-into", "" + v.get().getId());	// Achtung, Cookies erlauben keine Sonderzeichen (inkl. Whitespaces)!
+		c.setMaxAge(60 * 60 * 8);
+		c.setPath("/");
+		response.addCookie(c);
+
+		return "angemeldet";
+	}
+
+	@RequestMapping("/abmelden")
+	public String abmelden(@RequestParam(name = "besucherEmail", required = false) String besucherEmail,
+								Model model, HttpServletRequest request, HttpServletResponse response, @CookieValue("email") String mailInCookie) {
+
+		// TODO: ich denke, wir müssen das Speichern der Mail im Cookie zur Pflicht machen, wenn wir den Logout über die Leiste oben machen wollen?
+		// Oder wir versuchen es mit einer Session-Variablen?
+
+		if (besucherEmail == null || besucherEmail.length() == 0) {
+			if (mailInCookie != null && mailInCookie.length() > 0)
+				besucherEmail = mailInCookie;
+			else
+				return "index";
+		}
+
+		visitorService.findVisitorByEmail(besucherEmail)
+				.ifPresent(value -> veranstaltungsBesuchService.besucherAbmelden(value, new Date()));
+
+		Cookie c = new Cookie("checked-into", "");
+		c.setMaxAge(0);
+		c.setPath("/");
+		response.addCookie(c);
+
+		return "abgemeldet";
 	}
 
 	// zum Testen ggf. wieder aktivieren
@@ -235,9 +353,17 @@ public class CtController implements ErrorController {
 
 		if (status != null) {
 			int code = Integer.parseInt(status.toString());
+			log.error("Web ErrorCode: " + code);
+			log.error("URL:" +  request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString());
+			if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
+				log.error("Der Raum konnte nicht gefunden werden");
+			}
 
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
+			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
+				model.addAttribute("error", "Diesen Raum gibt es nicht");
+			}
 			else
 				model.addAttribute("error", "Fehler-Code: " + status.toString());
 		} else {
@@ -252,4 +378,24 @@ public class CtController implements ErrorController {
 		return null;
 	}
 
+	private Collection<VeranstaltungsBesuchDTO> getContacts(Visitor target) {
+		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(target.getEmail());
+		val roomContacts = roomVisitService.getVisitorContacts(target);
+
+		roomContacts
+				.stream()
+				.map((contact) -> new VeranstaltungsBesuchDTO(
+						contact.getContact().getVisitor().getEmail(),
+						Integer.MAX_VALUE,
+						contact.getContact().getRoom().getName(),
+						contact.getContact().getStartDate(),
+						contact.getContact().getEndDate(),
+						(int) Math.abs(Duration.between(
+								contact.getContact().getStartDate().toInstant(),
+								contact.getTarget().getStartDate().toInstant())
+								.toMinutes())
+				))
+				.forEach(kontakte::add);
+		return kontakte;
+	}
 }

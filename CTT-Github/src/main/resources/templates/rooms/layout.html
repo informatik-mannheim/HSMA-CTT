@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset='utf-8'>
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
+    <link rel="stylesheet" href="/main.css">
+    <link rel="shortcut icon"
+          href="https://hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Images/favicon.ico"
+          type="image/vnd.microsoft.icon" crossorigin="anonymous">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+<div style="width: 100%;" class="flex-container content-container">
+    <div class="flex-container header-bar" id="header-container">
+        <div class="flex-container header-bar center-container">
+            <img src="https://www.hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Icons/logo_bildmarke.svg"/>
+            <h1 style="margin-left: 0.5em;">CTT</h1>
+        </div>
+    </div>
+    <div class="center-container hidden" id="checkout-bar">
+        <p>Momentan eingecheckt in Raum A008</p>
+        <button>Abmelden</button>
+    </div>
+    <div class="page-content center-container">
+        <div class="flex-container content-container center-container" id="main-content" layout:fragment="content">
+        </div>
+    </div>
+    <footer class="center-container flex-container">
+        <div class="footer-content">
+            <span>© 2020</span>
+            <a href="https://www.space.hs-mannheim.de" target="_blank">StartupLab@HSMA</a> und
+            <a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakultät für Informatik</a>
+        </div>
+        <div class="footer-content">
+            <a class="float-right" href="https://www.hs-mannheim.de/impressum.html" target="_blank">Impressum</a>
+            <a class="float-right mr-2" href="/datenschutz">Datenschutz</a>
+            <a class="float-right mr-2" href="https://www.gnu.org/licenses/agpl-3.0.html">CopyRight</a>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

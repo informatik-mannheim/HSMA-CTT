@@ -1,0 +1,6 @@
+# Ignore everything expect pom, src and templates to avoid long docker context copy
+/*
+/*/
+!src/
+!pom.xml
+!templates/

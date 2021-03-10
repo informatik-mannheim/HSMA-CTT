@@ -6,7 +6,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.1</version>
+		<version>2.4.3</version>
+		<relativePath></relativePath>
 	</parent>
 
 	<groupId>de.hs_mannheim</groupId>
@@ -53,23 +54,20 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.5</version>
-				<configuration>
-					<imageName>springdocker</imageName>
-					<baseImage>java</baseImage>
-					<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
 			<plugin>
 				<groupId>org.owasp</groupId>
@@ -96,7 +94,25 @@
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>3.1.1</version>
 			</plugin>
-
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -157,6 +173,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -175,7 +197,7 @@
 			<version>2.6.0</version>
 		</dependency>
 
-		<!-- für Excel-Export -->
+		<!-- für Excel- und Word-Exporte -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -186,6 +208,21 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>4.1.2</version>
+		</dependency>
+
+		<!-- Email validation -->
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.7</version>
+		</dependency>
+
+		<!-- Test Framework -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-junit</artifactId>
+			<version>2.0.0.0</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Überschreiben der älteren Versionen (von anderen Dependencies importiert), 
@@ -199,15 +236,14 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-dom</artifactId>
-			<version>1.13</version>
+			<version>1.14</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-svggen</artifactId>
-			<version>1.13</version>
+			<version>1.14</version>
 		</dependency>
-
 	</dependencies>
 
 </project>

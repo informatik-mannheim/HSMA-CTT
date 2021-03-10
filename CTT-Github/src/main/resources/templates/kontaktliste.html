@@ -19,7 +19,7 @@
 		
 		<div th:if="!${#lists.isEmpty(kontakte)}">
 			
-			<p>Hier sind die Kontakte f&uuml;r <span th:text="${kranker}"></span>. Besuche des/der Betroffenen selbst sind jeweils rot hinterlegt.
+			<p>Hier sind die Kontakte f&uuml;r <span th:text="${kranker}" style="background-color: #fae1dc"></span>. Besuche des/der Betroffenen selbst sind jeweils rot hinterlegt.
 			   Zur Weitergabe an das Gesundheitsamt können die Daten <a th:href="@{/download(email=${kranker})}">hier als Excel-Datei</a>
 			   heruntergeladen werden.</p>
 		
@@ -27,8 +27,9 @@
 				<thead class="table-info">
 				<tr>
 					<th>Mailadresse</th>
-					<th>Veranstaltung</th>
+					<th>Raum/Veranstaltung</th>
 					<th>Anmeldezeit</th>
+					<th>Abmeldezeit</th>
 					<th>Zeitlicher Abstand</th>
 				</tr>
 				</thead>
@@ -37,6 +38,7 @@
 					<td th:text="${kontakt.besucherEmail}"/>
 					<td th:text="${kontakt.veranstaltungsName}" />
 					<td>am <span th:text="|${#dates.format(kontakt.timestamp, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
+					<td>am <span th:text="|${#dates.format(kontakt.endzeit, 'dd.MM.yyyy, HH:mm')} Uhr|"></span></td>
 					<td th:text ="|${kontakt.diffInMin} Minute${kontakt.diffInMin != 1 ? 'n' : ''}|" />
 				</tr>
 			</table>
