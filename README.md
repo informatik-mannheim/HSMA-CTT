@@ -1,9 +1,21 @@
 # HSMA-CTT
-Open Source CoronaTrackingTool der Hochschule Mannheim. Kann frei verwendet werden um die Auflagen zur Kontaktvervolgung zu erfüllen. Es geht davon aus das viele Daten bereits in Moodle oder andere Datenbanken Gespeichert sind, so dass diese Daten nicht jedes mal neu erhoben werden müssen. 
+Open Source CoronaTrackingTool der Hochschule Mannheim. Es kann frei verwendet werden um die Auflagen zur Kontaktvervolgung zu erfüllen. Wir Entwickler geht davon aus, dass viele Kontaktdaten bereits in Moodle oder andere Datenbanken Gespeichert sind, so dass diese Daten nicht jedes mal neu erhoben werden müssen. Schüler oder Studierende müssen für das tracking ein mal ihre Emailadresse eingeben, danach reicht das abscannen von QR Codes um in der Kontaktverfolgung drin zu sein.
 
-Die Webapp ist selbstgehostet und kann über einen Docker container deployed werden, oder auf Java Basis laufen. 
+Die Webapp ist selbstgehostet und kann über einen Docker Container deployed werden, oder auf Java Basis laufen.
 
-### Um das Projekt Lokal laufen zu lassen oder zu bearbeiten:
+## Setup für Adminestratoren:
+- Setup des Docker Containers order der Nativen Java Webapp
+- Erstellen von CSV Datein mit allen Räumen und der per Infektionsschutz zulässigen Gesamtkapazität.
+- Türschilder für jeden Raum ausdrucken und aufhängen
+
+### Benutzung der Weboberfläche
+Der standart Anwendungsfall sieht vor das Teilnehmer einen QR code Scanne. Damit werden sie zu einer Weboberfläche weitergeleitet so das sie Ihre Daten eingeben können. Alternativ kann die Homepage mit jedem Browser aufgerufen werden. In das Feld "manuelles checkin" kann eine Raumnummer oder ein Raumbezeichner eingegeben werden. Danach ist die Funktion identisch mit der des QR Code Scanners.
+
+Alterantiv können auch Sonderveranstaltungen angelegt werden, für Treffen die im Freien stattfinden. 
+Erstellen einer Veranstaltung erfordert einen Login. Die Passworter sollten gehashed werden und ein einer Sepperaten Datei gespeichert werden. Dateipfad: /var/local/ctt-app/.env  USER_CREDENTIALS. 
+
+
+### Um das Projekt Lokal laufen zu lassen es oder zu bearbeiten:
 **Das Projekt am besten in der Konsole kompilieren. Dazu das Projekt per Maven bauen:**
 - Konsole im Projektordner (wo das POM-file liegt) aufrufen.
 - "mvn clean install" (ohne Anführungszeichen) ausführen. 
@@ -32,12 +44,6 @@ In jeder IDE "import --> as existing Maven Project" wählen. Das dauerte einen k
 - Danach kann Projekt im Webbrowser aufgerufen werden mit: http://localhost:8080
 
 
-### Benutzung der Weboberfläche
-Über das Feld "manuelles checkin" kann eine Raumnummer oder ein Raumbezeichner eingegeben werden. Alterantiv können auch Sonderveranstaltungen angelegt werden, für Treffen die im Freien stattfinden. 
-
-Erstellen einer Veranstaltung erfordert einen Login. Die Passworter sollten gehashed werden und ein einer Sepperaten Datei gespeichert werden. Dateipfad: /var/local/ctt-app/.env  USER_CREDENTIALS. 
-
-
 ### Docker
 Neu dabei ist ein Dockerfile zur Erstellung eines Dockercontainers. Ebenfalls aus dem Projektordner wie folgt aufrufbar (erfordert natürlich einen laufenden Docker Daemon): docker build -f Dockerfile -t ct .
 
@@ -56,5 +62,5 @@ In einen Raum einchecken: http://<server>:<port>/r/<raum> (geht bei Auto-Checkin
 
 Testweise zum Deaktivieren eines Auto-Checkings ?noautosignin=1 an die vorige Raum-URL anhängen
 
-Import einer Raumliste (im European CSV-Format Raumname;Kapazität, also bspw. A008;30) über die URL: http://<server>:<port>/r/import 
+Import einer Raumliste im European CSV-Format Raumname;Kapazität, also bspw. A008;30 (wenn A008 eine Raumnummer ist, und 30 die Kapazität) über die URL: http://<server>:<port>/r/import 
 
