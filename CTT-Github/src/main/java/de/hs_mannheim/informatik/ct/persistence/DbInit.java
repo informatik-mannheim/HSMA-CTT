@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.persistence;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +29,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DbInit implements CommandLineRunner {
+    @Value("${server_env:production}")
+    private String serverEnvironment;
+
     @Autowired
     private RoomRepository roomsRepo;
 
-    // TODO: nur testweise für den Moment, später wieder entfernen
     @Override
     public void run(String... args) {
-        roomsRepo.save(new Room("A007a","A", 3));
-        roomsRepo.save(new Room("test","test", 12));
-        roomsRepo.save(new Room("A210","A", 19));
+        if(serverEnvironment.equals("dev")) {
+            roomsRepo.save(new Room("A007a", "A", 3));
+            roomsRepo.save(new Room("test", "test", 12));
+            roomsRepo.save(new Room("A210", "A", 19));
+        }
     }
 
 }
