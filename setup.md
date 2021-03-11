@@ -15,12 +15,15 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 1. Create a file named `.env`. It will contain deployment specific configuration:
 
     ``` conf
-    hostname=www.your-domain.com
-    # Override the public default credentials
-    POSTGRES_USER=XXbPWmwdRW
-    POSTGRES_PASSWORD=grEtwOBI4E
-    SPRING_DATASOURCE_USERNAME=XXbPWmwdRW
-    SPRING_DATASOURCE_PASSWORD=grEtwOBI4E
+    # Ensure the server is set to production mode
+    SERVER_ENV=production
+    # Override the URL used to construct absolute URLs
+    URL_OVERRIDE=https://your.domain.com/
+    # Override the public default database credentials
+    DB_USER=XXbPWmwdRW
+    DB_PW=grEtwOBI4E
+    # Add the user credentials for the site, see docker-compose for more information
+    USER_CREDENTIALS=user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;
     ```
 
 1. Copy the `docker-compose.yml` and `nginx.conf` files from the repository. Neither should require further customization, if possible use the `.env` for this purpose.
