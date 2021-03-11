@@ -1,14 +1,15 @@
 version: '3.7'
 services:
   app:
-    image: docker.pkg.github.com/informatik-mannheim/hsma-ctt/ctt-app
+    #image: docker.pkg.github.com/informatik-mannheim/hsma-ctt/ctt-app
+    build: .
     depends_on:
       - db
     environment:
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ctt
-      - SPRING_DATASOURCE_USERNAME=XXbPWmwdRW
-      - SPRING_DATASOURCE_PASSWORD=grEtwOBI4E
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-XXbPWmwdRW}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PW:-grEtwOBI4E}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_H2_CONSOLE_ENABLED=false
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=false
@@ -17,13 +18,15 @@ services:
       # A list of users in the format Username1,EncryptedPassword1,Role1,Role2;Username2,EncryptedPassword2,Role2;
       # Override with your own credentials in a .env file next to docker-compose.yml
       # Passwords are encrypted using Bcrypt in Java Spring. (Use org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.encode("passwordToEncode") )
-      - USER_CREDENTIALS=user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;prof,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,PROF;admin,$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a,PROF,ADMIN;
+      - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;prof,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,PROF;admin,$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a,PROF,ADMIN;}
+      # The URL to prefix absolute URLs with, since nginx handles the outside connections.
+      - URL_OVERRIDE=${URL_OVERRIDE}
     restart: always
   db:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_USER=XXbPWmwdRW
-      - POSTGRES_PASSWORD=grEtwOBI4E
+      - POSTGRES_USER=${DB_USER:-XXbPWmwdRW}
+      - POSTGRES_PASSWORD=${DB_PW:-grEtwOBI4E}
       - POSTGRES_DB=ctt
     restart: always
   proxy:
