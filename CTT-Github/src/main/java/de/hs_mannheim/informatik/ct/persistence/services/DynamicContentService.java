@@ -27,6 +27,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,12 +70,20 @@ public class DynamicContentService {
                     return uriConverter.apply(room).toUriString();
                 case "p":
                     return Integer.toString(room.getMaxCapacity());
+                case "c":
+                    return room.getRoomPin();
                 default:
                     throw new UnsupportedOperationException("Template contains invalid placeholder: " + templatePlaceholder);
             }
         };
 
-        Function<Room, byte[]> qrGenerator = room -> getQRCodePNGImage(uriConverter.apply(room), 500, 500);
+        Function<Room, byte[]> qrGenerator = room -> {
+            // TODO: This is a hack to integrate the PIN code into the QR Code but not in the hyperlink.
+            val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
+                    .queryParam("pin", room.getRoomPin())
+                    .build();
+            return getQRCodePNGImage(qrUri, 500, 500);
+        };
 
         val templateGenerator = new DocxTemplate<>(docxTemplatePath.toFile(), textReplacer, qrGenerator);
 
