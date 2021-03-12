@@ -45,7 +45,6 @@ public class Room {
         this.roomPin = String.format("%04d", new Random().nextInt(10000));
     }
 
-
     public String getId() {
         return getName();
     }
@@ -64,7 +63,6 @@ public class Room {
         @NonNull
         private String roomPin;
 
-
         public Data(Room room) {
             roomName = room.getName();
             roomId = room.getId();
@@ -73,6 +71,4 @@ public class Room {
             roomPin = room.getRoomPin();
         }
     }
-
-
 }

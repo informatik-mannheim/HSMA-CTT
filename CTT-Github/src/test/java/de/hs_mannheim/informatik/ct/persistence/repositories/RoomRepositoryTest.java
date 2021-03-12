@@ -33,10 +33,9 @@ public class RoomRepositoryTest {
     }
 
     @Test
-    public void verifyRoomPin(){
-        val pinTestRoom = entityManager.persist(new Room("pintest", "A", 20,"0007"));
-
-        Assertions.assertEquals("0007",roomRepository.findById("pintest").get().getRoomPin());
+    public void verifyRoomPin() {
+        val pinTestRoom = entityManager.persist(new Room("pintest", "A", 20, "0007"));
+        Assertions.assertEquals("0007", roomRepository.findById("pintest").get().getRoomPin());
 
     }
 }
