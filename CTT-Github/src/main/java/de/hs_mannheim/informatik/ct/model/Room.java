@@ -20,9 +20,8 @@ package de.hs_mannheim.informatik.ct.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
+import javax.persistence.*;
+import java.util.Random;
 
 
 @Data
@@ -35,11 +34,16 @@ public class Room {
     @Id
     @NonNull
     private String name;
-
     private String buildingName;
-
     private int maxCapacity;
+    private String roomPin;
 
+    public Room(String name, String buildingName, int maxCapacity) {
+        this.name = name;
+        this.buildingName = buildingName;
+        this.maxCapacity = maxCapacity;
+        this.roomPin = String.format("%04d", new Random().nextInt(10000));
+    }
 
     public String getId() {
         return getName();
@@ -56,12 +60,15 @@ public class Room {
         private int maxCapacity;
         @NonNull
         private String building;
+        @NonNull
+        private String roomPin;
 
         public Data(Room room) {
             roomName = room.getName();
             roomId = room.getId();
             maxCapacity = room.getMaxCapacity();
             building = room.getBuildingName();
+            roomPin = room.getRoomPin();
         }
     }
 }

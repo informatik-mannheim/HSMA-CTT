@@ -31,4 +31,11 @@ public class RoomRepositoryTest {
         Assertions.assertThrows(IncorrectResultSizeDataAccessException.class,
                 () -> roomRepository.findByNameIgnoreCase(ambiguous1.getName()));
     }
+
+    @Test
+    public void verifyRoomPin() {
+        val pinTestRoom = entityManager.persist(new Room("pintest", "A", 20, "0007"));
+        Assertions.assertEquals("0007", roomRepository.findById("pintest").get().getRoomPin());
+
+    }
 }
