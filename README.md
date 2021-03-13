@@ -1,21 +1,21 @@
 # HSMA-CTT
-Open Source CoronaTrackingTool der Hochschule Mannheim. Es kann frei verwendet werden um die Auflagen zur Kontaktvervolgung zu erfüllen. Wir Entwickler geht davon aus, dass viele Kontaktdaten bereits in Moodle oder andere Datenbanken Gespeichert sind, so dass diese Daten nicht jedes mal neu erhoben werden müssen. Schüler oder Studierende müssen für das tracking ein mal ihre Emailadresse eingeben, danach reicht das abscannen von QR Codes um in der Kontaktverfolgung drin zu sein.
+Open Source CoronaTrackingTool der Hochschule Mannheim. Es kann frei verwendet werden um die Auflagen zur Kontaktverfolgung zu erfüllen. Wir Entwickler gehen davon aus, dass viele Kontaktdaten bereits in Moodle oder andere Datenbanken gespeichert sind, sodass diese Daten nicht jedes Mal neu erhoben werden müssen. Schüler oder Studierende müssen für das Tracking einmalig ihre Emailadresse eingeben, danach reicht das abscannen von QR Codes um in der Kontaktverfolgung drin zu sein.
 
 Die Webapp ist selbstgehostet und kann über einen Docker Container deployed werden, oder auf Java Basis laufen.
 
-## Setup für Adminestratoren:
-- Setup des Docker Containers order der Nativen Java Webapp
-- Erstellen von CSV Datein mit allen Räumen und der per Infektionsschutz zulässigen Gesamtkapazität.
+## Setup für Administratoren:
+- Setup des Docker Containers oder der Nativen Java Webapp
+- Erstellen von CSV Dateien mit allen Räumen und der per Infektionsschutz zulässigen Gesamtkapazität.
 - Türschilder für jeden Raum ausdrucken und aufhängen
 
 ### Benutzung der Weboberfläche
-Der standart Anwendungsfall sieht vor das Teilnehmer einen QR code Scanne. Damit werden sie zu einer Weboberfläche weitergeleitet so das sie Ihre Daten eingeben können. Alternativ kann die Homepage mit jedem Browser aufgerufen werden. In das Feld "manuelles checkin" kann eine Raumnummer oder ein Raumbezeichner eingegeben werden. Danach ist die Funktion identisch mit der des QR Code Scanners.
+Der Standardanwendungsfall sieht vor, dass Teilnehmer einen QR Code scannen. Damit werden Sie zu einer Weboberfläche weitergeleitet, sodass sie Ihre Daten eingeben können. Alternativ kann die Homepage mit jedem Browser aufgerufen werden. In das Feld "manuelles Check-In" kann eine Raumnummer oder ein Raumbezeichner eingegeben werden. Danach ist die Funktion identisch mit der des QR Code Scanners.
 
-Alterantiv können auch Sonderveranstaltungen angelegt werden, für Treffen die im Freien stattfinden. 
-Erstellen einer Veranstaltung erfordert einen Login. Die Passworter sollten gehashed werden und ein einer Sepperaten Datei gespeichert werden. Dateipfad: /var/local/ctt-app/.env  USER_CREDENTIALS. 
+Alternativ können auch Sonderveranstaltungen angelegt werden, für Treffen die im Freien stattfinden. 
+Erstellen einer Veranstaltung erfordert einen Login. Die Passwörter sollten gehashed werden und in einer separaten Datei gespeichert werden. Dateipfad: /var/local/ctt-app/.env  USER_CREDENTIALS. 
 
 
-### Um das Projekt Lokal laufen zu lassen es oder zu bearbeiten:
+### Um das Projekt Lokal laufen zu lassen, oder es zu bearbeiten:
 **Das Projekt am besten in der Konsole kompilieren. Dazu das Projekt per Maven bauen:**
 - Konsole im Projektordner (wo das POM-file liegt) aufrufen.
 - "mvn clean install" (ohne Anführungszeichen) ausführen. 
@@ -23,9 +23,9 @@ Erstellen einer Veranstaltung erfordert einen Login. Die Passworter sollten geha
 - Unter Linux diese Datei als ausführbar markieren.
 - Die JAR-Datei kann mit java -jar MeineFrischKompilierteDatei.jar (ersetze das "MeineFrischKompeliertenDatei") ausgeführt werden, sofern mindestens ein Java 8 auf dem Rechner installiert ist
 - Leichter geht "mvn spring-boot:run"
--> Danach kann Projekt in Webbrwoser aufgerufen werden mit: http://localhost:8080
+-> Danach kann Projekt in Webbrowser aufgerufen werden mit: http://localhost:8080
 - Port und Hostname können beim Aufruf mit folgendem Befehl gesetzt werden: java -Dserver.port=9092 -Dhostname= <server_name> -jar ct-0.0.1-SNAPSHOT.jar (Das <server_name> durch den echten namen ersetzen)
-- Weitere Konfigurationen finden sich in der Datei application.properties, die sich im Ordner src/main/resources befindet, alle dort enthaltenen Punkte können beim Start mit vorangestelltem -D überschrieben werden
+- Weitere Konfigurationen finden sich in der Datei application.properties, die sich im Ordner src/main/resources befindet. Alle dort enthaltenen Punkte können beim Start mit vorangestelltem -D überschrieben werden
 
 **Projekt in IDE laufen lassen**
 Da das Projekt auf Maven und Lombok aufbaut, läuft es besser in Intellij als in Eclipse. Es geht aber problemlos auch dort, s. n. Punkt.
@@ -36,8 +36,8 @@ Das Projekt benutzt das Lombok-Framework, Eclipse muss mit Hilfe von lombok.jar 
 
 ### IntelliJ
 
-1. [Lombok Plugin installieren](https://projectlombok.org/setup/intellij)
-2. [Enable Annotation Processing](https://stackoverflow.com/a/41166240) (Normalerweise wird es in einem Popup nach der Plugin Installation vorgeschlagen)
+1. [Lombok Plugin installieren] (https://projectlombok.org/setup/intellij)
+2. [Enable Annotation Processing] (https://stackoverflow.com/a/41166240) (Normalerweise wird es in einem Popup nach der Plugin Installation vorgeschlagen)
 
 In jeder IDE "import --> as existing Maven Project" wählen. Das dauerte einen kleinen Moment. Datei "CtApp.java" öffnen. Bei Run (play Knopf) "run as --> spring boot App (bzw. Java Application in Eclipse) auswählen.
 
@@ -53,14 +53,14 @@ Neu: Zum Testen mit nginx-Proxy reicht docker-compose up (ggf. -- build) auszuf�
 
 
 ### Räume
-QRCode für einen Raum generieren: http://<server>:<port>/QRCodes/room/<Raum> ("server" ggf. durch Servernamen ersetzen, ebenso wie den Port und die bezeichnung des Raums)
+QRCode für einen Raum generieren: http://<server>:<port>/QRCodes/room/<Raum> ("server" ggf. durch Servernamen ersetzen, ebenso wie den Port und die Bezeichnung des Raums)
 
-QRCodes für alle Räume: http://<server>:<port>/printout/rooms
+QR-Codes für alle Räume: http://<server>:<port>/printout/rooms
   (dazu muss eine Datei namens formTemplate.pdf in templates/printout vorhanden sein)
 
 In einen Raum einchecken: http://<server>:<port>/r/<raum> (geht bei Auto-Checkin dann automatisch)
 
-Testweise zum Deaktivieren eines Auto-Checkings ?noautosignin=1 an die vorige Raum-URL anhängen
+Testweise zum Deaktivieren eines Auto-Checkins ?noautosignin=1 an die vorige Raum-URL anhängen
 
 Import einer Raumliste im European CSV-Format Raumname;Kapazität, also bspw. A008;30 (wenn A008 eine Raumnummer ist, und 30 die Kapazität) über die URL: http://<server>:<port>/r/import 
 
