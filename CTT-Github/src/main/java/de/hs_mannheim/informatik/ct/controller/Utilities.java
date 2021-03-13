@@ -1,5 +1,24 @@
 package de.hs_mannheim.informatik.ct.controller;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import lombok.NonNull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,6 +46,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
+
+
 @Component
 public class Utilities {
 	@Value("${server.port}")
@@ -33,6 +55,13 @@ public class Utilities {
 
 	@Value("${hostname}")
 	private String host;
+
+	/**
+	 * Optional override for the URL the service is reachable at. This URL is used to construct absolute links.
+	 * Useful for reverse proxy setups/CDNs.
+	 */
+	@Value("${url_override:#{null}}")
+	private String urlOverride;
 
 	Workbook excelErzeugen(Collection<VeranstaltungsBesuchDTO> kontakte, String email) {
 		Workbook wb = new HSSFWorkbook();
@@ -107,7 +136,7 @@ public class Utilities {
 			cal.setTime(datum);
 			cal.set(Calendar.HOUR, Integer.parseInt(zeit.substring(0, 2)));
 			cal.set(Calendar.MINUTE, Integer.parseInt(zeit.substring(3, 5)));
-			
+
 			datum = cal.getTime();
 		}
 
@@ -121,11 +150,18 @@ public class Utilities {
 	 * @return An absolute URI to the given resource
 	 */
 	public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
-		 return UriComponentsBuilder.newInstance()
-				.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
-				.host(host)
-				.port(port)
-				.path(localPath)
-				.build();
+		if(urlOverride == null) {
+			return UriComponentsBuilder.newInstance()
+					.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+					.host(host)
+					.port(port)
+					.path(localPath)
+					.build();
+		} else {
+			return UriComponentsBuilder.newInstance()
+					.uri(URI.create(urlOverride))
+					.path(localPath)
+					.build();
+		}
 	}
 }

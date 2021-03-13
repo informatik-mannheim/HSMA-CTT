@@ -1,15 +1,13 @@
 body {
-  padding-top: 90px;
-  padding-left: 15px;
-  margin-right: 30px;
-  
-  color: #f8f8f8; 
-  font-family: 'Raleway',sans-serif; 
+    padding-top: 90px;
+    padding-left: 15px;
+    margin-right: 30px;
+    color: #f8f8f8;
+    font-family: 'Raleway', sans-serif;
 }
 
 p {
-  text-align: justify;
-  text-justify: inter-word;
+    text-justify: inter-word;
 }
 
 footer {
@@ -22,28 +20,133 @@ footer {
 }
 
 footer p {
-	margin-top: 0px;
+    margin-top: 0px;
     padding: 8px;
 }
 
 form.form-horizontal {
-	max-width: 720px; 
-	padding: 15px; 
-	margin: 0 auto; 
-	border-style: solid; 
-	border-width: 1px; 
-	border-radius: 0.3em; 
-	background-color: #f2f2f2;"
-} 
+    max-width: 720px;
+    padding: 15px;
+    margin: 0 auto;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 0.3em;
+    background-color: #f2f2f2;
+}
 
 h1, h2, h3, h4, h5, h6 {
-	color: #22376f;
+    color: #22376f;
 }
 
 a:visited, a:link {
-	color: #3f65c4;
+    color: #3f65c4;
 }
 
 a:hover {
-	color: #22376f;
+    color: #22376f;
+}
+
+.centerImg {
+    display: block;
+    max-width: 330px;
+    max-height: 800px;
+    width: auto;
+    height: auto;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 30px;
+    padding-top: 25px;
+}
+
+#checkinContainer {
+    margin: 5px;
+    padding: 15px;
+    border: solid black thin;
+
+}
+
+#checkIn {
+    font-size: x-large;
+}
+
+label[for=roomId] {
+    font-size: large;
+}
+
+input[id=roomId] {
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+#sendRoom {
+    color: white;
+    background-color: #22376f;
+    border-radius: 10px;
+
+}
+
+#sendRoom:hover {
+    background-color: #3f6fd7;
+}
+
+.btn-for-collapsible i {
+    float: right;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+#collapseButtonInfo {
+    background-color: #22376f;
+}
+
+#collapseButtonInfo:hover {
+    background-color: #3f6fd7;
+}
+
+#collapseBtnCheckIn {
+    background-color: #22376f;
+}
+
+#collapseBtnCheckIn:hover {
+    background-color: #3f6fd7;
+
+}
+
+#collapseBtnCheckOut{
+    background-color: #22376f;
+
+}
+
+#collapseBtnCheckOut:hover{
+    background-color: #3f6fd7;
+
+}
+
+#deviceChoice .nav-tabs li > a {
+    text-transform: capitalize;
+    color: #22376f;
+    transition: background-color .2s, color .2s;
+}
+
+#deviceChoice .nav-tabs li > a:hover {
+    background-color: #22376f;
+    color: #fff;
+}
+
+#deviceChoice .nav-tabs li > a:focus {
+    background-color: #22376f;
+    color: #fff;
+}
+
+#deviceChoice .nav-tabs li.active > a {
+    background-color: #22376f;
+    color: #fff;
+}
+
+.collapseMarginBottom{
+    margin-bottom: 60px;
 }

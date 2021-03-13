@@ -1,4 +1,4 @@
-package de.hs_mannheim.informatik.ct;
+package de.hs_mannheim.informatik.ct.persistence.repositories;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,16 +18,19 @@ package de.hs_mannheim.informatik.ct;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.model.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@SpringBootApplication
-@EnableScheduling
-public class CtApp {
+import java.util.Date;
+import java.util.List;
 
-	public static void main(String[] args) {
-		SpringApplication.run(CtApp.class, args);
-	}
 
+
+public interface EventRepository extends JpaRepository<Event, Long> {
+	List<Event> findAllByOrderByDatumAsc();
+
+	List<Event> findByDatumGreaterThan(Date startDate);
+
+	List<Event> findByRoom(Room room);
 }

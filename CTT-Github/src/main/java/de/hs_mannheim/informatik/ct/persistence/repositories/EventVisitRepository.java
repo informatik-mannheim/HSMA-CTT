@@ -18,30 +18,30 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Room;
+import java.util.Date;
+import java.util.List;
+
+import de.hs_mannheim.informatik.ct.model.EventVisit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
-public interface RoomRepository extends JpaRepository<Room, String> {
+public interface EventVisitRepository extends JpaRepository<EventVisit, Long> {
 
-    // TODO: is this optimal and smart to do it like this?
     @Modifying
     @Transactional
-    @Query(value = "BACKUP TO ?1", nativeQuery = true)
-    int backupH2DB(String path);
+    void deleteByEndDateBefore(Date endDate);
 
-    @Query("SELECT DISTINCT room.buildingName " +
-            "FROM Room room")
-    List<String> getAllBuildings();
+    @Query("SELECT COUNT(*) " +
+            "FROM EventVisit visit " +
+            "WHERE visit.event.id = ?1 AND endDate IS NULL")
+    int getEventVisitorCount(long eventId);
 
-    Optional<Room> findByNameIgnoreCase(String roomName);
-
-    List<Room> findByBuildingName(String building);
-
-
+    @Query("SELECT eventVisit " +
+            "FROM EventVisit eventVisit " +
+            "WHERE eventVisit.visitor.email = :visitorEmail and eventVisit.endDate is null")
+    List<EventVisit> getNotSignedOut(@Param(value = "visitorEmail") String visitorEmail);
 }

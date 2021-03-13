@@ -18,34 +18,36 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.io.Serializable;
-import java.time.Duration;
+import lombok.*;
+
+import javax.persistence.*;
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
+@Entity
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+public class Event {
+    @Id
+    @GeneratedValue
+    private Long id;
 
+    private String name;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Room room;
+    private Date datum = new Date();
+    private String createdBy;
 
-@AllArgsConstructor
-@Data
-public class VeranstaltungsBesuchDTO implements Serializable {
-	private String besucherEmail;
-	private long veranstaltungsId;
-	private String veranstaltungsName;
-	private Date timestamp;
-	private Date endzeit;
-	private int diffInMin;
+    public Event(String name, Room room, Date datum, String createdBy) {
+        this.name = name;
+        this.room = room;
+        this.datum = datum;
+        this.createdBy = createdBy;
+    }
 
-	public VeranstaltungsBesuchDTO(EventVisit target, EventVisit other) {
-		besucherEmail = target.getVisitor().getEmail();
-		veranstaltungsId = target.getEvent().getId();
-		veranstaltungsName = target.getEvent().getName();
-		timestamp = other.getStartDate();
-		endzeit = other.getEndDate();
-		diffInMin = (int) Math.abs(Duration.between(
-				other.getStartDate().toInstant(),
-				target.getStartDate().toInstant())
-				.toMinutes());
-	}
+    public int getRoomCapacity() {
+        return room.getMaxCapacity();
+    }
 }

@@ -1,11 +1,30 @@
 package de.hs_mannheim.informatik.ct.controller;
 
+/*
+ * Corona Tracking Tool der Hochschule Mannheim
+ * Copyright (C) 2021 Hochschule Mannheim
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
@@ -32,6 +51,8 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
+
+
 @Controller
 @RequestMapping("r")
 public class RoomController {
@@ -45,10 +66,10 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
-    	// get roomId from form on landing page (index.html)
-    	if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
-    		roomId = roomIdFromRequest.get();
-    	
+        // get roomId from form on landing page (index.html)
+        if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
+            roomId = roomIdFromRequest.get();
+
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -61,7 +82,7 @@ public class RoomController {
         Room.Data roomData = new Room.Data(room.get());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
-        
+
         return "rooms/checkIn";
     }
 
@@ -166,13 +187,18 @@ public class RoomController {
     }
 
     @PostMapping("/import")
-    public String roomTableImport(@RequestParam("file") MultipartFile file) {
-        try (InputStream is = file.getInputStream()) {
-            roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String roomTableImport(@RequestParam("file") MultipartFile file, Model model) {
+        String fileName = file.getOriginalFilename();
+        String extension = fileName.substring(fileName.indexOf("."), fileName.length());
+        if (extension.equals(".csv")) {
+            try (InputStream is = file.getInputStream()) {
+                roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new InvalidFileUploadException();
         }
-
         return "rooms/importCompleted";
     }
 
@@ -180,11 +206,17 @@ public class RoomController {
         return "r/" + room.getId();
     }
 
+
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Room not found")
     public static class RoomNotFoundException extends RuntimeException {
+
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Visitor not found")
     public static class VisitorNotFoundException extends RuntimeException {
+    }
+
+    @ResponseStatus(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Not a .csv file")
+    public static class InvalidFileUploadException extends RuntimeException {
     }
 }
