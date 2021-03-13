@@ -342,6 +342,11 @@ public class CtController implements ErrorController {
 		return "datenschutz";
 	}
 
+    @RequestMapping("/howToQr")
+    public String howToQr() {
+        return "howToQr";
+    }
+
 	// ------------
 	// ErrorControllerImpl
 	@RequestMapping("/error")
