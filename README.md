@@ -1,5 +1,5 @@
 # HSMA-CTT
-Open Source CoronaTrackingTool der Hochschule Mannheim. Es kann frei verwendet werden um die Auflagen zur Kontaktverfolgung zu erfüllen. Wir Entwickler gehen davon aus, dass viele Kontaktdaten bereits in Moodle oder andere Datenbanken gespeichert sind, sodass diese Daten nicht jedes Mal neu erhoben werden müssen. Schüler oder Studierende müssen für das Tracking einmalig ihre Emailadresse eingeben, danach reicht das abscannen von QR Codes um in der Kontaktverfolgung drin zu sein.
+Open Source CoronaTrackingTool der Hochschule Mannheim. Es kann frei verwendet werden, um die Auflagen zur Kontaktverfolgung zu erfüllen. Wir Entwickler gehen davon aus, dass viele Kontaktdaten bereits in Moodle oder andere Datenbanken gespeichert sind, sodass diese Daten nicht jedes Mal neu erhoben werden müssen. Schüler oder Studierende müssen für das Tracking einmalig ihre Emailadresse eingeben, danach reicht das abscannen von QR Codes um in der Kontaktverfolgung drin zu sein.
 
 Die Webapp ist selbstgehostet und kann über einen Docker Container deployed werden, oder auf Java Basis laufen.
 
