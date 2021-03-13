@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import lombok.NonNull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -53,6 +55,13 @@ public class Utilities {
 
 	@Value("${hostname}")
 	private String host;
+
+	/**
+	 * Optional override for the URL the service is reachable at. This URL is used to construct absolute links.
+	 * Useful for reverse proxy setups/CDNs.
+	 */
+	@Value("${url_override:#{null}}")
+	private String urlOverride;
 
 	Workbook excelErzeugen(Collection<VeranstaltungsBesuchDTO> kontakte, String email) {
 		Workbook wb = new HSSFWorkbook();
@@ -141,11 +150,18 @@ public class Utilities {
 	 * @return An absolute URI to the given resource
 	 */
 	public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
-		 return UriComponentsBuilder.newInstance()
-				.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
-				.host(host)
-				.port(port)
-				.path(localPath)
-				.build();
+		if(urlOverride == null) {
+			return UriComponentsBuilder.newInstance()
+					.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+					.host(host)
+					.port(port)
+					.path(localPath)
+					.build();
+		} else {
+			return UriComponentsBuilder.newInstance()
+					.uri(URI.create(urlOverride))
+					.path(localPath)
+					.build();
+		}
 	}
 }
