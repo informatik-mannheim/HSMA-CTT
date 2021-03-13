@@ -18,49 +18,36 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.util.Date;
+import lombok.*;
 
 import javax.persistence.*;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
+import java.util.Date;
 
 
 @Entity
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
-public class VeranstaltungsBesuch {
-	@EmbeddedId
-	@Getter(value = AccessLevel.NONE)
-	private VeranstaltungsBesuchPK id;
+public class Event {
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	@Column(name="timestamp", updatable = false)
-	private Date wann = new Date();
+    private String name;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Room room;
+    private Date datum = new Date();
+    private String createdBy;
 
-	@Column
-	private Date ende;
+    public Event(String name, Room room, Date datum, String createdBy) {
+        this.name = name;
+        this.room = room;
+        this.datum = datum;
+        this.createdBy = createdBy;
+    }
 
-	@ManyToOne
-	@MapsId("veranstaltungsId")
-	@NonNull
-	private Veranstaltung veranstaltung;
-
-	@ManyToOne
-	@MapsId("visitorId")
-	@NonNull
-	private Visitor visitor;
-
-	public VeranstaltungsBesuch(Veranstaltung veranstaltung, Visitor visitor) {
-		this.veranstaltung = veranstaltung;
-		this.visitor = visitor;
-
-		this.id = new VeranstaltungsBesuchPK(veranstaltung, visitor);
-	}
-
-	public void setEnde(Date ende) {
-		this.ende = ende;
-	}
+    public int getRoomCapacity() {
+        return room.getMaxCapacity();
+    }
 }

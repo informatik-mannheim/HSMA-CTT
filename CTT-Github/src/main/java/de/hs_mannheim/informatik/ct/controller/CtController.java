@@ -55,10 +55,10 @@ import java.util.Optional;
 @Slf4j
 public class CtController implements ErrorController {
 	@Autowired
-	private VeranstaltungsService vservice;
+	private EventService eventService;
 
 	@Autowired
-	private VeranstaltungsBesuchService veranstaltungsBesuchService;
+	private EventVisitService eventVisitService;
 
 	@Autowired
 	private RoomService roomService;
@@ -80,17 +80,14 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/")
 	public String home(Model model) {
-		Collection<Veranstaltung> veranstaltungen = vservice.findeAlleHeutigenVeranstaltungen();
-		model.addAttribute("veranstaltungen", veranstaltungen);
-
 		return "index";
 	}
 
 	@RequestMapping("/neu")
-	public String neueVeranstaltung(@RequestParam String name, @RequestParam Optional<Integer> max,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
-			@RequestParam String zeit,	// TODO: schauen, ob das auch eleganter geht
-			Model model, Authentication auth, @RequestHeader(value = "Referer", required = false) String referer) {
+	public String newEvent(@RequestParam String name, @RequestParam Optional<Integer> max,
+						   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
+						   @RequestParam String zeit,    // TODO: schauen, ob das auch eleganter geht
+						   Model model, Authentication auth, @RequestHeader(value = "Referer", required = false) String referer) {
 
 		// Optional beim int, um prüfen zu können, ob ein Wert übergeben wurde
 		if (name.isEmpty() || !max.isPresent()) {				// Achtung, es gibt Java-8-Versionen, die Optional.isEmpty noch nicht enthalten!
@@ -102,7 +99,7 @@ public class CtController implements ErrorController {
 			datum = util.uhrzeitAufDatumSetzen(datum, zeit);
 
 			Room defaultRoom = roomService.saveRoom(new Room("test","test", max.get()));
-			Veranstaltung v = vservice.speichereVeranstaltung(new Veranstaltung(name, defaultRoom, datum, auth.getName()));
+			Event v = eventService.saveEvent(new Event(name, defaultRoom, datum, auth.getName()));
 
 			return "redirect:/zeige?vid=" + v.getId();
 		}
@@ -112,16 +109,16 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/besuch")
 	public String neuerBesuch(@RequestParam Long vid, Model model) {
-		Optional<Veranstaltung> v = vservice.getVeranstaltungById(vid);
+		Optional<Event> event = eventService.getEventById(vid);
 
-		if (v.isPresent()) {
-			model.addAttribute("vid", v.get().getId());
-			model.addAttribute("name", v.get().getName());
+		if (event.isPresent()) {
+			model.addAttribute("vid", event.get().getId());
+			model.addAttribute("name", event.get().getName());
 
 			return "eintragen";
 		}
 
-		model.addAttribute("error", "Veranstaltung nicht gefunden");
+		model.addAttribute("error", "Event nicht gefunden");
 
 		return home(model);
 	}
@@ -146,16 +143,16 @@ public class CtController implements ErrorController {
 			if (email.isEmpty()) {
 				model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
 			} else {
-				Optional<Veranstaltung> vo = vservice.getVeranstaltungById(vid);
+				Optional<Event> event = eventService.getEventById(vid);
 
-				if (!vo.isPresent()) {
-					model.addAttribute("error", "Veranstaltung nicht gefunden.");
+				if (!event.isPresent()) {
+					model.addAttribute("error", "Event nicht gefunden.");
 					model.addAttribute("email", email);
 				} else {
-					int besucherZahl = vservice.getBesucherAnzahl(vid);
-					Veranstaltung v = vo.get();
+					int visitorCount = eventService.getVisitorCount(vid);
+					Event v = event.get();
 
-					if (besucherZahl >= v.getRaumkapazitaet()) {
+					if (visitorCount >= v.getRoomCapacity()) {
 						model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
 					} else {
 						Visitor b = null;
@@ -163,19 +160,20 @@ public class CtController implements ErrorController {
 							b = visitorService.findOrCreateVisitor(email);
 						} catch (InvalidEmailException e) {
 							model.addAttribute("error", "Ungültige Mail-Adresse");
+							return "eintragen";
 						}
 
 						Optional<String> autoAbmeldung = Optional.empty();
-						List<VeranstaltungsBesuch> nichtAbgemeldeteBesuche = veranstaltungsBesuchService.besucherAbmelden(b, new Date());
+						List<EventVisit> nichtAbgemeldeteBesuche = eventVisitService.signOutVisitor(b, new Date());
 
 						if(nichtAbgemeldeteBesuche.size() > 0) {
-							autoAbmeldung = Optional.ofNullable(nichtAbgemeldeteBesuche.get(0).getVeranstaltung().getName());
-							// TODO: Warning in server console falls mehr als eine Veranstaltung abgemeldet wurde,
+							autoAbmeldung = Optional.ofNullable(nichtAbgemeldeteBesuche.get(0).getEvent().getName());
+							// TODO: Warning in server console falls mehr als eine Event abgemeldet wurde,
 							//  da das eigentlich nicht möglich ist
 						}
 
-						VeranstaltungsBesuch vb = new VeranstaltungsBesuch(v, b);
-						vb = vservice.speichereBesuch(vb);
+						EventVisit vb = new EventVisit(v, b);
+						vb = eventService.saveVisit(vb);
 
 						if (saveMail) {
 							Cookie c = new Cookie("email", email);
@@ -195,7 +193,7 @@ public class CtController implements ErrorController {
 						return "redirect:" + uriComponents.toUriString();
 					} // endif Platz im Raum
 
-				} // endif Veranstaltung existiert
+				} // endif Event existiert
 
 			} // endif nicht leere Mail-Adresse
 
@@ -205,25 +203,25 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/veranstaltungen")
-	public String veranstaltungenAnzeigen(Model model) {
-		Collection<Veranstaltung> veranstaltungen = vservice.findeAlleVeranstaltungen();
-		model.addAttribute("veranstaltungen", veranstaltungen);
+	public String eventList(Model model) {
+		Collection<Event> events = eventService.getAll();
+		model.addAttribute("events", events);
 
-		return "veranstaltungsliste";
+		return "eventList";
 	}
 
 	@RequestMapping("/zeige")
-	public String zeigeVeranstaltung(@RequestParam Long vid, Model model) {
-		Optional<Veranstaltung> v = vservice.getVeranstaltungById(vid);
+	public String showEvent(@RequestParam Long vid, Model model) {
+		Optional<Event> event = eventService.getEventById(vid);
 
-		if (v.isPresent()) {
-			model.addAttribute("veranstaltung", v.get());
-			model.addAttribute("teilnehmerzahl", vservice.getBesucherAnzahl(vid));
+		if (event.isPresent()) {
+			model.addAttribute("event", event.get());
+			model.addAttribute("teilnehmerzahl", eventService.getVisitorCount(vid));
 
-			return "veranstaltung";
+			return "event";
 		}
 
-		model.addAttribute("error", "Veranstaltung nicht gefunden!");
+		model.addAttribute("error", "Event nicht gefunden!");
 
 		return home(model);
 	}
@@ -267,18 +265,17 @@ public class CtController implements ErrorController {
 
 	@RequestMapping("/angemeldet")
 	public String angemeldet(
-			@RequestParam String email, @RequestParam long veranstaltungId,
+			@RequestParam String email, @RequestParam(value = "veranstaltungId") long eventId,
 			@RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) {
 
-		Optional<Veranstaltung> v = vservice.getVeranstaltungById(veranstaltungId);
+		Optional<Event> v = eventService.getEventById(eventId);
 
 		if (!v.isPresent()) {
-			model.addAttribute("error", "Veranstaltung nicht gefunden!");
+			model.addAttribute("error", "Event nicht gefunden!");
 			return "index";
 		}
 
-		model.addAttribute("besucherEmail", email);
-		model.addAttribute("veranstaltungId", veranstaltungId);
+		model.addAttribute("visitorEmail", email);
 		model.addAttribute("autoAbmeldung", autoAbmeldung.orElse(""));
 
 		model.addAttribute("message", "Vielen Dank, Sie wurden erfolgreich im Raum eingecheckt.");
@@ -306,7 +303,7 @@ public class CtController implements ErrorController {
 		}
 
 		visitorService.findVisitorByEmail(besucherEmail)
-				.ifPresent(value -> veranstaltungsBesuchService.besucherAbmelden(value, new Date()));
+				.ifPresent(value -> eventVisitService.signOutVisitor(value, new Date()));
 
 		Cookie c = new Cookie("checked-into", "");
 		c.setMaxAge(0);
@@ -379,7 +376,7 @@ public class CtController implements ErrorController {
 	}
 
 	private Collection<VeranstaltungsBesuchDTO> getContacts(Visitor target) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = vservice.findeKontakteFuer(target.getEmail());
+		Collection<VeranstaltungsBesuchDTO> kontakte = eventService.findContactsFor(target.getEmail());
 		val roomContacts = roomVisitService.getVisitorContacts(target);
 
 		roomContacts

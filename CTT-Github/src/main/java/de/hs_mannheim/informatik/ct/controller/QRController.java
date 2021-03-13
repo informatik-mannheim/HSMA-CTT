@@ -20,7 +20,7 @@ package de.hs_mannheim.informatik.ct.controller;
 
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import de.hs_mannheim.informatik.ct.persistence.services.VeranstaltungsService;
+import de.hs_mannheim.informatik.ct.persistence.services.EventService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +42,7 @@ public class QRController {
     private final int maxSizeInPx = 2000;
 
     @Autowired
-    private VeranstaltungsService veranstaltungsService;
+    private EventService eventService;
 
     @Autowired
     private RoomService roomService;
@@ -80,17 +80,17 @@ public class QRController {
     }
 
     @GetMapping(value = "/event/{eventId}", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] veranstaltungsCode(
-            @PathVariable(name = "eventId") long veranstaltungsId,
+    public byte[] eventQRCode(
+            @PathVariable long eventId,
             @RequestParam(required = false, defaultValue = "400") int width,
             @RequestParam(required = false, defaultValue = "400") int height,
             HttpServletRequest request) {
-        val veranstaltung = veranstaltungsService.getVeranstaltungById(veranstaltungsId);
-        if (!veranstaltung.isPresent()) {
+        val event = eventService.getEventById(eventId);
+        if (!event.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        val qrUri = utilities.getUriToLocalPath(String.format(veranstaltungPath, veranstaltung.get().getId()), request);
+        val qrUri = utilities.getUriToLocalPath(String.format(veranstaltungPath, event.get().getId()), request);
 
         return getQRImage(qrUri, width, height);
     }
