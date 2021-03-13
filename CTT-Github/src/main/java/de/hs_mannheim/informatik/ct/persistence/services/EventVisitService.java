@@ -19,27 +19,39 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 import com.sun.istack.NotNull;
+import de.hs_mannheim.informatik.ct.model.EventVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
-import de.hs_mannheim.informatik.ct.model.Veranstaltung;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuch;
-import de.hs_mannheim.informatik.ct.persistence.repositories.VeranstaltungsBesuchRepository;
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.persistence.repositories.EventVisitRepository;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Date;
 import java.util.List;
 
+import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
 
 
 @Service
-public class VeranstaltungsBesuchService {
+public class EventVisitService {
 
     @Autowired
-    private VeranstaltungsBesuchRepository repoVeranstaltungsBesuche;
+    private EventVisitRepository eventVisitRepository;
 
-    private void abmelden(Visitor visitor, Veranstaltung veranstaltung, @NotNull Date ende) {
-        repoVeranstaltungsBesuche.besucherAbmelden(visitor.getEmail(), ende);
+    @Transactional
+    private void signOut(Visitor visitor, Event event, @NotNull Date end) {
+        val visits = eventVisitRepository.getNotSignedOut(visitor.getEmail());
+        for (val visit :
+                visits) {
+            visit.setEndDate(end);
+        }
+
+        eventVisitRepository.saveAll(visits);
     }
 
     /**
@@ -47,8 +59,8 @@ public class VeranstaltungsBesuchService {
      * @param visitor Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
-    public List<VeranstaltungsBesuch> getNichtAbgemeldeteBesuche(Visitor visitor) {
-        return repoVeranstaltungsBesuche.nichtAbgemeldeteBesuche(visitor.getEmail());
+    public List<EventVisit> getNotSignedOutVisits(Visitor visitor) {
+        return eventVisitRepository.getNotSignedOut(visitor.getEmail());
     }
 
     /**
@@ -57,12 +69,18 @@ public class VeranstaltungsBesuchService {
      * @return Alle nicht abgemeldeten Besuche.
      */
     @Transactional
-    public List<VeranstaltungsBesuch> besucherAbmelden(Visitor visitor, Date ende) {
-        List<VeranstaltungsBesuch> veranstaltungsBesuche = getNichtAbgemeldeteBesuche(visitor);
-        for (VeranstaltungsBesuch besuch: veranstaltungsBesuche) {
-            abmelden(visitor, besuch.getVeranstaltung(), ende);
+    public List<EventVisit> signOutVisitor(Visitor visitor, Date end) {
+        List<EventVisit> eventVisits = getNotSignedOutVisits(visitor);
+        for (EventVisit visit: eventVisits) {
+            signOut(visitor, visit.getEvent(), end);
         }
 
-        return veranstaltungsBesuche;
+        return eventVisits;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteExpiredRecords(Period recordLifeTime) {
+        val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
+        eventVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
     }
 }
