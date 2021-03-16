@@ -101,7 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getFullEmail() {
-        return emailText.value + emailPostfix;
+        // Check if the postfix is null
+        if(!!emailPostfix) {
+            return emailText.value + emailPostfix;
+        } else {
+            return emailText.value;
+        }
     }
 
     function showJSEnabled() {
