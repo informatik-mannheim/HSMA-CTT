@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -59,10 +60,14 @@ public class RoomControllerTest {
     private final String TEST_ROOM = "asdf";
     private final String USER_EMAIL = "123@stud.hs-mannheim.de";
 
+    @BeforeEach
+    public void setUp() {
+        Room testRoom = roomService.saveRoom(new Room(TEST_ROOM, "A", 2));
+    }
+
 
     @Test
     public void createAndRequestRoom() throws Exception {
-        Room testRoom = roomService.saveRoom(new Room(TEST_ROOM, "A", 2));
 
         this.mockMvc.perform(
                 get("/r/" + this.TEST_ROOM)).
@@ -75,7 +80,6 @@ public class RoomControllerTest {
 
     @Test
     public void checkIn() throws Exception {
-        Room testRoom = roomService.saveRoom(new Room(TEST_ROOM, "A", 2));
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
