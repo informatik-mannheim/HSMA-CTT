@@ -18,19 +18,6 @@ package de.hs_mannheim.informatik.ct.end_to_end;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-
 public class RoomControllerTestHelper {
 
-    private static final String roomName = "roomControllerTest";
-    private static final Room room = new Room(roomName, "roomControllerTest", 2);
-
-    public static String getRoomName(){
-       return roomName;
-    }
-
-    public static void saveTestRoom(){
-        new RoomService().saveRoom(room);
-    }
 }
