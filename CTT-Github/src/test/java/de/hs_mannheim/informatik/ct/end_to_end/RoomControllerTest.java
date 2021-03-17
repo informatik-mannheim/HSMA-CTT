@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,6 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,7 +45,9 @@ public class RoomControllerTest {
     @TestConfiguration
     static class RoomControllerTestConfig {
         @Bean
-        public RoomService service(){ return new RoomService();}
+        public RoomService service() {
+            return new RoomService();
+        }
     }
 
     @Autowired
@@ -53,6 +58,7 @@ public class RoomControllerTest {
 
     private final String TEST_ROOM = "asdf";
     private final String USER_EMAIL = "123@stud.hs-mannheim.de";
+
 
     @Test
     public void createAndRequestRoom() throws Exception {
@@ -69,11 +75,12 @@ public class RoomControllerTest {
 
     @Test
     public void checkIn() throws Exception {
+        Room testRoom = roomService.saveRoom(new Room(TEST_ROOM, "A", 2));
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", USER_EMAIL)
-                        .param("roomId", TEST_ROOM))
+                        .param("roomId", TEST_ROOM).with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
