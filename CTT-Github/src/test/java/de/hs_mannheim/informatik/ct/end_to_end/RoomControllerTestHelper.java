@@ -18,6 +18,40 @@ package de.hs_mannheim.informatik.ct.end_to_end;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-public class RoomControllerTestHelper {
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+
+public class RoomControllerTestHelper {
+    @Autowired
+    private RoomVisitService roomVisitService;
+
+    @Autowired
+    private VisitorService visitorService;
+
+    private ArrayList<Room> activeRooms = new ArrayList<Room>();
+    private int activeUserCounter;
+
+    public void addRoom(String name, int size){
+        this.activeRooms.add(new Room(name, "A", 10));
+    }
+
+    public void fillRoom(String name, int ammount) throws InvalidEmailException {
+        Room room = activeRooms.stream().filter(r -> r.getName() == name).findFirst().get();
+
+        activeUserCounter = ammount;
+
+        for(int i = 0; i < ammount; i++) {
+            String user = "" + i + "@stud.hs-mannheim.de";
+            roomVisitService.visitRoom(visitorService.findOrCreateVisitor(user), room);
+        }
+    }
+
+    public void signOut(Room room){
+
+    }
 }
