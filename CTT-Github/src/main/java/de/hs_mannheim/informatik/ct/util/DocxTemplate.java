@@ -58,7 +58,7 @@ public class DocxTemplate<T> {
 
     // Precompile regex patterns used for filling the template
     private final Pattern docxImageReplacer = Pattern.compile("<a:blip r:embed=\"rId\\d\">");
-    private final Pattern docxTextReplacer = Pattern.compile("(<w:t>.*)#(\\w)(.*</w:t>)");
+    private final Pattern docxTextReplacer = Pattern.compile("(<w:t(?: .*)?>.*)#(\\w)(.*</w:t>)");
     // Regex templates for fixing errors in the resulting document
     private final Pattern docPrUniqueIdFix = Pattern.compile(String.format("<wp:docPr id=\"\\d{1,%d}\"", uniqueIDDigits));
 
