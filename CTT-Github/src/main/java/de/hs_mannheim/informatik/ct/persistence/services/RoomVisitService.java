@@ -56,8 +56,11 @@ public class RoomVisitService {
 	@Autowired
 	private VisitorRepository visitorRepository;
 
+	@Autowired
+	private DateTimeService dateTimeService;
+
 	public RoomVisit visitRoom(Visitor visitor, Room room) {
-		return roomVisitRepository.save(new RoomVisit(visitor, room, new Date()));
+		return roomVisitRepository.save(new RoomVisit(visitor, room, dateTimeService.getDateNow()));
 	}
 
 	/**
@@ -71,7 +74,7 @@ public class RoomVisitService {
 	public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
 		List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
 		notSignedOutVisits.forEach((visit) -> {
-			visit.setEndDate(new Date());
+			visit.setEndDate(dateTimeService.getDateNow());
 			roomVisitRepository.save(visit);
 		});
 

@@ -1,4 +1,4 @@
-package de.hs_mannheim.informatik.ct.model;
+package de.hs_mannheim.informatik.ct.persistence.services;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,36 +18,19 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import lombok.*;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
-
-@Entity
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
-public class Event {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    private String name;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Room room;
-    private Date datum;
-    private String createdBy;
-
-    public Event(String name, Room room, Date datum, String createdBy) {
-        this.name = name;
-        this.room = room;
-        this.datum = datum;
-        this.createdBy = createdBy;
+@Service
+public class DateTimeService {
+    public LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
 
-    public int getRoomCapacity() {
-        return room.getMaxCapacity();
+    public Date getDateNow() {
+        return Date.from(getNow().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

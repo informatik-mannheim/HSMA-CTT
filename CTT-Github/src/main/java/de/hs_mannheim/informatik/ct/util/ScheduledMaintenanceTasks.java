@@ -45,20 +45,12 @@ public class ScheduledMaintenanceTasks {
     @Autowired
     private EventVisitService eventVisitService;
 
-    @Autowired
-    private RoomRepository roomRepository;
-
-    @Value("${spring.datasource.driverClassName}")
-    private String db;
-
     //   @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
     @Scheduled(cron = "0 55 3 * * *")    // 3:55 AM
     public void doMaintenance() {
         signOutAllVisitors(LocalTime.parse("21:00:00"));
 
         deleteExpiredVisitRecords(Period.ofWeeks(4));
-
-        doDbBackup();
     }
 
     public void signOutAllVisitors(LocalTime forcedEndTime) {
@@ -70,25 +62,5 @@ public class ScheduledMaintenanceTasks {
     public void deleteExpiredVisitRecords(Period recordLifeTime) {
         eventVisitService.deleteExpiredRecords(recordLifeTime);
         roomVisitService.deleteExpiredRecords(recordLifeTime);
-    }
-
-    public void doDbBackup() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String target = "bak/" + LocalDate.now().format(formatter) + "-db-backup" + ".zip";
-
-        if ("org.h2.Driver".contentEquals(db)) {
-            roomRepository.backupH2DB(target);
-
-            File[] files = new File("bak/").listFiles();
-
-            for (File file : files) {
-                long diff = new Date().getTime() - file.lastModified();
-
-                if (diff > 7 * 24 * 60 * 60 * 1000) {        // delete after 7 days
-                    file.delete();
-                }
-            }
-        } // H2DB
-
     }
 }

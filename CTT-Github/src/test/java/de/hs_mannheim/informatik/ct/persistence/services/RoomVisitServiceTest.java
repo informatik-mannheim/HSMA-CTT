@@ -57,6 +57,11 @@ class RoomVisitServiceTest {
         public RoomVisitService service() {
             return new RoomVisitService();
         }
+
+        @Bean
+        public DateTimeService dateTimeService() {
+            return new DateTimeService();
+        }
     }
 
     @Autowired
