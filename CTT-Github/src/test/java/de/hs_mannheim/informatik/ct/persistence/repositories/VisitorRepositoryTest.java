@@ -60,9 +60,9 @@ public class VisitorRepositoryTest {
         entityManager.persist(event1);
         entityManager.persist(event2);
 
-        EventVisit besuch1 = new EventVisit(event1, visitor1);
-        EventVisit besuch2 = new EventVisit(event1, visitor2);
-        EventVisit besuch3 = new EventVisit(event2, visitor3);
+        EventVisit besuch1 = new EventVisit(event1, visitor1, new Date());
+        EventVisit besuch2 = new EventVisit(event1, visitor2, new Date());
+        EventVisit besuch3 = new EventVisit(event2, visitor3, new Date());
 
         entityManager.persist(visitor1);
         entityManager.persist(visitor2);
@@ -122,6 +122,4 @@ public class VisitorRepositoryTest {
 
 
     }
-
-
 }

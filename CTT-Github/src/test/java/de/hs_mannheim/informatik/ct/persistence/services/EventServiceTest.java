@@ -50,6 +50,11 @@ public class EventServiceTest extends TestCase {
         public EventService service() {
             return new EventService();
         }
+
+        @Bean
+        public DateTimeService dateTimeService() {
+            return new DateTimeService();
+        }
     }
 
     @Autowired

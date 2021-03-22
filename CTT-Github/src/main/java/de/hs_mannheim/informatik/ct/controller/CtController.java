@@ -44,11 +44,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import java.util.*;
 
 
 @Controller
@@ -71,6 +67,9 @@ public class CtController implements ErrorController {
 
 	@Autowired
 	private Utilities util;
+
+	@Autowired
+	private DateTimeService dateTimeService;
 
 	@Value("${server.port}")
 	private String port;
@@ -164,7 +163,7 @@ public class CtController implements ErrorController {
 						}
 
 						Optional<String> autoAbmeldung = Optional.empty();
-						List<EventVisit> nichtAbgemeldeteBesuche = eventVisitService.signOutVisitor(b, new Date());
+						List<EventVisit> nichtAbgemeldeteBesuche = eventVisitService.signOutVisitor(b, dateTimeService.getDateNow());
 
 						if(nichtAbgemeldeteBesuche.size() > 0) {
 							autoAbmeldung = Optional.ofNullable(nichtAbgemeldeteBesuche.get(0).getEvent().getName());
@@ -172,7 +171,7 @@ public class CtController implements ErrorController {
 							//  da das eigentlich nicht möglich ist
 						}
 
-						EventVisit vb = new EventVisit(v, b);
+						EventVisit vb = new EventVisit(v, b, dateTimeService.getDateNow());
 						vb = eventService.saveVisit(vb);
 
 						if (saveMail) {
@@ -303,7 +302,7 @@ public class CtController implements ErrorController {
 		}
 
 		visitorService.findVisitorByEmail(besucherEmail)
-				.ifPresent(value -> eventVisitService.signOutVisitor(value, new Date()));
+				.ifPresent(value -> eventVisitService.signOutVisitor(value, dateTimeService.getDateNow()));
 
 		Cookie c = new Cookie("checked-into", "");
 		c.setMaxAge(0);

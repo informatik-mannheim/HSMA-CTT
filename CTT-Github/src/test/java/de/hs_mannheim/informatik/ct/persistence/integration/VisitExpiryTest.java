@@ -5,6 +5,7 @@ import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepositoryTest;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
+import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,11 @@ public class VisitExpiryTest {
         @Bean
         public RoomVisitService service() {
             return new RoomVisitService();
+        }
+
+        @Bean
+        public DateTimeService dateTimeService() {
+            return new DateTimeService();
         }
     }
 
