@@ -346,6 +346,11 @@ public class CtController implements ErrorController {
         return "howToQr";
     }
 
+	@RequestMapping("/howToInkognito")
+	public String howToInkognito() {
+		return "howToInkognito";
+	}
+
 	// ------------
 	// ErrorControllerImpl
 	@RequestMapping("/error")
