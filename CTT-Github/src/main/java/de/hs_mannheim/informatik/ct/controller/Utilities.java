@@ -63,7 +63,7 @@ public class Utilities {
 	@Value("${url_override:#{null}}")
 	private String urlOverride;
 
-	Workbook excelErzeugen(Collection<VeranstaltungsBesuchDTO> kontakte, String email) {
+	public Workbook excelErzeugen(Collection<VeranstaltungsBesuchDTO> kontakte, String email) {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("Kontaktliste");
 
