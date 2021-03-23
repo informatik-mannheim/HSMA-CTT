@@ -23,6 +23,7 @@ import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -54,7 +55,6 @@ public class RoomControllerTest {
         public RoomService service() {
             return new RoomService();
         }
-
     }
 
     @Autowired
@@ -69,29 +69,49 @@ public class RoomControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final String TEST_ROOM_NAME = "asdf";
-    private final String USER_EMAIL = "123@stud.hs-mannheim.de";
+    private final String TEST_ROOM_NAME = "123";
+    private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
+
+    @BeforeEach
+    public void setUp(){
+        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
+    }
 
     @Test
-    public void isTestRoomActive() throws Exception {
-        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
+    public void areStaticPagesCallable() throws Exception {
+        // strings that called Page should contain
+        String rTestRoom = "HSMA CTT - Check-in Raum " + TEST_ROOM_NAME;
+        String rTestRoomCheckOut = "Check-out";
 
+        // /{roomId}
         this.mockMvc.perform(
-                get("/r/" + this.TEST_ROOM_NAME).with(csrf()))
+                get("/r/" + TEST_ROOM_NAME).with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(
-                        containsString("HSMA CTT - Check-in Raum " + this.TEST_ROOM_NAME)));
+                        containsString(rTestRoom)));
+
+        // /{roomId}/checkOut
+        this.mockMvc.perform(
+                get("/r/" + TEST_ROOM_NAME + "/checkOut").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        containsString(rTestRoomCheckOut)
+                ));
+
+        // /import (should not be accessible without admin login)
+        this.mockMvc.perform(
+                get("/r/import").with(csrf()))
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 
     @Test
     public void checkInEmptyRoom() throws Exception {
-        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
-
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", USER_EMAIL)
+                        .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
                 .andDo(print())
@@ -100,20 +120,14 @@ public class RoomControllerTest {
 
     @Test
     public void checkInFilledRoom() throws Exception {
-        try {
-            // fill room with people
-            fillRoom(
-                    // save initiated Room in DB
-                    roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10))
-                    , 5);
-        } catch(InvalidEmailException mailError) {
-
-        }
+        // find and fill testroom
+        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
+        fillRoom(testRoom, 5);
 
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", USER_EMAIL)
+                        .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
                 .andDo(print())
@@ -122,15 +136,9 @@ public class RoomControllerTest {
 
     @Test
     public void checkInFullRoom() throws Exception {
-        try {
-            // fill room with people
-            fillRoom(
-                    // save initiated Room in DB
-                    roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10))
-                    , 10);
-        } catch(InvalidEmailException mailError) {
-
-        }
+        // find and fill testroom
+        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
+        fillRoom(testRoom, 10);
 
         // request form to check into full room should redirect to roomFull/{roomId}
         this.mockMvc.perform(
@@ -138,19 +146,30 @@ public class RoomControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("roomFull/" + TEST_ROOM_NAME));
+    }
 
+    @Test
+    public void checkInInvalidCredentials() throws Exception{
+        // check in with empty username should
+        this.mockMvc.perform(
+                post("/r/checkIn")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", "")
+                        .param("roomId", TEST_ROOM_NAME)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Invalid Email"));
     }
 
     @Test
     public void checkOut() throws Exception {
-        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
-
-        // post request on /r/checkout should redirect to /r/checkedOut
+        // post request on /r/checkout should check out user and redirect to /r/checkedOut
         this.mockMvc.perform(
                 // check in
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", USER_EMAIL)
+                        .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
                 .andDo(print())
@@ -160,25 +179,62 @@ public class RoomControllerTest {
                         result -> mockMvc.perform(
                                 post("/r/checkOut")
                                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                        .param("visitorEmail", USER_EMAIL)
+                                        .param("visitorEmail", TEST_USER_EMAIL)
                                         .with(csrf()))
                                 .andDo(print())
                                 .andExpect(status().isFound())
-                                .andExpect(redirectedUrl("/r/checkedOut"))
-                );
+                                .andExpect(redirectedUrl("/r/checkedOut")));
     }
 
-    // TODO post on {roomId}/checkout
-    //  check for and implement not tested method functionalities
-    //  move room filling functionality into helperclass
-
-    public void checkOutOfSpecifiedRoom(){
-
+    @Test
+    public void checkOutInvalidCredentials() throws Exception {
+        this.mockMvc.perform(
+                // check in
+                post("/r/checkIn")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(
+                        // check out
+                        result -> mockMvc.perform(
+                                post("/r/checkOut")
+                                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                        // invalid email
+                                        .param("visitorEmail", "1" + TEST_USER_EMAIL)
+                                        .with(csrf()))
+                                .andDo(print())
+                                .andExpect(status().is(404)));
     }
 
+    @Test
+    public void roomNotFoundException() throws Exception{
+        this.mockMvc.perform(
+                get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
+                .andDo(print())
+                .andExpect(status().is(404))  // checking for response status code 404
+                .andExpect(status().reason(containsString("Room not found"))); // checking if error message is displayed for user
+    }
+
+    /**
+     *  Helper method that creates users to fill room.
+     *  An address is created by combining iterator value with '@stud.hs-mannheim.de'.
+     *  To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
+     * @param room the room that should get filled.
+     * @param amount the amount the room will be filled.
+     */
     public void fillRoom(Room room, int amount) throws InvalidEmailException {
+        String randomUserEmail;
         for (int i = 0; i < amount; i++) {
-            roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
+            randomUserEmail = "" + i + "@stud.hs-mannheim.de";
+
+            if(randomUserEmail != TEST_USER_EMAIL){
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
+            } else {
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de"), room);
+            }
         }
     }
 }
