@@ -43,6 +43,7 @@ public class Room {
         this.buildingName = buildingName;
         this.maxCapacity = maxCapacity;
         this.roomPin = String.format("%04d", new Random().nextInt(10000));
+       // System.out.println(roomPin);
     }
 
     public String getId() {
