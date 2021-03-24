@@ -48,6 +48,10 @@ public class RoomService {
 
 
     public Room saveRoom(@NonNull Room room) {
+        if (findByName(room.getName()).get().getName().equals(room.getName())) {
+            room.setRoomPin(findByName(room.getName()).get().getRoomPin());
+
+        }
         return roomsRepo.save(room);
     }
 

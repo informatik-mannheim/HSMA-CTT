@@ -80,6 +80,7 @@ public class RoomController {
         }
 
         Room.Data roomData = new Room.Data(room.get());
+        // System.out.println("--------------------------------------------------> Room Pin"+roomData.getRoomPin());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
 
