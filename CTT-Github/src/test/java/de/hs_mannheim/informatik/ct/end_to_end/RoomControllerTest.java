@@ -41,7 +41,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -86,7 +85,6 @@ public class RoomControllerTest {
         // /{roomId}
         this.mockMvc.perform(
                 get("/r/" + TEST_ROOM_NAME).with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(
                         containsString(rTestRoom)));
@@ -98,7 +96,10 @@ public class RoomControllerTest {
                 .andExpect(content().string(
                         containsString(rTestRoomCheckOut)
                 ));
+    }
 
+    @Test
+    public void accessingImportWithoutAdminLogin() throws Exception{
         // /import (should not be accessible without admin login)
         this.mockMvc.perform(
                 get("/r/import").with(csrf()))
@@ -114,7 +115,6 @@ public class RoomControllerTest {
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -130,7 +130,6 @@ public class RoomControllerTest {
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -143,7 +142,6 @@ public class RoomControllerTest {
         // request form to check into full room should redirect to roomFull/{roomId}
         this.mockMvc.perform(
                 get("/r/" + TEST_ROOM_NAME).with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("roomFull/" + TEST_ROOM_NAME));
     }
@@ -157,7 +155,6 @@ public class RoomControllerTest {
                         .param("visitorEmail", "")
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
-                .andDo(print())
                 .andExpect(status().is(400))
                 .andExpect(status().reason("Invalid Email"));
     }
@@ -172,7 +169,6 @@ public class RoomControllerTest {
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(
                         // check out
@@ -181,7 +177,6 @@ public class RoomControllerTest {
                                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                         .param("visitorEmail", TEST_USER_EMAIL)
                                         .with(csrf()))
-                                .andDo(print())
                                 .andExpect(status().isFound())
                                 .andExpect(redirectedUrl("/r/checkedOut")));
     }
@@ -195,7 +190,6 @@ public class RoomControllerTest {
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
                         .with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(
                         // check out
@@ -205,7 +199,6 @@ public class RoomControllerTest {
                                         // invalid email
                                         .param("visitorEmail", "1" + TEST_USER_EMAIL)
                                         .with(csrf()))
-                                .andDo(print())
                                 .andExpect(status().is(404)));
     }
 
@@ -213,7 +206,6 @@ public class RoomControllerTest {
     public void roomNotFoundException() throws Exception{
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
-                .andDo(print())
                 .andExpect(status().is(404))  // checking for response status code 404
                 .andExpect(status().reason(containsString("Room not found"))); // checking if error message is displayed for user
     }
@@ -226,9 +218,9 @@ public class RoomControllerTest {
      * @param amount the amount the room will be filled.
      */
     public void fillRoom(Room room, int amount) throws InvalidEmailException {
-        String randomUserEmail;
+
         for (int i = 0; i < amount; i++) {
-            randomUserEmail = "" + i + "@stud.hs-mannheim.de";
+            String randomUserEmail = String.format("%d@stud.hs-mannheim.de", i);
 
             if(randomUserEmail != TEST_USER_EMAIL){
                 roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
