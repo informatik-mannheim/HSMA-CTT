@@ -42,6 +42,8 @@ public class EventService {
 	private VisitorRepository visitorRepository;
 	@Autowired
 	private EventVisitRepository eventVisitRepository;
+	@Autowired
+	private DateTimeService dateTimeService;
 
 	public Event saveEvent(Event entity) {
 		return eventRepository.save(entity);
@@ -64,7 +66,7 @@ public class EventService {
 	}
 
 	public Collection<Event> getEventsToday() {
-		long time = new Date().getTime();
+		long time = dateTimeService.getDateNow().getTime();
 		return eventRepository.findByDatumGreaterThan(new Date(time - time % (24 * 60 * 60 * 1000)));
 	}
 

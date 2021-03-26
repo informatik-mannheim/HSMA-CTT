@@ -35,7 +35,7 @@ public class EventVisit {
 	private PrimaryKey id;
 
 	@Column(updatable = false)
-	private final Date startDate = new Date();
+	private Date startDate;
 
 	@Column
 	private Date endDate;
@@ -50,9 +50,10 @@ public class EventVisit {
 	@NonNull
 	private Visitor visitor;
 
-	public EventVisit(Event event, Visitor visitor) {
+	public EventVisit(Event event, Visitor visitor, Date startDate) {
 		this.event = event;
 		this.visitor = visitor;
+		this.startDate = startDate;
 
 		this.id = new PrimaryKey(event, visitor);
 	}
