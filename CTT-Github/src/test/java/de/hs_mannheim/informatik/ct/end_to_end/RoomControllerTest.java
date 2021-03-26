@@ -101,6 +101,7 @@ public class RoomControllerTest {
     @Test
     public void accessingImportWithoutAdminLogin() throws Exception{
         // /import (should not be accessible without admin login)
+        // todo find a way to check for redirect without 'http://localhost'
         this.mockMvc.perform(
                 get("/r/import").with(csrf()))
                 .andExpect(status().is(302))
