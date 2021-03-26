@@ -20,7 +20,6 @@ package de.hs_mannheim.informatik.ct.persistence;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +27,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -43,7 +44,7 @@ public class DbInit implements CommandLineRunner {
     // For testing uncomment (we dont read Rooms from csv, for testing we initialize them here)
 
 
-/*    public Optional<Room> findByName(String roomName) {
+    public Optional<Room> findByName(String roomName) {
         try {
             return roomsRepo.findByNameIgnoreCase(roomName);
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -51,20 +52,26 @@ public class DbInit implements CommandLineRunner {
         }
     }
 
-    public Room saveRoom(@NonNull Room room) {
-        System.out.println("Room Name this: " + room.getName());
-        System.out.println("Room Name find: " + findByName(room.getName()).get().getName());
 
-        if (findByName(room.getName()).get().getName().equals(room.getName())) {
-            System.out.println("True");
+  /*  public void saveAllRooms(@NonNull ArrayList<Room> roomList) {
+        roomsRepo.saveAll(roomList);
+    }
 
-            System.out.println("Room Pin before: " + room.getRoomPin());
-            room.setRoomPin(findByName(room.getName()).get().getRoomPin());
-            System.out.println("Room Pin after: " + room.getRoomPin());
 
+    public List<Room> checkRoomPin(List<Room> roomList) {
+        List<Room> oldRoomList = new ArrayList<>();
+        oldRoomList = roomsRepo.findAll();
+        for (Room r : roomList) {
+            for (Room rOld : oldRoomList) {
+                if (r.getName().equals(rOld.getName())) {
+                    r.setRoomPin(rOld.getRoomPin());
+                    System.out.println("Pin überschrieben");
+                }
+            }
         }
-        return roomsRepo.save(room);
+        return roomList;
     }*/
+
 
     @Override
     public void run(String... args) {
@@ -74,9 +81,21 @@ public class DbInit implements CommandLineRunner {
             roomsRepo.save(new Room("test", "test", 12));
             roomsRepo.save(new Room("A210", "A", 19));
 
-            // saveRoom(new Room("A007a", "A", 3));
-            // saveRoom(new Room("test", "test", 12));
-            // saveRoom(new Room("A210", "A", 19));
+          /*  Room r1 = (new Room("A007a", "A", 3));
+            Room r2 = (new Room("test", "test", 12));
+            Room r3 = (new Room("A210", "A", 19));
+
+            ArrayList<Room> roomList = new ArrayList<>();
+            roomList.add(r1);
+            roomList.add(r2);
+            roomList.add(r3);
+
+            System.out.println("Alle Räume zum Array hinzugefügt");
+
+            checkRoomPin(roomList);
+
+            saveAllRooms(roomList);*/
+
         }
     }
 

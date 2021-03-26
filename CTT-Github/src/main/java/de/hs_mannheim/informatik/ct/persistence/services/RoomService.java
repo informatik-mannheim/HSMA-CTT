@@ -21,14 +21,16 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
-import org.hibernate.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 @Service
@@ -55,21 +57,38 @@ public class RoomService {
         return roomsRepo.save(room);
     }
 
-    @NonNull
-    public List<Room> all() {
-        return roomsRepo.findAll();
+    public void saveAllRooms(@NonNull List<Room> roomList) {
+        checkRoomPin(roomList);
+        roomsRepo.saveAll(roomList);
+    }
+
+    public List<Room> checkRoomPin(List<Room> roomList) {
+        List<Room> oldRoomList = roomsRepo.findAll();
+        for (Room r : roomList) {
+            for (Room rOld : oldRoomList) {
+                if (r.getName().equals(rOld.getName())) {
+                    r.setRoomPin(rOld.getRoomPin());
+                    break;
+                }
+            }
+        }
+        return roomList;
     }
 
     //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
     public void importFromCsv(BufferedReader csv) {
+        List<Room> roomList = new ArrayList<>();
         csv.lines()
                 .map((line) -> {
+
                     String[] values = line.split(COMMA_DELIMITER);
                     String building = values[0];
                     String roomName = values[1];
                     int roomCapacity = Integer.parseInt(values[2]);
-                    return new Room(roomName, building, roomCapacity);
-                })
-                .forEach(this::saveRoom);
+                    return roomList.add(new Room(roomName, building, roomCapacity));
+
+                });
+
+        saveAllRooms(roomList);
     }
 }

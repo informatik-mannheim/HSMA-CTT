@@ -52,7 +52,6 @@ import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
 
-
 @Controller
 @RequestMapping("r")
 public class RoomController {
@@ -80,7 +79,7 @@ public class RoomController {
         }
 
         Room.Data roomData = new Room.Data(room.get());
-        // System.out.println("--------------------------------------------------> Room Pin"+roomData.getRoomPin());
+        //System.out.println("--------------------------------------------------> Room Pin"+roomData.getRoomPin());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
 

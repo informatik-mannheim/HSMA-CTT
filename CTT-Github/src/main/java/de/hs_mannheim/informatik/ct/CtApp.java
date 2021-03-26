@@ -26,8 +26,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class CtApp {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CtApp.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CtApp.class, args);
+    }
 
 }
