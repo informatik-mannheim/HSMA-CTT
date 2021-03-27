@@ -10,36 +10,27 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 public class ContactListGenerator {
-    @Autowired
-    private DateTimeService dateTimeService;
-
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+    private final DateTimeService dateTimeService;
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm", Locale.GERMANY);
 
     private final String sheetName = "Kontaktliste";
-    private final int columnWidth = 24 * 256;
+    private final int columnWidth = 30 * 256;
     private final Function<String, String> headerText = email ->
             String.format("Mögliche Kontakte von %s an der Hochschule Mannheim", email);
     private final Function<LocalDateTime, String> timestampText = (timestamp) ->
             String.format("Stand: %s", dateTimeFormatter.format(timestamp));
-    private final List<String> tableHeadings = Arrays.asList(
-            "EMail-Adresse", "Raum/Veranstaltung", "Anmeldezeit", "Zeitlicher Abstand");
-    private final List<Function<Contact, String>> tableCellValues = Arrays.asList(
-            contact -> contact.getTarget().getEmail(),
-            Contact::getContactLocation,
-            contact -> dateTimeFormatter.format(contact.getStartDate()),
-            contact -> String.format("%d min", contact.getDiffInStart().abs().toMinutes())
-    );
+    private final List<String> tableHeadings;
+    private final List<Function<Contact<?>, String>> tableCellValues;
     private final String footerNotice = "Erstellt mit CTT, dem Corona Tracking Tool der Hochschule Mannheim";
 
     private final FontStyler headerFontStyler = font -> font.setFontHeightInPoints((short) 16);
@@ -52,7 +43,13 @@ public class ContactListGenerator {
         font.setColor(redColorCode);
     };
 
-    public HSSFWorkbook generateWorkbook(Iterable<Contact> contacts, String targetEmail) throws IOException {
+    public ContactListGenerator(DateTimeService dateTimeService, List<String> tableHeadings, List<Function<Contact<?>, String>> tableCellValues) {
+        this.dateTimeService = dateTimeService;
+        this.tableHeadings = tableHeadings;
+        this.tableCellValues = tableCellValues;
+    }
+
+    public HSSFWorkbook generateWorkbook(Iterable<Contact<?>> contacts, String targetEmail) {
         val workbook = new HSSFWorkbook();
         val sheet = workbook.createSheet(sheetName);
 
@@ -71,7 +68,7 @@ public class ContactListGenerator {
         return workbook;
     }
 
-    private void writeContacts(Iterable<Contact> contacts, String targetEmail, HSSFWorkbook workbook, HSSFSheet sheet) {
+    private void writeContacts(Iterable<Contact<?>> contacts, String targetEmail, HSSFWorkbook workbook, HSSFSheet sheet) {
         val defaultStyle = workbook.createCellStyle();
         val contactStyle = styleWithFont(workbook, contactStyler);
         for (val contact : contacts) {
@@ -113,7 +110,7 @@ public class ContactListGenerator {
     }
 
     private static HSSFRow appendRow(HSSFSheet sheet) {
-        return sheet.createRow(sheet.getLastRowNum());
+        return sheet.createRow(sheet.getLastRowNum() + 1);
     }
 
     private static HSSFCellStyle styleWithFont(HSSFWorkbook workbook, FontStyler fontStyler) {

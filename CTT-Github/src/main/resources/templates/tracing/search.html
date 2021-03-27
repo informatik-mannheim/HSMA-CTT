@@ -15,7 +15,7 @@
 
 		<p>Bitte geben Sie hier die Mail-Adresse des/r Erkrankten ein, um mögliche Kontakte zu identifizieren.</p>
 		
-		<form action="/suchen">
+		<form action="#" th:action="@{results}" method="POST">
 			 <div class="form-group">
 				<label for="email">E-Mail: *</label>
 				<input type="text" id="email" name="email" size="32" class="ml-1" required>
