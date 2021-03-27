@@ -18,34 +18,32 @@ package de.hs_mannheim.informatik.ct.util;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
-import lombok.val;
-import lombok.var;
-
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 public class DocxTemplate<T> {
     private XWPFDocument document;
     private final File templateFile;
-    private List<String> imageReferences;
     private List<T> dataSource;
     private final TextTemplate<T> textFormatter;
     private final Function<T, byte[]> imageGenerator;
@@ -68,13 +66,13 @@ public class DocxTemplate<T> {
         this.imageGenerator = imageGenerator;
     }
 
-    public XWPFDocument generate(List<T> dataSource) throws IOException, InvalidFormatException {
+    public XWPFDocument generate(List<T> dataSource) throws IOException, XmlException {
         try (val templateStream = new FileInputStream(templateFile)) {
             document = new XWPFDocument(templateStream);
         }
 
         this.dataSource = dataSource;
-        addImagesToDocMedia();
+        val imageIds = addImagesToDocMedia();
         val templateBuffer = getTemplateBuffer();
         // The section properties is at the end of body and sets headers, footers, etc.
         val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
@@ -83,32 +81,58 @@ public class DocxTemplate<T> {
         document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
 
         // Generate new Pages
-        for (int pageIndex = 0; pageIndex < dataSource.size(); pageIndex++) {
-            try {
-                applyTemplateToPage(pageIndex, templateBuffer);
-            } catch (XmlException e) {
-                throw new InvalidFormatException("Applying the template resulted in invalid XML.", e);
-            }
+        val pageDataSource = StreamSupport.stream(
+                ZipPageData(dataSource, imageIds).spliterator(),
+                false).collect(Collectors.toList());
 
-            // Set a page break in every page, except for the final page
-            if(pageIndex < dataSource.size() - 1) {
-                document.getParagraphArray(document.getParagraphs().size() - 1).setPageBreak(true);
-            }
-        }
+        val templateXml = getParagraphTemplateXml(templateBuffer);
 
+        pageDataSource
+                .parallelStream()
+                .unordered()
+                .map(data -> new Indexed<>(data.index, applyPageParagraphXml(templateXml, data.value)))
+                .sorted(Comparator.comparingInt(o -> o.index))
+                .forEachOrdered(paragraphs -> {
+                    for (int paragraphIndex = 0; paragraphIndex < paragraphs.value.size(); paragraphIndex++) {
+                        val paragraph = document.createParagraph();
+                        paragraph.getCTP().set(paragraphs.value.get(paragraphIndex));
+                        if (paragraphIndex == paragraphs.value.size() - 1) {
+                            paragraph.setPageBreak(true);
+                        }
+                    }
+                });
         // Reapply the section properties
         document.getDocument().getBody().setSectPr(sectionProperties);
 
         return document;
     }
 
-    private void addImagesToDocMedia() throws InvalidFormatException {
-        imageReferences = new ArrayList<>();
-
-        for (T data : dataSource) {
-            val image = imageGenerator.apply(data);
-            imageReferences.add(document.addPictureData(image, Document.PICTURE_TYPE_PNG));
+    private List<String> addImagesToDocMedia() {
+        val doc = document;
+        val indexDataSource = new ArrayList<Indexed<T>>(dataSource.size());
+        for (int i = 0; i < dataSource.size(); i++) {
+            indexDataSource.add(new Indexed<>(i, dataSource.get(i)));
         }
+        val indexedList =  indexDataSource
+                .parallelStream()
+                .unordered()
+                .map(indexData -> new Indexed<>(indexData.index, imageGenerator.apply(indexData.value)))
+                .map(image -> {
+                    synchronized (doc) {
+                        try {
+                            return new Indexed<>(image.index, document.addPictureData(image.value, Document.PICTURE_TYPE_PNG));
+                        } catch (InvalidFormatException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return indexedList
+                .stream()
+                .sorted(Comparator.comparingInt(indexed -> indexed.index))
+                .map(Indexed::getValue)
+                .collect(Collectors.toList());
     }
 
     private byte[] getTemplateBuffer() throws IOException {
@@ -118,21 +142,29 @@ public class DocxTemplate<T> {
         }
     }
 
-    private void applyTemplateToPage(int dataIndex, byte[] templateBuffer) throws IOException, XmlException {
-        try (val templateStream = new ByteArrayInputStream(templateBuffer); val template = new XWPFDocument(templateStream);) {
-            for (XWPFParagraph paragraph : template.getParagraphs()) {
-                val templateXml = paragraph.getCTP().xmlText();
-                var paragraphXml = applyTemplateToXml(dataIndex, templateXml);
+    @SneakyThrows
+    private List<XmlObject> applyPageParagraphXml(List<String> templateXml, PageData<T> data) {
+        val replacedParagraphs = new ArrayList<XmlObject>(templateXml.size());
+        for (val template : templateXml) {
+            val paragraphXml = applyTemplateToXml(data, template);
+            replacedParagraphs.add(XmlObject.Factory.parse(paragraphXml));
+        }
 
-                // Add paragraph with new XML
-                document.createParagraph().getCTP().set(XmlObject.Factory.parse(paragraphXml));
-            }
+        return replacedParagraphs;
+    }
+
+    private List<String> getParagraphTemplateXml(byte[] templateBuffer) throws IOException {
+        try (val templateStream = new ByteArrayInputStream(templateBuffer); val template = new XWPFDocument(templateStream)) {
+            return template.getParagraphs()
+                    .stream()
+                    .map(xwpfParagraph -> xwpfParagraph.getCTP().xmlText())
+                    .collect(Collectors.toList());
         }
     }
 
-    private String applyTemplateToXml(int dataIndex, String templateXml) {
-        val data = dataSource.get(dataIndex);
-        val imgIndex = imageReferences.get(dataIndex);
+    private String applyTemplateToXml(PageData<T> pageData, String templateXml) {
+        val data = pageData.data;
+        val imgIndex = pageData.qrCodeId;
 
         // Replace text markers
         templateXml = complexReplaceAll(templateXml, docxTextReplacer, match -> {
@@ -165,7 +197,39 @@ public class DocxTemplate<T> {
         return template;
     }
 
+    private Iterable<Indexed<PageData<T>>> ZipPageData(Iterable<T> data, Iterable<String> qrImageIds) {
+        val dataIterator = data.iterator();
+        val idIterator = qrImageIds.iterator();
+        return () -> new Iterator<Indexed<PageData<T>>>() {
+            int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return dataIterator.hasNext() && idIterator.hasNext();
+            }
+
+            @Override
+            public Indexed<PageData<T>> next() {
+                return new Indexed<>(index++, new PageData<>(dataIterator.next(), idIterator.next()));
+            }
+        };
+    }
+
     public interface TextTemplate<T> {
         String apply(T data, String templatePlaceholder);
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class PageData<T> {
+        private T data;
+        private String qrCodeId;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class Indexed<T> {
+        private int index;
+        private T value;
     }
 }
