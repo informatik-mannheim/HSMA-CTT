@@ -1,0 +1,45 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title>Kontaktliste</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+        <div class="border border-secondary p-2 mb-3">
+            <h5 class="mb-4">Kontaktverfolgung</h5>
+
+            <div th:if="${#lists.isEmpty(tableValues)}">
+                <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(tableValues)}">
+
+                <p>Hier sind die Kontakte f&uuml;r <span th:text="${target}"></span>.
+                    Zur Weitergabe an das Gesundheitsamt können die Daten <a
+                        th:href="@{download(email=${target})}">hier
+                        als Excel-Datei</a>
+                    heruntergeladen werden.</p>
+
+                <table class="table table-hover mt-3">
+                    <thead class="table-info">
+                        <tr>
+                            <th th:each="header: ${tableHeaders}" th:text="${header}" />
+                        </tr>
+                    </thead>
+
+                    <tr th:each="row: ${tableValues}">
+                        <td th:each="cell: ${row}" th:text="${cell}" />
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
