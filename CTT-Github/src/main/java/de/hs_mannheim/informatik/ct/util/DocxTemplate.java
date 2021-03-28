@@ -96,7 +96,8 @@ public class DocxTemplate<T> {
                     for (int paragraphIndex = 0; paragraphIndex < paragraphs.value.size(); paragraphIndex++) {
                         val paragraph = document.createParagraph();
                         paragraph.getCTP().set(paragraphs.value.get(paragraphIndex));
-                        if (paragraphIndex == paragraphs.value.size() - 1) {
+                        val isLastPage = paragraphs.index == dataSource.size() - 1;
+                        if (!isLastPage && paragraphIndex == paragraphs.value.size() - 1) {
                             paragraph.setPageBreak(true);
                         }
                     }
