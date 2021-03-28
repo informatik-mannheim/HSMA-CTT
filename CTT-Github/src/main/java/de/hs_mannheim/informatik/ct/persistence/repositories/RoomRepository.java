@@ -36,7 +36,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
     int backupH2DB(String path);
 
     @Query("SELECT DISTINCT room.buildingName " +
-            "FROM Room room")
+            "FROM Room room " +
+            "ORDER BY room.buildingName")
     List<String> getAllBuildings();
 
     Optional<Room> findByNameIgnoreCase(String roomName);
