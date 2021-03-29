@@ -10,10 +10,15 @@
 <body>
 <div layout:fragment="content">
     <h1 class="content-headers" style="margin-bottom: 0;">Raum voll</h1>
-    <p th:text="${'Leider ist der Raum ' + roomData.roomName + ' momentan voll (Maximal: ' + roomData.maxCapacity + ' Personen). Bitte betreten Sie ihn nicht!'}">
-        Leider ist der Raum bereits voll. Bitte betreten Sie ihn nicht!</p>
+    <p th:text="${'Dieser Raum '+roomData.roomName+ ' scheint voll zu sein,Maximal: ' + roomData.maxCapacity+ ' Personen. Bitte überprüfen Sie ob die Kapazität auf dem Schild mit den Personen im Raum übereinstimmt! '
+      }">
+    </p>
     <div class="icon-container">
         <div class="icon-background no-access"></div>
+    </div>
+    <p>Sollten weniger Personen im Raum sein, als von der App angezeigt, können Sie sich trotzdem anmelden.</p>
+    <div>
+        <a class="button">ANMELDEN</a>
     </div>
     <p>Bereits in diesem Raum angemeldet?</p>
     <p>
