@@ -40,10 +40,6 @@ public class DbInit implements CommandLineRunner {
     @Autowired
     private RoomRepository roomsRepo;
 
-
-    // For testing uncomment (we dont read Rooms from csv, for testing we initialize them here)
-
-
     public Optional<Room> findByName(String roomName) {
         try {
             return roomsRepo.findByNameIgnoreCase(roomName);
@@ -51,26 +47,6 @@ public class DbInit implements CommandLineRunner {
             return roomsRepo.findById(roomName);
         }
     }
-
-
-  /*  public void saveAllRooms(@NonNull ArrayList<Room> roomList) {
-        roomsRepo.saveAll(roomList);
-    }
-
-
-    public List<Room> checkRoomPin(List<Room> roomList) {
-        List<Room> oldRoomList = new ArrayList<>();
-        oldRoomList = roomsRepo.findAll();
-        for (Room r : roomList) {
-            for (Room rOld : oldRoomList) {
-                if (r.getName().equals(rOld.getName())) {
-                    r.setRoomPin(rOld.getRoomPin());
-                    System.out.println("Pin überschrieben");
-                }
-            }
-        }
-        return roomList;
-    }*/
 
 
     @Override
@@ -81,20 +57,6 @@ public class DbInit implements CommandLineRunner {
             roomsRepo.save(new Room("test", "test", 12));
             roomsRepo.save(new Room("A210", "A", 19));
 
-          /*  Room r1 = (new Room("A007a", "A", 3));
-            Room r2 = (new Room("test", "test", 12));
-            Room r3 = (new Room("A210", "A", 19));
-
-            ArrayList<Room> roomList = new ArrayList<>();
-            roomList.add(r1);
-            roomList.add(r2);
-            roomList.add(r3);
-
-            System.out.println("Alle Räume zum Array hinzugefügt");
-
-            checkRoomPin(roomList);
-
-            saveAllRooms(roomList);*/
 
         }
     }
