@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -50,10 +51,6 @@ public class RoomService {
 
 
     public Room saveRoom(@NonNull Room room) {
-        if (findByName(room.getName()).get().getName().equals(room.getName())) {
-            room.setRoomPin(findByName(room.getName()).get().getRoomPin());
-
-        }
         return roomsRepo.save(room);
     }
 
@@ -62,7 +59,7 @@ public class RoomService {
         roomsRepo.saveAll(roomList);
     }
 
-    public List<Room> checkRoomPin(List<Room> roomList) {
+    private List<Room> checkRoomPin(List<Room> roomList) {
         List<Room> oldRoomList = roomsRepo.findAll();
         for (Room r : roomList) {
             for (Room rOld : oldRoomList) {
@@ -80,7 +77,6 @@ public class RoomService {
         List<Room> roomList = new ArrayList<>();
         csv.lines()
                 .map((line) -> {
-
                     String[] values = line.split(COMMA_DELIMITER);
                     String building = values[0];
                     String roomName = values[1];
@@ -88,7 +84,6 @@ public class RoomService {
                     return roomList.add(new Room(roomName, building, roomCapacity));
 
                 });
-
         saveAllRooms(roomList);
     }
 }
