@@ -1,5 +1,12 @@
 # Deploying CTT on a server
 
+## Table of Content
+
+* [Software Requirements](#Software-Requirements)
+* [Setup](#Setup)
+* [Configuration](#Configuration)
+* [Container Architecture](#Container-Architecture)
+
 ## Software Requirements  
 
 CTT only requires Docker and Docker-Compose to be installed on the server. Provided links are for an Ubuntu installations.
@@ -29,6 +36,21 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 1. Copy the `docker-compose.yml` and `nginx.conf` files from the repository. Neither should require further customization, if possible use the `.env` for this purpose.
 1. Run `docker-compose pull && docker-compose up -d`. This will ensure that the newest images are pulled and containers restarted, if necessary. The containers are configured to restart if anything breaks (cf. docker-compose.yml).
 1. To stop the server again use `docker-compose down`.
+
+## Configuration
+
+### Import a room list
+
+To configure the rooms available in the building(s) upload a `.csv` file containing a list of rooms to <https://your.domain.com/r/import>. The CSV is semi-colon delimited with Windows (CLRF) line-endings with three columns: Building letter; room name; room capacity.  
+An example row for room 'A008' in building 'A' :
+
+``` csv
+A;A008;20
+```
+
+### Printing room postings
+
+The page containing the check-in QR code can be generated as a `.docx` document for each building at <https://your.domain.com/printout/rooms>.
 
 ## Container Architecture
 
