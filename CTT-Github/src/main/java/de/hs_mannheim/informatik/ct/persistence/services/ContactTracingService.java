@@ -1,4 +1,4 @@
-package de.hs_mannheim.informatik.ct.model;
+package de.hs_mannheim.informatik.ct.persistence.services;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,19 +18,28 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import lombok.NonNull;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 
+@Service
+public class ContactTracingService {
+    @Autowired
+    private List<VisitService<?>> visitServices;
 
-/**
- * Pair Class representing a target visitor having contact with another visitor
- */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class RoomVisitContact {
-    private RoomVisit target;
-    private RoomVisit contact;
+    @NonNull
+    public List<Contact<?>> getVisitorContacts(@NonNull Visitor visitor) {
+        val contacts = new ArrayList<Contact<?>>();
+        for(val service : visitServices) {
+            contacts.addAll(service.getVisitorContacts(visitor));
+        }
+
+        return contacts;
+    }
 }

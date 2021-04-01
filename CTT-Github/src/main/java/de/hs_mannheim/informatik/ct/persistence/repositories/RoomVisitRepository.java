@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
 import java.util.Date;
 import java.util.List;
 
+import de.hs_mannheim.informatik.ct.model.Contact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,8 +29,6 @@ import org.springframework.data.repository.query.Param;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
-import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
-
 
 
 public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
@@ -54,14 +53,15 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 
 	void deleteByEndDateBefore(Date endDate);
 
-	@Query("SELECT NEW de.hs_mannheim.informatik.ct.model.RoomVisitContact(visitTarget, visitOther) " +
+	@Query("SELECT NEW de.hs_mannheim.informatik.ct.model.Contact(visitTarget, visitOther) " +
 			"FROM RoomVisit visitTarget," +
 			"RoomVisit visitOther " +
 			"WHERE visitTarget.visitor = :visitor AND " +
+			"visitTarget.visitor != visitOther.visitor AND " +
 			"visitTarget.room = visitOther.room AND " +
 			"visitTarget.startDate <= visitOther.endDate AND " +
 			"visitOther.startDate <= visitTarget.endDate " +
 			"ORDER BY visitTarget.startDate")
-	List<RoomVisitContact> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
+	List<Contact<RoomVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 
 }

@@ -19,10 +19,12 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 import com.sun.istack.NotNull;
+import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.EventVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Event;
 import de.hs_mannheim.informatik.ct.persistence.repositories.EventVisitRepository;
+import lombok.NonNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,7 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
 
 
 @Service
-public class EventVisitService {
+public class EventVisitService implements VisitService<EventVisit> {
 
     @Autowired
     private EventVisitRepository eventVisitRepository;
@@ -82,5 +84,10 @@ public class EventVisitService {
     public void deleteExpiredRecords(Period recordLifeTime) {
         val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
         eventVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
+    }
+
+    @Override
+    public List<Contact<EventVisit>> getVisitorContacts(@NonNull Visitor visitor) {
+        return eventVisitRepository.findVisitsWithContact(visitor);
     }
 }

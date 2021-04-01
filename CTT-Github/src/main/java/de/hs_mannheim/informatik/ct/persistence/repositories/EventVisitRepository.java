@@ -21,7 +21,9 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
 import java.util.Date;
 import java.util.List;
 
+import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.EventVisit;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +46,15 @@ public interface EventVisitRepository extends JpaRepository<EventVisit, Long> {
             "FROM EventVisit eventVisit " +
             "WHERE eventVisit.visitor.email = :visitorEmail and eventVisit.endDate is null")
     List<EventVisit> getNotSignedOut(@Param(value = "visitorEmail") String visitorEmail);
+
+    @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.Contact(visitTarget, visitOther) " +
+            "FROM EventVisit visitTarget," +
+            "EventVisit visitOther " +
+            "WHERE visitTarget.visitor = :visitor AND " +
+            "visitTarget.visitor != visitOther.visitor AND " +
+            "visitTarget.event = visitOther.event AND " +
+            "visitTarget.startDate <= visitOther.endDate AND " +
+            "visitOther.startDate <= visitTarget.endDate " +
+            "ORDER BY visitTarget.startDate")
+    List<Contact<EventVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 }

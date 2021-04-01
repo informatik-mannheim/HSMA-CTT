@@ -57,10 +57,6 @@ public class EventService {
 		return eventVisitRepository.save(eventVisit);
 	}
 
-	public Collection<VeranstaltungsBesuchDTO> findContactsFor(String email) {
-		return visitorRepository.findContactsFor(email);
-	}
-
 	public Collection<Event> getAll() {
 		return eventRepository.findAllByOrderByDatumAsc();
 	}
