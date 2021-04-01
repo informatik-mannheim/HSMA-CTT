@@ -363,12 +363,15 @@ public class CtController implements ErrorController {
 			if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
 				log.error("Der Raum konnte nicht gefunden werden");
 			}
-
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
 			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
 				model.addAttribute("error", "Diesen Raum gibt es nicht");
 			}
+			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/checkOut")){
+                log.error("Checkout nicht möglich da Email nicht vorhanden");
+                model.addAttribute("error", "Checkout nicht möglich, Emailadresse nicht im System. Waren Sie eingecheckt?");
+            }
 			else
 				model.addAttribute("error", "Fehler-Code: " + status.toString());
 		} else {
