@@ -29,21 +29,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
-    // TODO: nochmal überlegen wenn jemand noch angemeldet ist, wird er in einer Event nicht als Kontakt gefunden.
-    // Das sollte aber in der Praxis kein Problem sein, da eine Verfolgung ja ohnehin erst Tage später gemacht wird.
-
-    // Besucher der gleichen Event in einem definierbaren Zeitintervall
-    // Und auch der Gesuchte selbst wird zurückgegeben, damit man sieht, wann er in welcher Event war
-    @Query("SELECT new de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO(visitTarget, visitOther)" +
-            "FROM EventVisit visitTarget, " +
-            "EventVisit visitOther " +
-            "WHERE visitTarget.visitor.email = :email " +
-            "AND visitTarget.event.id = visitOther.event.id " +
-            "AND visitTarget.startDate <= visitOther.endDate " +
-            "AND visitOther.startDate <= visitTarget.endDate " +
-            "ORDER BY visitOther.startDate DESC")
-    Collection<VeranstaltungsBesuchDTO> findContactsFor(@Param(value = "email") String email);
-
     Optional<Visitor> findByEmail(String email);
 
     /**

@@ -30,7 +30,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomVisit {
+public class RoomVisit implements Visit {
     @ManyToOne
     @JoinColumn
     @NonNull
@@ -56,6 +56,11 @@ public class RoomVisit {
         this.visitor = visitor;
         this.room = room;
         this.startDate = startDate;
+    }
+
+    @Override
+    public String getLocationName() {
+        return room.getName();
     }
 
     @lombok.Data
