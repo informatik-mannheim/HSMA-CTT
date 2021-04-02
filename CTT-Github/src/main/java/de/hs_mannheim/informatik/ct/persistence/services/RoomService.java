@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -68,16 +69,15 @@ public class RoomService {
 
     //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
     public void importFromCsv(BufferedReader csv) {
-        List<Room> roomList = new ArrayList<>();
-        csv.lines()
+        List<Room> roomList = csv.lines()
                 .map((line) -> {
                     String[] values = line.split(COMMA_DELIMITER);
                     String building = values[0];
                     String roomName = values[1];
                     int roomCapacity = Integer.parseInt(values[2]);
-                    return roomList.add(new Room(roomName, building, roomCapacity));
-
-                });
+                    return new Room(roomName, building, roomCapacity);
+                })
+                .collect(Collectors.toList());
         saveAllRooms(roomList);
     }
 }
