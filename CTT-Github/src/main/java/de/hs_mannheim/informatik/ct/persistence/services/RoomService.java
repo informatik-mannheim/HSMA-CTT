@@ -26,12 +26,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 
 @Service
@@ -51,12 +46,11 @@ public class RoomService {
 
 
     public Room saveRoom(@NonNull Room room) {
-        return roomsRepo.save(room);
+        return saveAllRooms(Collections.singletonList(room)).get(0);
     }
 
-    public void saveAllRooms(@NonNull List<Room> roomList) {
-        checkRoomPin(roomList);
-        roomsRepo.saveAll(roomList);
+    public List<Room> saveAllRooms(@NonNull List<Room> roomList) {
+        return roomsRepo.saveAll(checkRoomPin(roomList));
     }
 
     private List<Room> checkRoomPin(List<Room> roomList) {
