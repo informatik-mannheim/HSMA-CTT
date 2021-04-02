@@ -21,14 +21,13 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
-import org.hibernate.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.util.Optional;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -48,17 +47,29 @@ public class RoomService {
 
 
     public Room saveRoom(@NonNull Room room) {
-        return roomsRepo.save(room);
+        return saveAllRooms(Collections.singletonList(room)).get(0);
     }
 
-    @NonNull
-    public List<Room> all() {
-        return roomsRepo.findAll();
+    public List<Room> saveAllRooms(@NonNull List<Room> roomList) {
+        return roomsRepo.saveAll(checkRoomPin(roomList));
+    }
+
+    private List<Room> checkRoomPin(List<Room> roomList) {
+        List<Room> oldRoomList = roomsRepo.findAll();
+        for (Room r : roomList) {
+            for (Room rOld : oldRoomList) {
+                if (r.getName().equals(rOld.getName())) {
+                    r.setRoomPin(rOld.getRoomPin());
+                    break;
+                }
+            }
+        }
+        return roomList;
     }
 
     //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
     public void importFromCsv(BufferedReader csv) {
-        csv.lines()
+        List<Room> roomList = csv.lines()
                 .map((line) -> {
                     String[] values = line.split(COMMA_DELIMITER);
                     String building = values[0];
@@ -66,6 +77,7 @@ public class RoomService {
                     int roomCapacity = Integer.parseInt(values[2]);
                     return new Room(roomName, building, roomCapacity);
                 })
-                .forEach(this::saveRoom);
+                .collect(Collectors.toList());
+        saveAllRooms(roomList);
     }
 }

@@ -52,7 +52,6 @@ import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
 
-
 @Controller
 @RequestMapping("r")
 public class RoomController {
