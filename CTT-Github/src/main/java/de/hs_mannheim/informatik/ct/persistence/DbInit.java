@@ -20,7 +20,9 @@ package de.hs_mannheim.informatik.ct.persistence;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.NonNull;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +30,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,26 +41,18 @@ public class DbInit implements CommandLineRunner {
     private String serverEnvironment;
 
     @Autowired
-    private RoomRepository roomsRepo;
-
-    public Optional<Room> findByName(String roomName) {
-        try {
-            return roomsRepo.findByNameIgnoreCase(roomName);
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return roomsRepo.findById(roomName);
-        }
-    }
-
+    private RoomService roomService;
 
     @Override
     public void run(String... args) {
         if (serverEnvironment.equals("dev")) {
+            val roomList = Arrays.asList(
+                    new Room("A007a", "A", 3),
+                    new Room("test", "test", 12),
+                    new Room("A210", "A", 19)
+            );
 
-            roomsRepo.save(new Room("A007a", "A", 3));
-            roomsRepo.save(new Room("test", "test", 12));
-            roomsRepo.save(new Room("A210", "A", 19));
-
-
+            roomService.saveAllRooms(roomList);
         }
     }
 
