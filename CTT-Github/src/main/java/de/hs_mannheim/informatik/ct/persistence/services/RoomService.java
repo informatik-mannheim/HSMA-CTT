@@ -54,7 +54,7 @@ public class RoomService {
     }
 
     public Room saveRoom(@NonNull Room room) {
-        return roomsRepo.save(room);
+        return saveAllRooms(Collections.singletonList(room)).get(0);
     }
 
     public List<Room> saveAllRooms(@NonNull List<Room> roomList) {
