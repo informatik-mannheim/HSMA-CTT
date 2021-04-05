@@ -1,5 +1,22 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.stereotype.Service;
+
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -15,20 +32,12 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.stereotype.Service;
-
-import java.io.BufferedReader;
-import java.util.*;
-import java.util.stream.Collectors;
-
 
 @Service
 public class RoomService {
@@ -44,7 +53,6 @@ public class RoomService {
             return roomsRepo.findById(roomName);
         }
     }
-
 
     public Room saveRoom(@NonNull Room room) {
         return saveAllRooms(Collections.singletonList(room)).get(0);
@@ -67,17 +75,41 @@ public class RoomService {
         return roomList;
     }
 
-    //TODO: Maybe check if csv is correctly formatted (or accept that the user uploads only correct files?)
+    // TODO: Maybe check if csv is correctly formatted (or accept that the user
+    // uploads only correct files?)
     public void importFromCsv(BufferedReader csv) {
-        List<Room> roomList = csv.lines()
-                .map((line) -> {
-                    String[] values = line.split(COMMA_DELIMITER);
-                    String building = values[0];
-                    String roomName = values[1];
-                    int roomCapacity = Integer.parseInt(values[2]);
-                    return new Room(roomName, building, roomCapacity);
-                })
-                .collect(Collectors.toList());
-        saveAllRooms(roomList);
+        csv.lines().map((line) -> {
+            String[] values = line.split(COMMA_DELIMITER);
+            String building = values[0];
+            String roomName = values[1];
+            int roomCapacity = Integer.parseInt(values[2]);
+            return new Room(roomName, building, roomCapacity);
+        }).forEach(this::saveRoom);
     }
+
+    public void importFromExcel(InputStream is) throws IOException {
+        XSSFWorkbook workbook = XSSFWorkbookFactory.createWorkbook(is);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        List<Room> rooms = new LinkedList<>();
+
+        Iterator<Row> iter = sheet.rowIterator();
+        if (iter.hasNext())
+            iter.next(); // skip first line
+
+        while (iter.hasNext()) {
+            Row row = iter.next();
+
+            String building = row.getCell(32).getStringCellValue();
+            String roomName = row.getCell(34).getStringCellValue();
+            int roomCapacity = (int) row.getCell(35).getNumericCellValue();
+
+            rooms.add(new Room(roomName, building, roomCapacity));
+        }
+
+        this.saveAllRooms(rooms);
+
+        workbook.close();
+    }
+
 }
