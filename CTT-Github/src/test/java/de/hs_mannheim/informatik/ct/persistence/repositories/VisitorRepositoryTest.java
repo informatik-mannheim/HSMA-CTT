@@ -79,18 +79,6 @@ public class VisitorRepositoryTest {
         entityManager.flush();
     }
 
-    @Test
-    public void findeKontakteFuer() {
-        befuelleDatenbank();
-
-        Collection<VeranstaltungsBesuchDTO> kontakte = visitorRepository.findContactsFor(visitor1.getEmail());
-        Assertions.assertEquals(2, kontakte.size());
-        Assertions.assertTrue(kontakte.stream().allMatch(besuch ->
-                besuch.getBesucherEmail().equals(visitor1.getEmail()) ||
-                        besuch.getBesucherEmail().equals(visitor2.getEmail())
-        ));
-    }
-
     /**
      * Uses the repository to fetch a visitor and checks if the email gets correctly decrypted
      */

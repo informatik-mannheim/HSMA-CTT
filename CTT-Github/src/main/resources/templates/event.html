@@ -13,12 +13,12 @@
 
 		<h5 class="mb-4">Herzlich willkommen zu <span th:text="|${event.name} (${#dates.format(event.datum, 'dd.MM.yyyy, HH:mm')})|">name</span></h5>
 		
-		<p style="color:red; font-size:180%" class="mt-4" th:if="${teilnehmerzahl == event.raumkapazitaet}">Maximale Teilnehmeranzahl erreicht!</p>
+		<p style="color:red; font-size:180%" class="mt-4" th:if="${teilnehmerzahl == event.roomCapacity}">Maximale Teilnehmeranzahl erreicht!</p>
 		
-		<div class="row" th:if="${teilnehmerzahl &lt; event.raumkapazitaet}">
+		<div class="row" th:if="${teilnehmerzahl &lt; event.roomCapacity}">
 			<div class="col-sm-6">
 				<p>Bisher <span th:text="${teilnehmerzahl} ?: '0'"></span> Person<td th:text="${teilnehmerzahl == 1} ? '' : 'en'" /> 
-					von maximal <span th:text="${event.raumkapazitaet} ?: '?'" /> anwesend.</p>
+					von maximal <span th:text="${event.roomCapacity} ?: '?'" /> anwesend.</p>
 		
 				<p>Bitte Ihre Anwesenheit <a th:href="@{/besuch?vid={vid}(vid=${event.id})}">hier eintragen</a> oder mit
 				   dem Handy den folgenden QR-Code nutzen.</p>

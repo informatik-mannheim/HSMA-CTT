@@ -43,6 +43,6 @@ public class DateTimeServiceTest extends TestCase {
 
         val diff = Duration.between(serviceDate.toInstant(), newDate.toInstant()).abs();
 
-        assertThat(diff.toMillis(), lessThan(1L));
+        assertThat(diff.toMillis(), lessThan(100L));
     }
 }
