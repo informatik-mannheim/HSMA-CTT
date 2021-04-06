@@ -29,7 +29,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class EventVisit {
+public class EventVisit implements Visit {
 	@EmbeddedId
 	@Getter(value = AccessLevel.NONE)
 	private PrimaryKey id;
@@ -60,6 +60,11 @@ public class EventVisit {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	@Override
+	public String getLocationName() {
+		return event.getName();
 	}
 
 	@Embeddable

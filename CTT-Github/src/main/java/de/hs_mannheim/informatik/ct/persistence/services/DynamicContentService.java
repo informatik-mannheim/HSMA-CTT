@@ -18,13 +18,17 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.controller.Utilities;
 import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
 import de.hs_mannheim.informatik.ct.util.DocxTemplate;
 import lombok.val;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,13 +38,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-
-
 @Service
 public class DynamicContentService {
+    @Autowired
+    private Utilities utilities;
+
     private final Path docxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout.docx");
 
     public byte[] getQRCodePNGImage(UriComponents uri, int width, int height) {
@@ -53,13 +59,20 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public void writeRoomsPrintOutDocx(List<Room> rooms, OutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, InvalidFormatException {
+    public void writeRoomsPrintOutDocx(List<Room> rooms, OutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
         try(val document = getRoomsPrintOutDox(rooms, uriConverter)) {
            document.write(outputStream);
         }
     }
 
-    private XWPFDocument getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter) throws IOException, InvalidFormatException {
+    @Deprecated
+    public void writeContactList(Collection<VeranstaltungsBesuchDTO> contacts, String targetEmail, OutputStream outputStream) throws IOException {
+        try(val workbook = utilities.excelErzeugen(contacts, targetEmail)) {
+            workbook.write(outputStream);
+        }
+    }
+
+    private XWPFDocument getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
         DocxTemplate.TextTemplate<Room> textReplacer = (room, templatePlaceholder) -> {
             switch (templatePlaceholder) {
                 case "g":

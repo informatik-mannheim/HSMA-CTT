@@ -1,5 +1,6 @@
 package de.hs_mannheim.informatik.ct.persistence.integration;
 
+import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
@@ -58,30 +59,26 @@ public class VisitExpiryTest {
      */
     @Test
     public void expirePersonalData() {
-        val expiredVisitor = new Visitor("expired");
-        val notExpiredVisitor = new Visitor("not-expired");
-        val partiallyExpiredVisitor = new Visitor("some-expired");
+        val roomVisitHelper = new RoomVisitHelper(entityManager.persist(
+                new Room("Test", "Test", 20)));
+        val expiredVisitor = entityManager.persist(new Visitor("expired"));
+        val notExpiredVisitor = entityManager.persist(new Visitor("not-expired"));
+        val partiallyExpiredVisitor = entityManager.persist(new Visitor("some-expired"));
 
-        entityManager.persist(notExpiredVisitor);
-        entityManager.persist(expiredVisitor);
-        entityManager.persist(partiallyExpiredVisitor);
-
-        val roomVisits = RoomVisitRepositoryTest.generateExpirationTestData(expiredVisitor, notExpiredVisitor);
+        val roomVisits = roomVisitHelper.generateExpirationTestData(expiredVisitor, notExpiredVisitor);
 
         // Add visits for a visitor that has an expired visit, but also a visit that is kept on record
         // A visit that just ended
-        roomVisits.add(RoomVisitHelper.generateVisit(
+        roomVisits.add(roomVisitHelper.generateVisit(
                 partiallyExpiredVisitor,
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now()));
         // A visit that ended two months ago, to be removed
-        roomVisits.add(RoomVisitHelper.generateVisit(
+        roomVisits.add(roomVisitHelper.generateVisit(
                 partiallyExpiredVisitor,
                 LocalDateTime.now().minusHours(1).minusMonths(2),
                 LocalDateTime.now().minusMonths(2)));
 
-        // Store all records in the test db
-        entityManager.persist(roomVisits.get(0).getRoom());
         roomVisitRepository.saveAll(roomVisits);
 
         // Expire records older than 4 Weeks
