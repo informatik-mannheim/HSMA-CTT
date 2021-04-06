@@ -22,14 +22,19 @@ import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.util.TimeUtil;
+import lombok.AllArgsConstructor;
+import lombok.val;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+@AllArgsConstructor
 public class RoomVisitHelper {
-    private static final Room room = new Room("autoCheckOutTest","autoCheckOutTest", 20);
+    private final Room room;
 
-    public static RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
+    public RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
         Date endDate = null;
         if (end != null) {
             endDate = TimeUtil.convertToDate(end);
@@ -42,5 +47,41 @@ public class RoomVisitHelper {
                 endDate,
                 visitor
         );
+    }
+
+    /**
+     * Generates a list of room visits, some of which should be delete because they are after the expiration date for personal data.
+     *
+     * @param expiredVisitor    The visitor used for visits that should be deleted
+     * @param notExpiredVisitor The vistor used for visits that are still valid
+     */
+    public List<RoomVisit> generateExpirationTestData(Visitor expiredVisitor, Visitor notExpiredVisitor) {
+        val roomVisits = new ArrayList<RoomVisit>();
+
+        // Absolutely not expired
+        roomVisits.add(generateVisit(
+                notExpiredVisitor,
+                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now()));
+
+        // Older but also not expired
+        roomVisits.add(generateVisit(
+                notExpiredVisitor,
+                LocalDateTime.now().minusHours(1).minusDays(25),
+                LocalDateTime.now().minusDays(25)));
+
+        // Definitely expired
+        roomVisits.add(generateVisit(
+                expiredVisitor,
+                LocalDateTime.now().minusHours(1).minusMonths(2),
+                LocalDateTime.now().minusMonths(2)));
+
+        // Just expired
+        roomVisits.add(generateVisit(
+                expiredVisitor,
+                LocalDateTime.now().minusHours(1).minusWeeks(4).minusDays(1),
+                LocalDateTime.now().minusWeeks(4).minusDays(1)));
+
+        return roomVisits;
     }
 }

@@ -18,8 +18,10 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.val;
@@ -41,12 +43,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper.generateVisit;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDateTime;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
-
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -90,23 +90,24 @@ class RoomVisitServiceTest {
 
     @Test
     void checkOutAllVisitors() {
+        val roomVisitHelper = new RoomVisitHelper(new Room("Test", "Test", 20));
         val expected = new ArrayList<RoomVisit>();
 
         val yesterday = LocalDate.now().minusDays(1);
         val forcedEndTime = LocalTime.parse("18:00:00");
         val visitor = new Visitor("1");
         // No sign out yesterday
-        expected.add(generateVisit(
+        expected.add(roomVisitHelper.generateVisit(
                 visitor,
                 yesterday.atTime(LocalTime.parse("14:00:00")),
                 yesterday.atTime(forcedEndTime))); // Expected Value, removed in mock call
         // No sign out today
-        expected.add(generateVisit(
+        expected.add(roomVisitHelper.generateVisit(
                 visitor,
                 LocalDate.now().atTime(LocalTime.parse("14:00:00")),
                 LocalDate.now().atTime(forcedEndTime)));
         // Sign in yesterday after auto sign-in time
-        expected.add(generateVisit(
+        expected.add(roomVisitHelper.generateVisit(
                 visitor,
                 yesterday.atTime(forcedEndTime.plusHours(2)),
                 yesterday.atTime(LocalTime.parse("23:59:59"))));
@@ -117,7 +118,7 @@ class RoomVisitServiceTest {
                         .collect(Collectors.toList());
 
         // Sign in today after auto sign-in time
-        autoSignOutCandidates.add(generateVisit(
+        autoSignOutCandidates.add(roomVisitHelper.generateVisit(
                 visitor,
                 LocalDate.now().atTime(forcedEndTime.plusHours(2)),
                 null));

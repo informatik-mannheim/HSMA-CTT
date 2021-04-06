@@ -1,4 +1,4 @@
-package de.hs_mannheim.informatik.ct;
+package de.hs_mannheim.informatik.ct.model;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,16 +18,11 @@ package de.hs_mannheim.informatik.ct;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import java.util.Date;
 
-@SpringBootApplication
-@EnableScheduling
-public class CtApp {
-
-    public static void main(String[] args) {
-        SpringApplication.run(CtApp.class, args);
-    }
-
+public interface Visit {
+    Visitor getVisitor();
+    Date getStartDate();
+    Date getEndDate();
+    String getLocationName();
 }
