@@ -24,10 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
-import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -43,15 +41,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
-
-
 
 @Controller
 @RequestMapping("r")
@@ -65,7 +62,8 @@ public class RoomController {
 
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
-    public String checkIn(@PathVariable String roomId, @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
+    public String checkIn(@PathVariable String roomId,
+            @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
@@ -102,16 +100,18 @@ public class RoomController {
         String autoCheckoutValue = null;
         if (notCheckedOutVisits.size() != 0) {
             if (notCheckedOutVisits.size() > 1) {
-                // TODO: Logging: Log a warning because a visitor was checked into multiple rooms at once.
+                // TODO: Logging: Log a warning because a visitor was checked into multiple
+                // rooms at once.
             }
 
             val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
             autoCheckoutValue = checkedOutRoom.getName();
 
-            // If the user is automatically checked out of the same room they're trying to check into,
-            // show them the checked out page instead (Auto checkout after scanning room qr code twice)
-            if (room.isPresent() &&
-                    room.get().getId().equals(checkedOutRoom.getId())) {
+            // If the user is automatically checked out of the same room they're trying to
+            // check into,
+            // show them the checked out page instead (Auto checkout after scanning room qr
+            // code twice)
+            if (room.isPresent() && room.get().getId().equals(checkedOutRoom.getId())) {
                 return "forward:checkedOut/";
             }
         }
@@ -190,15 +190,18 @@ public class RoomController {
     public String roomTableImport(@RequestParam("file") MultipartFile file, Model model) {
         String fileName = file.getOriginalFilename();
         String extension = fileName.substring(fileName.indexOf("."), fileName.length());
-        if (extension.equals(".csv")) {
-            try (InputStream is = file.getInputStream()) {
+
+        try (InputStream is = file.getInputStream()) {
+            if (extension.equals(".csv"))
                 roomService.importFromCsv(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            throw new InvalidFileUploadException();
+            else if (extension.equals(".xlsm"))
+                roomService.importFromExcel(is);
+            else
+                throw new InvalidFileUploadException();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return "rooms/importCompleted";
     }
 
@@ -206,17 +209,15 @@ public class RoomController {
         return "r/" + room.getId();
     }
 
-
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Room not found")
     public static class RoomNotFoundException extends RuntimeException {
-
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Visitor not found")
     public static class VisitorNotFoundException extends RuntimeException {
     }
 
-    @ResponseStatus(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Not a .csv file")
+    @ResponseStatus(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Not a supported filetype, only .csv or .xlsm will work!")
     public static class InvalidFileUploadException extends RuntimeException {
     }
 }

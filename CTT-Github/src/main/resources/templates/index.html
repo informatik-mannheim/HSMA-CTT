@@ -26,7 +26,7 @@ layout:decorate="~{layout}">
             <hr/>
             <p>Um mit einem Mobilgerät in einen Raum einzuchecken, scannen Sie bitte den QR-Code an dessen Eingang  ab und
                 öffnen dann die erkannte Webseite.
-                Eine detailierte Anleitung finden Sie unter "Weitere Infos".
+                Eine detaillierte Anleitung sowie Ansprechpartner finden Sie unter "Weitere Infos".
                 <img src="/images/example.png" width="360" style="float:right" class="mt-3"/>
             </p>
             <hr/>
@@ -35,41 +35,52 @@ layout:decorate="~{layout}">
                     <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseButtonInfo" type="button" data-toggle="collapse"
                     data-target="#collapseInfo" aria-expanded="false" aria-controls="collapseInfo">
                     Weitere Infos<i class="fa fa-plus-square"></i>
-                    
+
                 </button>
             </div>
             <div class="collapse collapseMarginBottom" id="collapseInfo">
                 <div class="card card-body">
-                 <h5>Linksammlung</h5>
-                 <!-- Todo: links for github and documentation-->
-                 <div id="links">
+                   <h5>Linksammlung</h5>
+                   <!-- Todo: links for github-->
+                   <div id="links">
                     <ul>
                         <li><a href="https://www.hs-mannheim.de/die-hochschule/hochschule-mannheim/betrieb-unter-corona.html">Corona-Hygienekonzept der Hochschule.</a>
                         </li>
                         <li><a href="/howToQr"> Anleitung für das Nutzen eines QR-Code Scanners </a></li>
+
                         <li><a href="/howToInkognito"> Anleitung für Anmelden von mehreren Personen von einem Gerät</a></li>
                         <li><a href="/"> Vollständiger Code auf Github</a></li>
                         <li><a href="/"> Vollständige Projekt Dokumentation als PDF</a>
                         </li>
+
+                        <li><a href="/"> Vollständiger Code sowie Dokumentation auf Github (Coming Soon)</a></li>
+
                         <li>
                             <a href="https://owncloud.informatik.hs-mannheim.de/index.php/s/bw33K7HpHjp4YxR">Demo Video
                             der CTT-App</a>
                         </li>
                     </ul>
-                    <h5>Designphilosophie</h5>
-                    <div id="project-outline">
-                        <ul>
-                            <li>minimale, <b>verschlüsselte</b> Datenerfassung der Anwender</li>
-                            <li>Datenlöschung nach 4 Wochen</li>
-                            <li>OpenSource</li>
-                            <li>Datenschutzkonformität in Hinsicht auf Infektionsschutz und Aufbewahrungsfrist</li>
-                            <li>Flexible Anwendungsmöglichkeiten (Meetings, Vorlesungen, Workshops etc.)</li>
-                        </ul>
-                    </div>
+                    <h5>Ansprechpartner</h5>
+                    <div id="contacts">
+                       <ul>
+                           <li><strong>Im Falle einer Corona Infektion: </strong> <a href="javascript:linkTo_UnCryptMailto('nbjmup;dpspob/{wAit.nbooifjn/ef');">corona [dot] zv [at] hs-mannheim [dot] de</a></li>
+                           <li>Bei Problemen oder Interesse an der Software: <a href="javascript:linkTo_UnCryptMailto('nbjmup;benjo/duuA3dmfwfs5zpv/ofu');">admin [dot] ctt [at] 2clever4you [dot] net</a></li>
+                       </ul>
+                   </div>
+                   <h5>Designphilosophie</h5>
+                   <div id="project-outline">
+                    <ul>
+                        <li>minimale, <b>verschlüsselte</b> Datenerfassung der Anwender</li>
+                        <li>Datenlöschung nach 4 Wochen</li>
+                        <li>OpenSource</li>
+                        <li>Datenschutzkonformität in Hinsicht auf Infektionsschutz und Aufbewahrungsfrist</li>
+                        <li>Flexible Anwendungsmöglichkeiten (Meetings, Vorlesungen, Workshops etc.)</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 
 </html>
