@@ -12,17 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.junit.MatcherAssert.assertThat;
-
-// todo verify csv file is properly created
-//  delete cvs after test finished
-//  comment Methods
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,6 +43,7 @@ public class RoomServiceTest {
 
         String initialTestRoomPin = testRoom.getRoomPin();
 
+        // import and delete csv
         roomService.importFromCsv(new BufferedReader(new FileReader(TEST_CSV_FILENAME)));
         String newTestRoomPin = roomService.findByName("testRoom").get().getRoomPin();
 
@@ -59,24 +51,15 @@ public class RoomServiceTest {
     }
 
     public void createTestCsv(String roomName, String buildingName, int maxCapacity) throws IOException {
-        // define Testdata
-        List<String[]> dataLines = new ArrayList<>();
-        dataLines.add(new String[]{ buildingName, roomName, String.valueOf(maxCapacity)});
-
-        // create and write to file
         File csvOutputFile = new File(TEST_CSV_FILENAME);
 
+        //todo check if file TEST_CSV_FILENAME already exists to be sure nothing gets overwritten
+        String[] data = new String[]{ buildingName, roomName, String.valueOf(maxCapacity)};
+
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-            dataLines.stream()
-                    .map(this::convertToCSV)
-                    .forEach(pw::println);
+            pw.format(Stream.of(data).collect(Collectors.joining(COMMA_DELIMITER)));
         }
 
-        assertThat(csvOutputFile, notNullValue());
-    }
-
-    public String convertToCSV(String[] data) {
-        return Stream.of(data)
-                .collect(Collectors.joining(COMMA_DELIMITER));
+        csvOutputFile.deleteOnExit();
     }
 }
