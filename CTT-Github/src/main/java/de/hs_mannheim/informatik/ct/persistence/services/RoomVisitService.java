@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,6 @@ import org.springframework.stereotype.Service;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
-import de.hs_mannheim.informatik.ct.model.RoomVisitContact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import lombok.NonNull;
 import lombok.val;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class RoomVisitService {
+public class RoomVisitService implements VisitService<RoomVisit> {
 
 	@Autowired
 	private RoomVisitRepository roomVisitRepository;
@@ -130,7 +130,7 @@ public class RoomVisitService {
 		visitorRepository.removeVisitorsWithNoVisits();
 	}
 
-	public List<RoomVisitContact> getVisitorContacts(@NonNull Visitor visitor) {
+	public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor) {
 		return roomVisitRepository.findVisitsWithContact(visitor);
 	}
 
