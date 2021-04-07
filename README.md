@@ -17,6 +17,7 @@
 </p>
 
 The goal of this project is to develop an open source contact tracing solution for public institutions, especially universities and colleges. Students can check into a room at the beginning of their lecture, using a QR code and their student mail. Non faculty members may be required to provide additional information to allow effective tracing in the case of an infection. The project was created around the principals of transparency and privacy. All gathered data is deleted automatically after the required period. Further information can be be accessed in German: [Datenschutz](https://ctt.hs-mannheim.de/datenschutz)
+
 The full documentation can be accessed in German: [Dokumentation](documentation.md).
 
 ## Setup
