@@ -18,11 +18,11 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.model.EventVisit;
 import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
-import de.hs_mannheim.informatik.ct.util.TimeUtil;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,59 +31,47 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-public class RoomVisitRepositoryTest {
+public class EventVisitRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
-    private RoomVisitRepository roomVisitRepository;
-
-    @Test
-    public void deleteExpiredVisits() {
-        val roomVisitHelper = new RoomVisitHelper(entityManager.persist(
-                new Room("Test", "Test", 20)));
-        val expiredVisitor = entityManager.persist(new Visitor("expired"));
-        val notExpiredVisitor = entityManager.persist(new Visitor("not-expired"));
-        val roomVisits = roomVisitHelper.generateExpirationTestData(
-                expiredVisitor,
-                notExpiredVisitor);
-
-        roomVisitRepository.saveAll(roomVisits);
-        entityManager.flush();
-
-        roomVisitRepository.deleteByEndDateBefore(TimeUtil.convertToDate(LocalDateTime.now().minusWeeks(4)));
-
-        assertThat(roomVisitRepository.findAll(),
-                everyItem(hasProperty("visitor", equalTo(notExpiredVisitor))));
-    }
+    private EventVisitRepository eventVisitRepository;
 
     @Test
     public void findVisitsWithContact_MultipleContacts() {
-        val roomVisitHelper = new RoomVisitHelper(entityManager.persist(new Room("Test", "Test", 20)));
+        val event = entityManager.persist(
+                new Event(
+                        "TestEvent",
+                        entityManager.persist(new Room("test", "test", 20)),
+                        Date.from(Instant.parse("2021-03-20T10:00:00Z")),
+                        "target"));
         val target = entityManager.persist(new Visitor("target"));
         val contact1 = entityManager.persist(new Visitor("contact1"));
         val contact2 = entityManager.persist(new Visitor("contact2"));
-        val targetVisit = entityManager.persist(
-                roomVisitHelper.generateVisit(target,
-                        LocalDateTime.parse("2021-03-20T10:00:00"), LocalDateTime.parse("2021-03-20T11:00:00")));
-        entityManager.persist(
-                roomVisitHelper.generateVisit(contact1,
-                        LocalDateTime.parse("2021-03-20T10:15:00"), LocalDateTime.parse("2021-03-20T11:00:00")));
-        entityManager.persist(
-                roomVisitHelper.generateVisit(contact2,
-                        LocalDateTime.parse("2021-03-20T10:00:00"), LocalDateTime.parse("2021-03-20T10:15:00")));
+
+        val targetVisit = new EventVisit(event, target, Date.from(Instant.parse("2021-03-20T10:00:00Z")));
+        targetVisit.setEndDate(Date.from(Instant.parse("2021-03-20T11:00:00Z")));
+        val contactVisit1 = new EventVisit(event, contact1, Date.from(Instant.parse("2021-03-20T10:15:00Z")));
+        contactVisit1.setEndDate(Date.from(Instant.parse("2021-03-20T11:00:00Z")));
+        val contactVisit2 = new EventVisit(event, contact2, Date.from(Instant.parse("2021-03-20T10:00:00Z")));
+        contactVisit2.setEndDate(Date.from(Instant.parse("2021-03-20T10:15:00Z")));
+        entityManager.persist(targetVisit);
+        entityManager.persist(contactVisit1);
+        entityManager.persist(contactVisit2);
         entityManager.flush();
 
-        val contacts = roomVisitRepository.findVisitsWithContact(target);
+        val contacts = eventVisitRepository.findVisitsWithContact(target);
 
         assertThat(contacts.size(), equalTo(2));
         assertThat(contacts, everyItem(hasProperty("targetVisit", equalTo(targetVisit))));

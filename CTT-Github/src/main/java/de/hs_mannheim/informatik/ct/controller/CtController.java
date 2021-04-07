@@ -45,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -69,7 +70,13 @@ public class CtController implements ErrorController {
 	private Utilities util;
 
 	@Autowired
+	private DynamicContentService contentService;
+
+	@Autowired
 	private DateTimeService dateTimeService;
+
+	@Autowired
+	private ContactTracingService contactTracingService;
 
 	@Value("${server.port}")
 	private String port;
@@ -234,7 +241,7 @@ public class CtController implements ErrorController {
 			return "suche";
 		}
 
-		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContactsToDTO(target.get());
 
 		model.addAttribute("kranker", email);
 		model.addAttribute("kontakte", kontakte);
@@ -243,22 +250,19 @@ public class CtController implements ErrorController {
 	}
 
 	@RequestMapping("/download")
-	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) {
+	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) throws IOException {
 		val target = visitorService.findVisitorByEmail(email);
 		if(!target.isPresent()) {
 			throw new RoomController.VisitorNotFoundException();
 		}
 
-		Collection<VeranstaltungsBesuchDTO> kontakte = getContacts(target.get());
+		Collection<VeranstaltungsBesuchDTO> kontakte = getContactsToDTO(target.get());
 
 		response.setHeader("Content-disposition", "attachment; filename=kontaktliste.xls");
 		response.setContentType("application/vnd.ms-excel");
 
 		try(OutputStream out = response.getOutputStream()) {
-			util.excelErzeugen(kontakte, email).write(out);
-		} catch (IOException e) {
-			e.printStackTrace();
-			// TODO: wie kann man dem User Bescheid geben, falls doch mal etwas schief gehen sollte?
+			contentService.writeContactList(kontakte, email, out);
 		}
 	}
 
@@ -364,12 +368,15 @@ public class CtController implements ErrorController {
 			if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
 				log.error("Der Raum konnte nicht gefunden werden");
 			}
-
 			if (code == HttpStatus.FORBIDDEN.value())
 				model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
 			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")){
 				model.addAttribute("error", "Diesen Raum gibt es nicht");
 			}
+			else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/checkOut")){
+                log.error("Checkout nicht möglich da Email nicht vorhanden");
+                model.addAttribute("error", "Checkout nicht möglich, Emailadresse nicht im System. Waren Sie eingecheckt?");
+            }
 			else
 				model.addAttribute("error", "Fehler-Code: " + status.toString());
 		} else {
@@ -384,24 +391,41 @@ public class CtController implements ErrorController {
 		return null;
 	}
 
-	private Collection<VeranstaltungsBesuchDTO> getContacts(Visitor target) {
-		Collection<VeranstaltungsBesuchDTO> kontakte = eventService.findContactsFor(target.getEmail());
-		val roomContacts = roomVisitService.getVisitorContacts(target);
+	@Deprecated
+	private Collection<VeranstaltungsBesuchDTO> getContactsToDTO(Visitor target) {
+		val contacts = contactTracingService.getVisitorContacts(target);
 
-		roomContacts
+		val targetVisits = contacts
 				.stream()
 				.map((contact) -> new VeranstaltungsBesuchDTO(
-						contact.getContact().getVisitor().getEmail(),
+						contact.getTarget().getEmail(),
 						Integer.MAX_VALUE,
-						contact.getContact().getRoom().getName(),
-						contact.getContact().getStartDate(),
-						contact.getContact().getEndDate(),
+						contact.getTargetVisit().getLocationName(),
+						contact.getTargetVisit().getStartDate(),
+						contact.getTargetVisit().getEndDate(),
 						(int) Math.abs(Duration.between(
-								contact.getContact().getStartDate().toInstant(),
-								contact.getTarget().getStartDate().toInstant())
+								contact.getTargetVisit().getStartDate().toInstant(),
+								contact.getTargetVisit().getStartDate().toInstant())
+								.toMinutes())
+				));
+
+
+		val dto = contacts
+				.stream()
+				.map((contact) -> new VeranstaltungsBesuchDTO(
+						contact.getContactVisit().getVisitor().getEmail(),
+						Integer.MAX_VALUE,
+						contact.getContactVisit().getLocationName(),
+						contact.getContactVisit().getStartDate(),
+						contact.getContactVisit().getEndDate(),
+						(int) Math.abs(Duration.between(
+								contact.getContactVisit().getStartDate().toInstant(),
+								contact.getTargetVisit().getStartDate().toInstant())
 								.toMinutes())
 				))
-				.forEach(kontakte::add);
-		return kontakte;
+				.collect(Collectors.toSet());
+		targetVisits.forEach(dto::add);
+
+		return dto.stream().sorted(Comparator.comparing(VeranstaltungsBesuchDTO::getTimestamp)).collect(Collectors.toList());
 	}
 }

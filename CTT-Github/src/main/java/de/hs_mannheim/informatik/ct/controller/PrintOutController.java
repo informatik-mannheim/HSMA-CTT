@@ -22,20 +22,27 @@ import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.val;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 
 @Controller
@@ -67,7 +74,7 @@ public class PrintOutController {
     }
 
     @GetMapping(value = "/rooms/{building}")
-    public ResponseEntity<StreamingResponseBody> getRoomPrintout(
+    public DeferredResult<ResponseEntity<byte[]>> getRoomPrintout(
             @PathVariable(value = "building") String building,
             HttpServletRequest request) {
         val roomsInBuilding = buildingService.getAllRoomsInBuilding(building);
@@ -77,24 +84,30 @@ public class PrintOutController {
 
         val outFileName = String.format("Gebäude %s.docx", building);
 
-        StreamingResponseBody responseBody = outputStream -> {
-            try {
+        val result = new DeferredResult<ResponseEntity<byte[]>>(120 * 1000L);
+        CompletableFuture.runAsync(() -> {
+            try(val buffer = new ByteArrayOutputStream()) {
                 contentService.writeRoomsPrintOutDocx(
                         roomsInBuilding,
-                        outputStream,
+                        buffer,
                         room -> utilities.getUriToLocalPath(
                                 RoomController.getRoomCheckinPath(room),
                                 request
-                        )
-                );
-            } catch (Exception e) {
+                        ));
+
+
+                val response = ResponseEntity
+                        .ok()
+                        .contentType(
+                                MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + outFileName)
+                        .body(buffer.toByteArray());
+                result.setResult(response);
+            } catch (IOException | XmlException e) {
                 throw new RuntimeException(e);
             }
-        };
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + outFileName)
-                .body(responseBody);
+        });
+        return result;
 
     }
 }
