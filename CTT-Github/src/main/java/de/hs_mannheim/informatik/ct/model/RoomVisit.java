@@ -44,7 +44,6 @@ public class RoomVisit implements Visit {
     private Date startDate;
 
     @Column
-    @Setter
     private Date endDate = null;
 
     @ManyToOne
@@ -52,15 +51,32 @@ public class RoomVisit implements Visit {
     @NonNull
     private Visitor visitor;
 
-    public RoomVisit(Visitor visitor, Room room, Date startDate) {
+    @Column
+    @Enumerated
+    private CheckOutSource checkOutSource = CheckOutSource.NotCheckedOut;
+
+    public RoomVisit(@NonNull Visitor visitor, @NonNull Room room, Date startDate) {
         this.visitor = visitor;
         this.room = room;
         this.startDate = startDate;
     }
 
+
     @Override
     public String getLocationName() {
         return room.getName();
+    }
+
+    public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
+        assert endDate == null && checkOutSource == CheckOutSource.NotCheckedOut;
+        endDate = checkOutDate;
+        checkOutSource = reason;
+    }
+
+    public CheckOutSource getCheckOutSource() {
+        assert endDate != null || checkOutSource == CheckOutSource.NotCheckedOut;
+
+        return checkOutSource;
     }
 
     @lombok.Data
@@ -91,6 +107,14 @@ public class RoomVisit implements Visit {
             this.roomId = roomData.getRoomId();
             this.roomName = roomData.getRoomName();
             this.roomCapacity = roomData.getMaxCapacity();
+        }
+    }
+
+    public enum CheckOutSource {
+        NotCheckedOut, UserCheckout, AutomaticCheckout, RoomReset;
+
+        public static CheckOutSource getDefault() {
+            return CheckOutSource.UserCheckout;
         }
     }
 }
