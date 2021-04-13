@@ -51,7 +51,7 @@ import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
 @Controller
-@RequestMapping("r")
+@RequestMapping("/r")
 public class RoomController {
     @Autowired
     private RoomService roomService;
