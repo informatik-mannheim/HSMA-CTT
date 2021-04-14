@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("QRCodes")
+@RequestMapping("/QRCodes")
 public class QRController {
     private final String veranstaltungPath = "/besuchMitCode?vid=%s";
 

@@ -89,7 +89,7 @@ public class CtController implements ErrorController {
 		return "index";
 	}
 
-	@RequestMapping("/neu")
+	@RequestMapping("/neu") // wenn neue veranstaltung erstellt wurde
 	public String newEvent(@RequestParam String name, @RequestParam Optional<Integer> max,
 						   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datum,
 						   @RequestParam String zeit,    // TODO: schauen, ob das auch eleganter geht
@@ -107,7 +107,7 @@ public class CtController implements ErrorController {
 			Room defaultRoom = roomService.saveRoom(new Room("test","test", max.get()));
 			Event v = eventService.saveEvent(new Event(name, defaultRoom, datum, auth.getName()));
 
-			return "redirect:/zeige?vid=" + v.getId();
+			return "redirect:/zeige?vid=" + v.getId(); // Qr code zeigen
 		}
 
 		return "neue";
