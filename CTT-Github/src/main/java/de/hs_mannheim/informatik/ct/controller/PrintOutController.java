@@ -46,7 +46,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Controller
-@RequestMapping("printout")
+@RequestMapping("/printout")
 public class PrintOutController {
     @Autowired
     private RoomService roomService;
@@ -69,7 +69,6 @@ public class PrintOutController {
     @GetMapping(value = "/rooms")
     public String getRoomPrintoutList(Model model) {
         model.addAttribute("buildings", buildingService.getAllBuildings());
-
         return "rooms/roomPrintout";
     }
 
@@ -86,7 +85,7 @@ public class PrintOutController {
 
         val result = new DeferredResult<ResponseEntity<byte[]>>(120 * 1000L);
         CompletableFuture.runAsync(() -> {
-            try(val buffer = new ByteArrayOutputStream()) {
+            try (val buffer = new ByteArrayOutputStream()) {
                 contentService.writeRoomsPrintOutDocx(
                         roomsInBuilding,
                         buffer,
