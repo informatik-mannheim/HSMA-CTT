@@ -72,8 +72,6 @@ public class PrintOutController {
         return "rooms/roomPrintout";
     }
 
-
-
     @GetMapping(value = "/rooms/{building}")
     public DeferredResult<ResponseEntity<byte[]>> getRoomPrintout(
             @PathVariable(value = "building") String building,
