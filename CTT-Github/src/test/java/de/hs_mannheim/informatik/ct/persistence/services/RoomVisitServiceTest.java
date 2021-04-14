@@ -92,7 +92,7 @@ class RoomVisitServiceTest {
     }
 
     @Test
-    void autoCheckAutoVisitor_HadCheckedOutProperly() {
+    void autoCheckOutVisitor_HadCheckedOutProperly() {
         val forcedEndTime = LocalTime.of(18, 0);
 
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits())
@@ -111,7 +111,7 @@ class RoomVisitServiceTest {
     }
 
     @Test
-    void autoCheckAutoVisitor_NoCheckoutYesterday() {
+    void autoCheckOutVisitor_NoCheckoutYesterday() {
         val forcedEndTime = LocalTime.of(18, 0);
         val today = LocalDate.of(2021, Month.APRIL, 2);
         val yesterday = today.minusDays(1);
@@ -128,7 +128,7 @@ class RoomVisitServiceTest {
     }
 
     @Test
-    void autoCheckAutoVisitor_NoCheckoutToday() {
+    void autoCheckOutVisitor_NoCheckoutToday() {
         val forcedEndTime = LocalTime.of(18, 0);
         val today = LocalDate.of(2021, Month.APRIL, 2);
 
@@ -147,7 +147,7 @@ class RoomVisitServiceTest {
      * Someone checked in yesterday AFTER the auto-checkout. They should be checked out at midnight.
      */
     @Test
-    void autoCheckAutoVisitor_NoCheckoutYesterdayAfterAutoCheckout() {
+    void autoCheckOutVisitor_NoCheckoutYesterdayAfterAutoCheckout() {
         val forcedEndTime = LocalTime.of(18, 0);
         val today = LocalDate.of(2021, Month.APRIL, 2);
         val yesterday = today.minusDays(1);
@@ -167,7 +167,7 @@ class RoomVisitServiceTest {
      * Someone checked in today AFTER the auto-checkout. They should not be checked out today.
      */
     @Test
-    void autoCheckAutoVisitor_NoCheckoutTodayAfterAutoCheckout() {
+    void autoCheckOutVisitor_NoCheckoutTodayAfterAutoCheckout() {
         val forcedEndTime = LocalTime.of(18, 0);
         val today = LocalDate.of(2021, Month.APRIL, 2);
 
