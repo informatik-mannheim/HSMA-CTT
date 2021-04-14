@@ -1,11 +1,9 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
 import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,11 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
+
 
 /* todo
-    creation arraylist              test
-    create rooms from arraylist     test
-    create csv from arraylist       refactor
+    create csv from arraylist       refactor and comment
+    outsource roompin extraction
     find a way to delete csv file
  */
 @SpringBootTest
@@ -51,14 +51,21 @@ public class RoomServiceTest {
     // existing room in csv
     @Test
     public void importCsvSingleRoom() throws Exception {
-        // create testroom and csv file
         // todo create array list, saveRooms(), createCsv() and assert
+        String roomName = "newTestRoom";
+        List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
-        // import and delete csv
+        saveRooms(testRoomData);
+
+        String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
+
+        createTestCsv(testRoomData);
+
         roomService.importFromCsv(new BufferedReader(new FileReader(TEST_CSV_FILENAME)));
-        String newTestRoomPin = roomService.findByName(String.valueOf(rooms)).get().getRoomPin();
 
-        Assertions.assertEquals(newTestRoomPin, initialTestRoomPin);
+        String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
+
+        assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
 
         deleteTestCsv();
     }
@@ -66,12 +73,32 @@ public class RoomServiceTest {
     // new and existing rooms in csv
     @Test
     public void importCsvMultipleRooms() throws IOException {
-        List<String[]> roomData = new ArrayList<>();
+        String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
+        List<String[]> testRoomData = createRoomData(roomNames);
 
-        // todo create array list, saveRooms(), createCsv() and assert
+        saveRooms(testRoomData);
+
+        String[] initialTestRoomPins = new String[roomNames.length];
+        for(int i = 0; i < roomNames.length; i++){
+            initialTestRoomPins[i] = roomService.findByName(roomNames[i]).get().getRoomPin();
+        }
+
+        createTestCsv(testRoomData);
+
+        roomService.importFromCsv(new BufferedReader(new FileReader(TEST_CSV_FILENAME)));
+
+        String[] newTestRoomPins = new String[roomNames.length];
+        for(int i = 0; i < roomNames.length; i++){
+            newTestRoomPins[i] = roomService.findByName(roomNames[i]).get().getRoomPin();
+        }
+
+        for(int i = 0; i < initialTestRoomPins.length; i++){
+            assertThat(initialTestRoomPins[i], equalTo(newTestRoomPins[i]));
+        }
+
+        deleteTestCsv();
     }
 
-    // todo test this
     public void createTestCsv(List<String[]> roomData) throws IOException {
         File csvFile = new File(TEST_CSV_FILENAME);
 
