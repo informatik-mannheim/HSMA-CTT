@@ -44,7 +44,7 @@ Alle Einträge, die älter als vier Wochen alt sind, werden automatisch aus der 
 
 ## Hosting
 Aktuell wird die App in einem Docker-Container auf einem hochschulinternen Ubuntu-Server (18.04) betrieben. Der Server läuft 24/7 auf einer virtuellen Maschine, welche von der Campus IT im Rahmen des VirtuServ-Projektes bereitgestellt wird. 
-Sicherheitsupdates werden automatisch installiert. Eine Firewall mit Fail2Ban ist installiert und eingerichtet. Der Server besitzt aktuell 11GB RAM und eine 30GB Festplattenspeicher.
+Sicherheitsupdates werden automatisch installiert. Eine Firewall mit Fail2Ban ist installiert und eingerichtet. Der Server besitzt aktuell 11 GB RAM und 30 GB Festplattenspeicher.
 
 ## Rollen und Rechte
 ### User-Rolle
