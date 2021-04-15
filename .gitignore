@@ -1,2 +1,26 @@
+# Eclipse
+.classpath
+.project
+.settings/
 
-CTT-Github/src/main/resources/static/images/uncropped/
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Windwos
+Thumbs.db
+
+# Maven
+log/
+target/
+
+#self
+database.mv.db
+/database.trace.db
+/privat/
+/logs/
+/h2db/
