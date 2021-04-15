@@ -1,5 +1,6 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
+import com.sun.istack.NotNull;
 import de.hs_mannheim.informatik.ct.model.Room;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,25 +10,21 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.support.NullValue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
-
-/* todo
-    create csv from arraylist       refactor and comment
-    outsource roompin extraction
-    find a way to delete csv file
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -44,14 +41,11 @@ public class RoomServiceTest {
     @Autowired
     private RoomService roomService;
 
-    // filename including file extension (e.g. testFile.csv)
-    private final String TEST_CSV_FILENAME = "testFile.csv";
     private final String COMMA_DELIMITER = ";";
 
-    // existing room in csv
+    // overwrite existing room with csv
     @Test
     public void importCsvSingleRoom() throws Exception {
-        // todo create array list, saveRooms(), createCsv() and assert
         String roomName = "newTestRoom";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
@@ -59,16 +53,13 @@ public class RoomServiceTest {
 
         String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
-        createTestCsv(testRoomData);
-
-        roomService.importFromCsv(new BufferedReader(new FileReader(TEST_CSV_FILENAME)));
+        roomService.importFromCsv(createReader(testRoomData));
 
         String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
         assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
-
-        deleteTestCsv();
     }
+
 
     // new and existing rooms in csv
     @Test
@@ -83,9 +74,8 @@ public class RoomServiceTest {
             initialTestRoomPins[i] = roomService.findByName(roomNames[i]).get().getRoomPin();
         }
 
-        createTestCsv(testRoomData);
-
-        roomService.importFromCsv(new BufferedReader(new FileReader(TEST_CSV_FILENAME)));
+        BufferedReader buffer = createReader(testRoomData);
+        roomService.importFromCsv(buffer);
 
         String[] newTestRoomPins = new String[roomNames.length];
         for(int i = 0; i < roomNames.length; i++){
@@ -95,43 +85,32 @@ public class RoomServiceTest {
         for(int i = 0; i < initialTestRoomPins.length; i++){
             assertThat(initialTestRoomPins[i], equalTo(newTestRoomPins[i]));
         }
-
-        deleteTestCsv();
     }
 
-    public void createTestCsv(List<String[]> roomData) throws IOException {
-        File csvFile = new File(TEST_CSV_FILENAME);
+    // todo
+    //private String[] extractRoomPins(List<String[]> roomData){ }
 
-        if(csvFile.exists()){
-            throw new FileAlreadyExistsException("%s already exists. Remove this file or change TEST_CSV_FILENAME");
+    /**
+     * Helper Method to create Buffered Reader from Array List. This is used to test a room import
+     * feature without generating and reading from a csv file.
+     * @aparam roomData Arraylist holding room data.
+     */
+    private BufferedReader createReader(@NotNull List<String[]> roomData){
+        StringBuilder buffer = new StringBuilder();
+
+        for(String[] room : roomData){
+            buffer.append(Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER)));
+            buffer.append('\n');
         }
 
-        try (PrintWriter pw = new PrintWriter(csvFile)) {
-           //pw.format(Stream.of(data).collect(Collectors.joining(COMMA_DELIMITER)));
-            roomData.stream()
-                    .map(this::convertToCSV)
-                    .forEach(pw::println);
-        }
-    }
-
-    public String convertToCSV(String[] data) {
-        return Stream.of(data)
-                .collect(Collectors.joining(COMMA_DELIMITER));
-    }
-
-    public void deleteTestCsv(){
-        File csvFile = new File(TEST_CSV_FILENAME);
-        if(csvFile.exists()){
-            csvFile.delete();
-            System.out.println("FILE HAS BEEN REMOVED!");
-        }
+        return new BufferedReader(new StringReader(buffer.toString()));
     }
 
     /**
      *  Helper method that saves Rooms from Array List into the data base
      * @param roomData Array list containing room name, building name and room size for each room that should be created.
      */
-    public void saveRooms(List<String[]> roomData) throws NumberFormatException{
+    private void saveRooms(List<String[]> roomData) throws NumberFormatException{
         for (String[] room : roomData) {
             roomService.saveRoom(new Room(
                     room[0],                    // room name
@@ -146,7 +125,7 @@ public class RoomServiceTest {
      * @param roomNames Array containing room names
      * @return Array List where every Array contains data to create and save a Room (room name, building name and room size).
      */
-    public List<String[]> createRoomData(String[] roomNames){
+    private List<String[]> createRoomData(String[] roomNames){
         List<String[]> roomData = new ArrayList<>();
         String buildingName = "A";
         String size = "3";
