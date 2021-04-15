@@ -10,7 +10,7 @@
 
 ## Umfeld und Kontext
 ### Zweck des Projekts
-Das Projekt dient der Kontaktverfolgung für den Infektionsschutz durch das Gesundheitsamts. Das Corona Tracking Tool (CTT) ermöglicht es, Listen von Personen und deren Aufenthalt in einem bestimmten Raum digital zu speichern, um ein schnelles Finden von Kontaktdaten und Kontaktpersonen im Falle einer Corona-Infektion zu ermöglichen. Ziel ist es, Papierlisten abzuschaffen, um so den Verwaltungsaufwand zu reduzieren, eine datenschutzkonforme Löschung der Personendaten zu gewährleisten sowie den Vorgaben des Gesundheitsamts zu entsprechen.
+Das Projekt dient der Kontaktverfolgung für den Infektionsschutz durch das Gesundheitsamt. Das Corona Tracking Tool (CTT) speichert den Aufenthalt von Personen in Räumen digital ab, um ein schnelles Finden von Kontaktdaten und Kontaktpersonen im Falle einer Corona-Infektion zu ermöglichen. Ziel ist es, Papierlisten abzuschaffen, um so den Verwaltungsaufwand zu reduzieren, eine datenschutzkonforme Löschung der Personendaten zu gewährleisten sowie den Vorgaben des Gesundheitsamts zu entsprechen.
 
 ### Genutzte Technologien
 Die App arbeitet hauptsächlich mit dem Java-Framework Spring Boot, dem Layout Manager Thymeleaf sowie einer PostgreSQL-Datenbank.
@@ -35,13 +35,12 @@ Das Spring-Framework stellt außerdem einen integrierten Tomcat-Server bereit, a
 ## Datenhaltung
 
 ### Was wird gespeichert?
-Für Studierende und Hochschulmitarbeiter*innen speichert die App ausschließlich die Email-Adresse des Benutzers, die Zeit des Eincheckens und den Raum in den sich die Email anmeldet. Die Speicherung der Email-Adresse auf der Datenbank erfolgt AES-verschlüsselt und kann ausschließlich von Administratoren/Tracingbeauftragten über die App ausgelesen werden.
+Für Studierende und Hochschulmitarbeiter*innen speichert die App ausschließlich die Email-Adresse des Benutzers, die Zeit des Eincheckens und den Raum in dem sich der Email-Inhaber anmeldet. Die Speicherung der Email-Adresse auf der Datenbank erfolgt AES-verschlüsselt und kann ausschließlich von Administratoren/Tracingbeauftragten über die App ausgelesen werden.
 
 Für Gäste speichert die App nach Corona-Verordnung neben der Dauer des Aufenthalts noch Name, Vorname, Email sowie wahlweise eine Telefonnummer und/oder Postadresse. Diese Daten müssen zwingend gespeichert werden, um dem Gesundheitsamt alle benötigten Daten zur Kontaktverfolgung bereitzustellen.
 
 ### Wann wird gelöscht?
 Alle Einträge, die älter als vier Wochen alt sind, werden automatisch aus der Datenbank entfernt.
-
 
 ## Hosting
 Aktuell wird die App in einem Docker-Container auf einem hochschulinternen Ubuntu-Server (18.04) betrieben. Der Server läuft 24/7 auf einer virtuellen Maschine, welche von der Campus IT im Rahmen des VirtuServ-Projektes bereitgestellt wird. 
