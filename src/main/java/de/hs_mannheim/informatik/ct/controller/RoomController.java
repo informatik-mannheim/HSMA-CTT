@@ -50,6 +50,9 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Controller
 @RequestMapping("/r")
 public class RoomController {
@@ -166,7 +169,7 @@ public class RoomController {
     }
 
     @RequestMapping("/roomFull/{roomId}")
-    public String roomFull(@PathVariable String roomId, Model model) {
+    public String roomFull(@PathVariable String roomId, Model model, HttpServletRequest request, HttpServletResponse response) {
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -178,7 +181,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "rooms/checkIn";
+            return "redirect:/r/noId?roomId="+roomId.toString();
         } else {
             return "rooms/full";
         }
