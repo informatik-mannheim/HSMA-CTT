@@ -14,6 +14,7 @@ Das Projekt dient der Kontaktverfolgung für den Infektionsschutz durch das Gesu
 
 ### Genutzte Technologien
 Die App arbeitet hauptsächlich mit dem Java-Framework Spring Boot, dem Layout Manager Thymeleaf sowie einer PostgreSQL-Datenbank.
+Sämtliche Kommunikation zwischen Client und Server wird nach gängigem Webstandard verschlüsselt über HTTPS übertragen.
 Die genutzten Module und Bibliotheken sind:
  - Spring Data JPA
  - Spring Security
