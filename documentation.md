@@ -61,3 +61,4 @@ Diese Rolle hat die Möglichkeit, Veranstaltungen anzulegen und ihre Belegung (A
 Die Admin-Rolle kann alles was die Rolle Mitarbeitende kann und kann zusätzlich die Kontaktverfolgung nutzen.
 
 ## Ansprechpartner
+Für Fragen rund um das Projekt und zur Software wenden Sie sich bitte an [CTT Administration] (mailto:admin.ctt@2clever4you.net)
