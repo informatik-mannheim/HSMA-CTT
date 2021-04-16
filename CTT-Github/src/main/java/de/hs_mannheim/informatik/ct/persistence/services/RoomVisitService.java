@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -74,7 +75,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 	public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
 		List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
 		notSignedOutVisits.forEach((visit) -> {
-			visit.setEndDate(dateTimeService.getDateNow());
+			visit.checkOut(dateTimeService.getDateNow(), RoomVisit.CheckOutSource.UserCheckout);
 			roomVisitRepository.save(visit);
 		});
 
@@ -96,16 +97,17 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 					val startTime = convertToLocalTime(roomVisit.getStartDate());
 					val startDate = convertToLocalDate(roomVisit.getStartDate());
 
+					LocalDateTime endDate;
 					if (startTime.isBefore(forcedVisitEndTime)) {
-						val endDate = startDate.atTime(forcedVisitEndTime);
-						roomVisit.setEndDate(convertToDate(endDate));
-					} else if (startDate.isBefore(LocalDate.now())) {
+						endDate = startDate.atTime(forcedVisitEndTime);
+					} else if (startDate.isBefore(dateTimeService.getNow().toLocalDate())) {
 						// Visit started yesterday after forced sign-out time, sign-out at midnight yesterday instead
-						val endDate = startDate.atTime(LocalTime.parse("23:59:59"));
-						roomVisit.setEndDate(convertToDate(endDate));
+						endDate = startDate.atTime(LocalTime.parse("23:59:59"));
 					} else {
 						return null;
 					}
+
+					roomVisit.checkOut(convertToDate(endDate), RoomVisit.CheckOutSource.AutomaticCheckout);
 
 					return roomVisit;
 				}))
@@ -121,6 +123,23 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 
 	public boolean isRoomFull(@NonNull Room room) {
 		return getVisitorCount(room) >= room.getMaxCapacity();
+	}
+
+	/**
+	 * Immediately checks out everyone in the room.
+	 * @param room The room that will be cleared.
+	 */
+	@Transactional(isolation = Isolation.SERIALIZABLE)
+	@Modifying
+	public void resetRoom(@NonNull Room room) {
+		val notCheckedOutVisits = roomVisitRepository.findNotCheckedOutVisits(room);
+		for(val visit: notCheckedOutVisits) {
+			visit.checkOut(dateTimeService.getDateNow(), RoomVisit.CheckOutSource.RoomReset);
+		}
+
+		roomVisitRepository.saveAll(notCheckedOutVisits);
+
+		assert getVisitorCount(room) == 0;
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED)

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.hs_mannheim.informatik.ct.model.Contact;
+import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -50,6 +51,11 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
 			"FROM RoomVisit visit " +
 			"WHERE visit.endDate is null")
 	List<RoomVisit> findNotCheckedOutVisits();
+
+	@Query("SELECT visit " +
+			"FROM RoomVisit visit " +
+			"WHERE visit.room = :room AND visit.endDate is null")
+	List<RoomVisit> findNotCheckedOutVisits(@NonNull Room room);
 
 	void deleteByEndDateBefore(Date endDate);
 
