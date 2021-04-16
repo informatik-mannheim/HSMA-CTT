@@ -1,4 +1,4 @@
-Argumente für das Corona Tracing Tool (CTT)
+Argumente für das Corona Tracking Tool (CTT)
 
 - CTT ist so einfach und sicher zu benutzen das Infektionschhutz praktischer wird.
 
