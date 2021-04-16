@@ -18,9 +18,9 @@ package de.hs_mannheim.informatik.ct.persistence;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.util.TimeUtil;
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -36,8 +36,10 @@ public class RoomVisitHelper {
 
     public RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
         Date endDate = null;
+        RoomVisit.CheckOutSource checkOutSource = RoomVisit.CheckOutSource.NotCheckedOut;
         if (end != null) {
             endDate = TimeUtil.convertToDate(end);
+            checkOutSource = RoomVisit.CheckOutSource.UserCheckout;
         }
 
         return new RoomVisit(
@@ -45,7 +47,8 @@ public class RoomVisitHelper {
                 null,
                 TimeUtil.convertToDate(start),
                 endDate,
-                visitor
+                visitor,
+                checkOutSource
         );
     }
 
