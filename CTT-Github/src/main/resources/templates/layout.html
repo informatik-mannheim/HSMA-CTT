@@ -81,7 +81,7 @@
 		<div id="checkin-bar" hidden class="mb-4" style="position: fixed; height: 32px; width: 100%; background-color: #f7d986; margin-top: -25px; margin-left: -15px;">
 			<form action="/abmelden">
 				<input type="hidden" id="besucherEmail" name="besucherEmail" th:value="${besucherEmail}"/>
-				<div style="float:right")>
+				<div style="float:right">
 					<p>Aus dem zuletzt eingecheckten Raum<button type="submit" class="btn btn-link link-secondary mt-n1 ml-n2">abmelden</button></p>
 				</div>
 			</form>
@@ -89,7 +89,7 @@
 
 		<div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
 
-		<main role="main" class="container float-left">    
+		<main class="container float-left">
 			<p th:if="${message}" class="alert alert-info" style="color: blue" th:text="${message}"></p>
 			<p th:if="${error}" class="alert alert-danger" style="color: red" th:text="${error}"></p>	
 
