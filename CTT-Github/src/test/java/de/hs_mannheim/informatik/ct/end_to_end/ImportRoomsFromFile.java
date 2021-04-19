@@ -1,7 +1,8 @@
-package de.hs_mannheim.informatik.ct.persistence.services;
+package de.hs_mannheim.informatik.ct.end_to_end;
 
 import com.sun.istack.NotNull;
 import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.apache.coyote.http11.filters.BufferedInputFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class RoomServiceTest {
+public class ImportRoomsFromFile {
     @TestConfiguration
     static class RoomControllerTestConfig {
         @Bean
@@ -45,7 +46,7 @@ public class RoomServiceTest {
 
     private final String COMMA_DELIMITER = ";";
 
-    // overwrite existing room with csv
+    // overwrite existing room with csv import
     @Test
     public void importCsvSingleRoom() throws Exception {
         String roomName = "newTestRoom";
@@ -122,7 +123,8 @@ public class RoomServiceTest {
 
         assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
     }
-   private InputStream createReaderExcel(@NotNull List<String[]> roomData) {
+
+    private InputStream createReaderExcel(@NotNull List<String[]> roomData) {
         StringBuilder buffer = new StringBuilder();
         for (String[] room : roomData) {
             buffer.append(Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER)));
