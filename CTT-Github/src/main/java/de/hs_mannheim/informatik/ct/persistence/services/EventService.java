@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.hs_mannheim.informatik.ct.model.EventVisit;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
-
 
 
 @Service

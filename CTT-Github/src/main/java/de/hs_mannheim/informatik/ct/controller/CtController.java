@@ -232,39 +232,6 @@ public class CtController implements ErrorController {
 		return home(model);
 	}
 
-	@RequestMapping("/suchen")
-	public String kontakteFinden(@RequestParam String email, Model model) {
-		val target = visitorService.findVisitorByEmail(email);
-		if(!target.isPresent()) {
-			model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
-
-			return "suche";
-		}
-
-		Collection<VeranstaltungsBesuchDTO> kontakte = getContactsToDTO(target.get());
-
-		model.addAttribute("kranker", email);
-		model.addAttribute("kontakte", kontakte);
-
-		return "kontaktliste";
-	}
-
-	@RequestMapping("/download")
-	public void kontakteHerunterladen(@RequestParam String email, HttpServletResponse response) throws IOException {
-		val target = visitorService.findVisitorByEmail(email);
-		if(!target.isPresent()) {
-			throw new RoomController.VisitorNotFoundException();
-		}
-
-		Collection<VeranstaltungsBesuchDTO> kontakte = getContactsToDTO(target.get());
-
-		response.setHeader("Content-disposition", "attachment; filename=kontaktliste.xls");
-		response.setContentType("application/vnd.ms-excel");
-
-		try(OutputStream out = response.getOutputStream()) {
-			contentService.writeContactList(kontakte, email, out);
-		}
-	}
 
 	@RequestMapping("/angemeldet")
 	public String angemeldet(
@@ -330,11 +297,6 @@ public class CtController implements ErrorController {
 		return "neue";
 	}
 
-	@RequestMapping("/suche")
-	public String suche() {
-		return "suche";
-	}
-
 	@RequestMapping("/login")
 	public String login() {
 		return "login";
@@ -389,43 +351,5 @@ public class CtController implements ErrorController {
 	@Override
 	public String getErrorPath() {
 		return null;
-	}
-
-	@Deprecated
-	private Collection<VeranstaltungsBesuchDTO> getContactsToDTO(Visitor target) {
-		val contacts = contactTracingService.getVisitorContacts(target);
-
-		val targetVisits = contacts
-				.stream()
-				.map((contact) -> new VeranstaltungsBesuchDTO(
-						contact.getTarget().getEmail(),
-						Integer.MAX_VALUE,
-						contact.getTargetVisit().getLocationName(),
-						contact.getTargetVisit().getStartDate(),
-						contact.getTargetVisit().getEndDate(),
-						(int) Math.abs(Duration.between(
-								contact.getTargetVisit().getStartDate().toInstant(),
-								contact.getTargetVisit().getStartDate().toInstant())
-								.toMinutes())
-				));
-
-
-		val dto = contacts
-				.stream()
-				.map((contact) -> new VeranstaltungsBesuchDTO(
-						contact.getContactVisit().getVisitor().getEmail(),
-						Integer.MAX_VALUE,
-						contact.getContactVisit().getLocationName(),
-						contact.getContactVisit().getStartDate(),
-						contact.getContactVisit().getEndDate(),
-						(int) Math.abs(Duration.between(
-								contact.getContactVisit().getStartDate().toInstant(),
-								contact.getTargetVisit().getStartDate().toInstant())
-								.toMinutes())
-				))
-				.collect(Collectors.toSet());
-		targetVisits.forEach(dto::add);
-
-		return dto.stream().sorted(Comparator.comparing(VeranstaltungsBesuchDTO::getTimestamp)).collect(Collectors.toList());
 	}
 }
