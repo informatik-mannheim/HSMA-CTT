@@ -19,8 +19,10 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 import de.hs_mannheim.informatik.ct.controller.Utilities;
+import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.VeranstaltungsBesuchDTO;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
 import de.hs_mannheim.informatik.ct.util.DocxTemplate;
 import lombok.val;
 import net.glxn.qrgen.core.image.ImageType;
@@ -65,9 +67,8 @@ public class DynamicContentService {
         }
     }
 
-    @Deprecated
-    public void writeContactList(Collection<VeranstaltungsBesuchDTO> contacts, String targetEmail, OutputStream outputStream) throws IOException {
-        try(val workbook = utilities.excelErzeugen(contacts, targetEmail)) {
+    public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
+        try (val workbook = generator.generateWorkbook(contacts, target.getEmail())) {
             workbook.write(outputStream);
         }
     }

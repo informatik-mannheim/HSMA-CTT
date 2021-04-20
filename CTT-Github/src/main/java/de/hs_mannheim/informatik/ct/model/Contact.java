@@ -16,18 +16,10 @@ public class Contact<T extends Visit> {
         return targetVisit.getVisitor();
     }
 
+    public Visitor getContact() { return contactVisit.getVisitor(); }
+
     public String getContactLocation() {
         assert targetVisit.getLocationName().equals(contactVisit.getLocationName());
         return targetVisit.getLocationName();
-    }
-
-    @Deprecated
-    public Date getStartDate() {
-        return targetVisit.getStartDate();
-    }
-
-    @Deprecated
-    public Duration getDiffInStart() {
-        return Duration.between(targetVisit.getStartDate().toInstant(), contactVisit.getStartDate().toInstant()).abs();
     }
 }
