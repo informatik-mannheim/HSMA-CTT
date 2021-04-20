@@ -13,7 +13,7 @@
 	 	<div class="border border-secondary p-2">
 			<h5 class="mb-4">Willkommen zur Veranstaltung <span th:text="${name}">name</span></h5>
 	
-			<p>Bitte geben Sie hier Ihre Mail-Adresse ein, um ggf. eine Kontaktverfolgung zu ermölglichen.</p>
+			<p>Bitte geben Sie hier Ihre Mail-Adresse ein, um ggf. eine Kontaktverfolgung zu ermöglichen.</p>
 			
 			<form th:action="@{/senden}" method="POST">
 				<input type="hidden" id="vid" name="vid" th:value="${vid}" /> 
