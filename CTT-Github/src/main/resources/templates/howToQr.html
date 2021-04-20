@@ -4,9 +4,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 layout:decorate="~{layout}">
 <link rel="stylesheet" href="main.css">
 <head>
-    <meta charset="UTF-8">
     <title>QRCode Anleitung</title>
-
 </head>
 <body>
     <div layout:fragment="content">
@@ -28,17 +26,17 @@ layout:decorate="~{layout}">
             <p>Alternativ können Sie ab <strong>Android 9</strong> auch die Kamera benutzen.</p>
         </div>
         <!-- ios chrome-->
-        <div class="tab-pane fade" id="nav-iOS-chrome" role="tabpanel" aria-labelledby="nav-iOS-tab">
+        <div class="tab-pane fade" id="nav-iOS-chrome" role="tabpanel" aria-labelledby="nav-iOS-chrome-tab">
             <h5>Scannen im Chrome Browser</h5>
             <img class="centerImg" src="/images/ios-chrome-qr.png" alt="Chrome QR-Scanner unter Android">
         </div>
         <!-- ios firefox-->
-        <div class="tab-pane fade" id="nav-iOS-firefox" role="tabpanel" aria-labelledby="nav-iOS-tab">
+        <div class="tab-pane fade" id="nav-iOS-firefox" role="tabpanel" aria-labelledby="nav-iOS-firefox-tab">
             <h5>Scannen im Firefox Browser</h5>
             <img class="centerImg" src="/images/ios-firefox-qr.png" alt="Firefox QR-Scanner unter Android">
         </div>
         <!-- ios Safari-->
-        <div class="tab-pane fade" id="nav-iOS-safari" role="tabpanel" aria-labelledby="nav-iOS-tab">
+        <div class="tab-pane fade" id="nav-iOS-safari" role="tabpanel" aria-labelledby="nav-iOS-safari-tab">
             <p> Sie können die <strong>Iphone Kamera</strong> oder den <strong> <a href="https://support.apple.com/de-de/guide/iphone/iphe8bda8762/ios"> Codescanner </a> </strong> nutzen, um den QR-Code in Safari zu öffnen</p>
         </div>
     </div>
