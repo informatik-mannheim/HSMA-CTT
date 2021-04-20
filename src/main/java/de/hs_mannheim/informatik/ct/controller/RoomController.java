@@ -169,7 +169,7 @@ public class RoomController {
     }
 
     @RequestMapping("/roomFull/{roomId}")
-    public String roomFull(@PathVariable String roomId, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String roomFull(@PathVariable String roomId, Model model) {
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -181,7 +181,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "redirect:/r/noId?roomId="+roomId.toString();
+            return "redirect:/r/noId?roomId="+roomId;
         } else {
             return "rooms/full";
         }
