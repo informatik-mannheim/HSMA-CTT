@@ -179,7 +179,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "redirect:/r/noId?roomId="+roomId;
+            return "redirect:/r/noId?roomId="+ roomId;
         } else {
             return "rooms/full";
         }
