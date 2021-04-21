@@ -5,7 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
 
 jobs:
@@ -28,11 +28,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Test with Maven
-        run: mvn --errors clean test --file CTT-Github/pom.xml
+        run: mvn --errors clean test
       ## Upload coverage to codecov.io (Would require an account)
       # - name: Upload to CodeCov
       #   uses: codecov/codecov-action@v1
       #   timeout-minutes: 10
       #   with:
       #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: CTT-Github/target/site/jacoco/jacoco.xml
+      #     files: target/site/jacoco/jacoco.xml
