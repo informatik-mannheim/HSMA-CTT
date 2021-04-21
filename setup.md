@@ -9,7 +9,7 @@
 
 ## Software Requirements  
 
-CTT only requires Docker and Docker-Compose to be installed on the server. Provided links are for an Ubuntu installations.
+CTT only requires Docker and Docker-Compose to be installed on the server. Provided links are for an Ubuntu installation.
 
 * Docker: <https://docs.docker.com/engine/install/ubuntu/>
 * Docker-Compose: <https://docs.docker.com/compose/install/#install-compose-on-linux-systems>
