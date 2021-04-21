@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.localStorage;
     const emailText = document.getElementById("email-text");
+    const guestFreeSection = document.getElementById("guest-free-section")
     const emailLabel = document.getElementById("email-text-label");
     const postFixRadioButtons = document.querySelectorAll("input[type=radio][name='email-postfix']");
     let emailPostfix = null;
@@ -79,17 +80,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
+                guestFreeSection.style.visibility = "hidden";
+
                 break;
             case "internal":
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
+                guestFreeSection.style.visibility = "hidden";
                 break;
             default:
             case "external":
                 emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
+                guestFreeSection.style.visibility = "visible";
+                guestFreeSection.placeholder = "Bitte tragen Sie Namen/Postadresse oder Name/Telefon ein"
                 break;
         }
 
