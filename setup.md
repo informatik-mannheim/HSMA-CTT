@@ -41,7 +41,7 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 
 ### Import a room list
 
-To configure the rooms available in the building(s) upload a `.csv` file containing a list of rooms to <https://your.domain.com/r/import>. The CSV is semi-colon delimited with Windows (CLRF) line-endings with three columns: Building letter; room name; room capacity.  
+To configure the rooms available in the building(s) upload a `.csv` file containing a list of rooms to <https://your.domain.com/r/import>. The CSV is semicolon delimited with Windows (CLRF) line-endings with three columns: Building letter; room name; room capacity.  
 An example row for room 'A008' in building 'A' :
 
 ``` csv
