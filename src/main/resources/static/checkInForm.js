@@ -80,21 +80,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
-                guestFreeSection.style.visibility = "hidden";
-
+                guestFreeSection.style.display = "none"
                 break;
             case "internal":
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
-                guestFreeSection.style.visibility = "hidden";
+                guestFreeSection.style.display = "none"
                 break;
             default:
             case "external":
                 emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
-                guestFreeSection.style.visibility = "visible";
+                guestFreeSection.style.display = "flex"
                 guestFreeSection.placeholder = "Bitte tragen Sie Namen/Postadresse oder Name/Telefon ein"
                 break;
         }
