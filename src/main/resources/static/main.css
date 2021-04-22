@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Raleway',sans-serif;
+    font-family: 'Raleway', sans-serif;
     background-color: #ccc;
     display: flex;
     min-height: 100vh;
@@ -132,7 +132,7 @@ input.email::-webkit-inner-spin-button {
 }
 
 input[type=number].email {
-    -moz-appearance:textfield;
+    -moz-appearance: textfield;
 }
 
 .email {
@@ -201,6 +201,7 @@ label.radio-label::after {
 input[type=radio][name='email-postfix']:checked + label.radio-label::before {
     border-color: #22376f;
 }
+
 input[type=radio][name='email-postfix']:checked + label.radio-label::after {
     transform: scale(1, 1);
 }
@@ -218,7 +219,7 @@ a:visited {
 }
 
 #checkout-bar {
-    background-color:#00000040;
+    background-color: #00000040;
     display: flex;
     justify-content: center;
     flex-flow: wrap;
@@ -283,6 +284,13 @@ footer {
     margin: 0.5em;
     margin-left: 1em;
     margin-right: 1em;
+}
+
+#guest-free-section {
+    font-family: 'Raleway', sans-serif;
+        resize: none;
+    margin-left: 24px;
+    font-size: 16px;
 }
 
 #forceCheckIn{
