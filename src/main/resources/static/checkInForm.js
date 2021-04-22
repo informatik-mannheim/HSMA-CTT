@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.type = "email";
                 emailPostfix = null;
                 guestFreeSection.style.display = "flex"
-                guestFreeSection.placeholder = "Bitte tragen Sie Name/Adresse oder Name/Telefon ein"
+                guestFreeSection.placeholder = "Bitte tragen Sie \nName/Adresse oder \nName/Telefon ein"
                 break;
         }
 
