@@ -75,14 +75,11 @@ public class RoomService {
         return roomList;
     }
 
-
-
-    // uploads only correct files?)
-    public void importFromCsv(BufferedReader csv)  {
-      /*  boolean csvCorrect = checkCsvFormation(csv);
-        if(csvCorrect==false){
-            // throw exception csv file is not correctly formatted
-        }*/
+    public void importFromCsv(BufferedReader csv) throws IOException {
+        boolean csvCorrect = checkCsvFormation(csv);
+        if (csvCorrect == false) {
+            throw new IOException("CSV of room import not correct formatted");
+        }
         csv.lines().map((line) -> {
             String[] values = line.split(COMMA_DELIMITER);
             String building = values[0];
@@ -91,9 +88,7 @@ public class RoomService {
             return new Room(roomName, building, roomCapacity);
         }).forEach(this::saveRoom);
     }
-
-    // TODO: Maybe check if csv is correctly formatted (or accept that the user
-
+    
     public boolean checkCsvFormation(BufferedReader csv) throws IOException {
         String line;
         while ((line = csv.readLine()) != null) {
