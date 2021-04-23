@@ -85,7 +85,7 @@ public class ImportRoomsFromFile {
 
     // new and existing rooms
     @Test
-    public void importCsvExistingNonExistingRooms()  {
+    public void importCsvExistingAndNonExistingRooms()  {
         String[] existingRoomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
         List<String[]> testRoomData = createRoomData(existingRoomNames);
         saveRooms(testRoomData);
@@ -100,38 +100,9 @@ public class ImportRoomsFromFile {
         for (int i = 0; i < initialTestRoomPins.length; i++) {
             if (existingRoomNames[i].equals(newRoomNames[i])) {
                 assertThat(initialTestRoomPins[i], equalTo(newTestRoomPins[i]));
-            } else {
-                assertThat(initialTestRoomPins[i], not(equalTo(newTestRoomPins[i])));
-            }
+            } 
         }
     }
-
-    /*
-    // overwrite existing room with excel
-    @Test
-    public void importExcelSingleRoom() throws Exception {
-        String roomName = "newTestRoom";
-        List<String[]> testRoomData = createRoomData(new String[]{roomName});
-
-        saveRooms(testRoomData);
-
-        String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
-
-        roomService.importFromExcel(createReaderExcel(testRoomData));
-
-        String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
-
-        assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
-    }
-
-    private InputStream createReaderExcel(@NotNull List<String[]> roomData) {
-        StringBuilder buffer = new StringBuilder();
-        for (String[] room : roomData) {
-            buffer.append(Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER)));
-            buffer.append('\n');
-        }
-        return new ByteArrayInputStream(Charset.forName("UTF-16").encode(buffer.toString()).array());
-    }*/
     
 
     /**
