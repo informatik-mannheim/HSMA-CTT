@@ -50,6 +50,7 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
+
 @Controller
 @RequestMapping("/r")
 public class RoomController {
@@ -63,7 +64,7 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId,
-            @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
+                          @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
@@ -171,10 +172,19 @@ public class RoomController {
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
         }
-
-        model.addAttribute("roomData", new Room.Data(room.get()));
-        return "rooms/full";
+        Room requestedRoom = room.get();
+        int visitorCount = roomVisitService.getVisitorCount(requestedRoom);
+        int maxCapacity = requestedRoom.getMaxCapacity();
+        Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("roomData", roomData);
+        if (visitorCount < maxCapacity) {
+            model.addAttribute("visitData", new RoomVisit.Data(roomData));
+            return "redirect:/r/noId?roomId="+ roomId;
+        } else {
+            return "rooms/full";
+        }
     }
+
 
     @RequestMapping("/checkedOut")
     public String checkedOutPage() {
