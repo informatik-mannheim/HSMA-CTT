@@ -11,21 +11,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,14 +42,59 @@ public class ImportRoomsFromFile {
     private RoomService roomService;
 
     private final String COMMA_DELIMITER = ";";
+    private final String PATH_TO_TEST_EXCEL = "excelForTest.xlsm";
 
-    // todo
-    //  use exel example file
-    //  empty file
-    //  invalid file format
-    //  valid file format but invalid room format (missing/switched rows)
+    // CSV tests
+    @Test
+    public void importCsv() throws IOException {
+        String roomName = "newTestRoom";
+        List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
-    // overwrite existing room with csv import
+        BufferedReader csvReader = createCsvReader(testRoomData);
+        roomService.importFromCsv(csvReader);
+
+        Optional<Room> testRoom = roomService.findByName(roomName);
+
+        assertThat(testRoom.isPresent(), is(true));
+    }
+
+    @Test
+    public void importCsv_EmptyFile() {
+        String exceptedMessages = "CSV of room import not correct formatted";
+        BufferedReader csvReader = new BufferedReader(new StringReader(";;"));
+        Exception exception = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReader);});
+
+        assertThat(exception.getMessage(), equalTo(exceptedMessages));
+    }
+
+    @Test
+    public void importCsv_WrongCommaDelimiter() {
+        String exceptedMessages = "CSV of room import not correct formatted";
+        BufferedReader csvReaderSingleLine = new BufferedReader(
+                new StringReader("room,building,2"));
+
+        BufferedReader csvReaderTwoLines = new BufferedReader(
+                new StringReader("room;building;1\n" +
+                                    "room2;building,2"));
+
+        Exception exceptionSingleLine = assertThrows(Exception.class, () -> { roomService.importFromCsv(csvReaderSingleLine);});
+        Exception exceptionTwoLines = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReaderTwoLines);});
+
+        assertThat(exceptionSingleLine.getMessage(), equalTo(exceptedMessages));
+        assertThat(exceptionTwoLines.getMessage(), equalTo(exceptedMessages));
+    }
+
+    @Test
+    public void importCsv_WrongRoomCapacityType() {
+        String exceptedMessages = "CSV of room import not correct formatted";
+        BufferedReader csvReader = new BufferedReader(
+                new StringReader("room;building;zwölf"));
+
+        Exception exception = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReader);});
+
+        assertThat(exception.getMessage(), equalTo(exceptedMessages));
+    }
+
     @Test
     public void importCsvSingleRoom() throws Exception {
         String roomName = "newTestRoom";
@@ -61,15 +104,14 @@ public class ImportRoomsFromFile {
 
         String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
-        roomService.importFromCsv(createCsvReader(testRoomData));
+        BufferedReader csvReader = createCsvReader(testRoomData);
+        roomService.importFromCsv(csvReader);
 
         String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
         assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
     }
 
-
-    // new and existing rooms in csv
     @Test
     public void importCsvMultipleRooms() throws IOException {
         String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
@@ -79,7 +121,8 @@ public class ImportRoomsFromFile {
 
         String[] initialTestRoomPins = extractRoomPins(roomNames);
 
-        roomService.importFromCsv(createCsvReader(testRoomData));
+        BufferedReader csvReader = createCsvReader(testRoomData);
+        roomService.importFromCsv(csvReader);
 
         String[] newTestRoomPins = extractRoomPins(roomNames);
 
@@ -88,7 +131,6 @@ public class ImportRoomsFromFile {
         }
     }
 
-    // new and existing rooms
     @Test
     public void importCsvExistingAndNonExistingRooms() throws IOException {
         String[] existingRoomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
@@ -109,9 +151,23 @@ public class ImportRoomsFromFile {
         }
     }
 
-    // Exel tests
+    // Excel tests
+    /* Todo methods to implement
     @Test
-    public void importExelSingleRoom() throws Exception {
+    public void importExcel() throws IOException {}
+
+    @Test
+    public void importExcel_EmptyFile() {}
+
+    @Test
+    public void importExcel_WrongCommaDelimiter() {}
+
+    @Test
+    public void importExcel_WrongRoomCapacityType() {}
+    */
+
+    @Test
+    public void importExcelSingleRoom() throws Exception {
         String roomName = "newTestRoom";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
@@ -119,38 +175,21 @@ public class ImportRoomsFromFile {
 
         String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
-        roomService.importFromExcel(createExelInputStream(testRoomData));
+        roomService.importFromExcel(createExcelIS());
 
         String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
         assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
     }
 
-
-
     /**
-     * Helper Method to create exel-like input stream without saving and reading a File.
-     *
-     * @param roomData data to write into exel input stream
-     * @return InputStream containing data as if it was loaded from an existing exel file
+     * Helper Method to read excel file
+     * @return InputStream containing data as if it was loaded from an existing excel file
      */
-    public InputStream createExelInputStream(List<String[]> roomData) throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Test Rooms");
-
-        int rowCount = 0;
-
-        for (String[] room : roomData) {
-            Row row = sheet.createRow(++rowCount);
-
-            int columnCount = 0;
-            for (String field : room){
-                Cell cell = row.createCell(++columnCount);
-                cell.setCellValue(field);
-            }
-        }
-        //todo create inputstream from workbook
-        return workbook.getCTWorkbook().newInputStream();
+    private InputStream createExcelIS() throws IOException {
+        File excelFile = new ClassPathResource(PATH_TO_TEST_EXCEL).getFile();
+        InputStream is = new FileInputStream(excelFile);
+        return is;
     }
 
     /**
