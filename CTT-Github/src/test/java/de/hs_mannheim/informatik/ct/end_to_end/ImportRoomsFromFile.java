@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,7 +97,7 @@ public class ImportRoomsFromFile {
     }
 
     @Test
-    public void importCsvSingleRoom() throws Exception {
+    public void importCsvSingleRoom() throws IOException {
         String roomName = "newTestRoom";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
@@ -140,8 +141,9 @@ public class ImportRoomsFromFile {
 
         String[] newRoomNames = new String[]{"newTestRoom2", "otherTestRoom", "test2", "room"};
         List<String[]> testRoomData2 = createRoomData(newRoomNames);
+        BufferedReader csvData = createCsvReader(testRoomData2);
+        roomService.importFromCsv(csvData);
 
-        roomService.importFromCsv(createCsvReader(testRoomData2));
         String[] newTestRoomPins = extractRoomPins(newRoomNames);
 
         for (int i = 0; i < initialTestRoomPins.length; i++) {
@@ -152,7 +154,7 @@ public class ImportRoomsFromFile {
     }
 
     // Excel tests
-    /* Todo methods to implement
+    /* Todo methods to implement. Find a way to customize excel file
     @Test
     public void importExcel() throws IOException {}
 
@@ -166,27 +168,36 @@ public class ImportRoomsFromFile {
     public void importExcel_WrongRoomCapacityType() {}
     */
 
+    // todo need rework. This method contains an ugly workaround with hardcoded values.
     @Test
-    public void importExcelSingleRoom() throws Exception {
-        String roomName = "newTestRoom";
-        List<String[]> testRoomData = createRoomData(new String[]{roomName});
+    public void importExcelMultipleRooms() throws Exception {
+        // needs to be changed if the values in the testfile change.
+        String[] roomNames = new String[]{"A-101", "A-102"};
+        List<String[]> testRoomData = createRoomData(roomNames);
+        String[] initialTestRoomPins = extractRoomPins(roomNames);
 
-        saveRooms(testRoomData);
+        roomService.saveRoom(
+                new Room("A-101", "A", 2)
+        );
+        roomService.saveRoom(
+                new Room("A-102", "A", 8)
+        );
 
-        String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
+        InputStream is = inputStreamFromTestExcel();
+        roomService.importFromExcel(is);
 
-        roomService.importFromExcel(createExcelIS());
+        String[] newTestRoomPins = extractRoomPins(roomNames);
 
-        String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
-
-        assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
+        for (int i = 0; i < initialTestRoomPins.length; i++) {
+            assertThat(initialTestRoomPins[i], equalTo(newTestRoomPins[i]));
+        }
     }
 
     /**
      * Helper Method to read excel file
      * @return InputStream containing data as if it was loaded from an existing excel file
      */
-    private InputStream createExcelIS() throws IOException {
+    private InputStream inputStreamFromTestExcel() throws IOException {
         File excelFile = new ClassPathResource(PATH_TO_TEST_EXCEL).getFile();
         InputStream is = new FileInputStream(excelFile);
         return is;
@@ -198,10 +209,16 @@ public class ImportRoomsFromFile {
      * @param roomNames string array holding the room names
      * @return array holding the room pins
      */
-    private String[] extractRoomPins(String[] roomNames) {
+    private String[] extractRoomPins(String[] roomNames) throws NoSuchElementException {
         String[] roomPins = new String[roomNames.length];
         for (int i = 0; i < roomNames.length; i++) {
-            roomPins[i] = roomService.findByName(roomNames[i]).get().getRoomPin();
+            Optional<Room> room = roomService.findByName(roomNames[i]);
+            if(room.isPresent()){
+                roomPins[i] = room.get().getRoomPin();
+            }else{
+                String errorMessage = "Raum " + roomNames[i] + " konnte nicht gefunden werden.";
+                throw new NoSuchElementException(errorMessage);
+            }
         }
         return roomPins;
     }
