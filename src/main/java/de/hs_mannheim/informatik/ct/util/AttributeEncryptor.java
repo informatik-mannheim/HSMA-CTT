@@ -1,5 +1,18 @@
 package de.hs_mannheim.informatik.ct.util;
 
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.persistence.AttributeConverter;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -18,36 +31,20 @@ package de.hs_mannheim.informatik.ct.util;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.springframework.stereotype.Component;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.persistence.AttributeConverter;
-import java.security.InvalidKeyException;
-import java.util.Base64;
-
-
-
 /**
  * Encryptor class which encrypts and decrypts column values tagged with @Convert using the AES algorithm provided by JDK.
  */
 @Component
 public class AttributeEncryptor implements AttributeConverter<String, String> {
 
-    private static final String AES = "AES";
-    private static final String SECRET = "corona-ctt-20201";
-
+    private final String AES = "AES";
     private final Key key;
     private final Cipher cipher;
 
-    public AttributeEncryptor() throws Exception {
-        key = new SecretKeySpec(SECRET.getBytes(), AES);
+    public AttributeEncryptor(@Value("${db.encryption.secret:corona-ctt-20201}") String secret) throws Exception {
+        key = new SecretKeySpec(secret.getBytes(), AES);
         cipher = Cipher.getInstance(AES);
     }
-
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
@@ -68,5 +65,5 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
             throw new IllegalStateException(e);
         }
     }
+    
 }
-
