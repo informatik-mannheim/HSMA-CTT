@@ -26,6 +26,11 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+// todo split into:                     todo:
+//  - RoomServiceTest                   mock
+//  - ImportRoomsFromFile/RoomPinTests  comment
+//  - RoomServiceHelper
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -43,12 +48,11 @@ public class ImportRoomsFromFile {
     private RoomService roomService;
 
     private final String COMMA_DELIMITER = ";";
-    private final String PATH_TO_TEST_EXCEL = "excelForTest.xlsm";
 
     // CSV tests
     @Test
     public void importCsv() throws IOException {
-        String roomName = "newTestRoom";
+        String roomName = "A001a";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
         BufferedReader csvReader = createCsvReader(testRoomData);
@@ -63,13 +67,15 @@ public class ImportRoomsFromFile {
     public void importCsv_EmptyFile() {
         String exceptedMessages = "CSV of room import not correct formatted";
         BufferedReader csvReader = new BufferedReader(new StringReader(";;"));
-        Exception exception = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReader);});
+        Exception exception = assertThrows(Exception.class, () -> {
+            roomService.importFromCsv(csvReader);
+        });
 
         assertThat(exception.getMessage(), equalTo(exceptedMessages));
     }
 
     @Test
-    public void importCsv_WrongCommaDelimiter() {
+    public void importCsv_wrongCommaDelimiter() {
         String exceptedMessages = "CSV of room import not correct formatted";
         BufferedReader csvReaderSingleLine = new BufferedReader(
                 new StringReader("room,building,2"));
@@ -78,26 +84,32 @@ public class ImportRoomsFromFile {
                 new StringReader("room;building;1\n" +
                                     "room2;building,2"));
 
-        Exception exceptionSingleLine = assertThrows(Exception.class, () -> { roomService.importFromCsv(csvReaderSingleLine);});
-        Exception exceptionTwoLines = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReaderTwoLines);});
+        Exception exceptionSingleLine = assertThrows(Exception.class, () -> {
+            roomService.importFromCsv(csvReaderSingleLine);
+        });
+        Exception exceptionTwoLines = assertThrows(Exception.class, () -> {
+            roomService.importFromCsv(csvReaderTwoLines);
+        });
 
         assertThat(exceptionSingleLine.getMessage(), equalTo(exceptedMessages));
         assertThat(exceptionTwoLines.getMessage(), equalTo(exceptedMessages));
     }
 
     @Test
-    public void importCsv_WrongRoomCapacityType() {
+    public void importCsv_wrongRoomCapacityType() {
         String exceptedMessages = "CSV of room import not correct formatted";
         BufferedReader csvReader = new BufferedReader(
                 new StringReader("room;building;zwölf"));
 
-        Exception exception = assertThrows(Exception.class, () -> {roomService.importFromCsv(csvReader);});
+        Exception exception = assertThrows(Exception.class, () -> {
+            roomService.importFromCsv(csvReader);
+        });
 
         assertThat(exception.getMessage(), equalTo(exceptedMessages));
     }
 
     @Test
-    public void importCsvSingleRoom() throws IOException {
+    public void importCsv_overrideSingleRoom() throws IOException {
         String roomName = "newTestRoom";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
@@ -114,7 +126,7 @@ public class ImportRoomsFromFile {
     }
 
     @Test
-    public void importCsvMultipleRooms() throws IOException {
+    public void importCsv_overrideMultipleRooms() throws IOException {
         String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
         List<String[]> testRoomData = createRoomData(roomNames);
 
@@ -122,8 +134,11 @@ public class ImportRoomsFromFile {
 
         String[] initialTestRoomPins = extractRoomPins(roomNames);
 
-        BufferedReader csvReader = createCsvReader(testRoomData);
-        roomService.importFromCsv(csvReader);
+        BufferedReader csvData = createCsvReader(testRoomData);
+
+        roomService.importFromCsv(csvData);
+
+        //roomService.importFromCsv(csvReader);
 
         String[] newTestRoomPins = extractRoomPins(roomNames);
 
@@ -133,15 +148,18 @@ public class ImportRoomsFromFile {
     }
 
     @Test
-    public void importCsvExistingAndNonExistingRooms() throws IOException {
+    public void importCsv_overrideExistingAndNewRooms() throws IOException {
         String[] existingRoomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
         List<String[]> testRoomData = createRoomData(existingRoomNames);
+
         saveRooms(testRoomData);
+
         String[] initialTestRoomPins = extractRoomPins(existingRoomNames);
 
-        String[] newRoomNames = new String[]{"newTestRoom2", "otherTestRoom", "test2", "room"};
+        String[] newRoomNames = new String[]{"TestR00m", "otherTestRoom", "test2", "room"};
         List<String[]> testRoomData2 = createRoomData(newRoomNames);
         BufferedReader csvData = createCsvReader(testRoomData2);
+
         roomService.importFromCsv(csvData);
 
         String[] newTestRoomPins = extractRoomPins(newRoomNames);
@@ -154,23 +172,39 @@ public class ImportRoomsFromFile {
     }
 
     // Excel tests
-    /* Todo methods to implement. Find a way to customize excel file
+    // Todo methods to implement. Find a way to customize excel file
     @Test
-    public void importExcel() throws IOException {}
+    public void importExcel() throws IOException{
+        String testExcelPath = "excelForTest.xlsm";
+        InputStream is = inputStreamFromTestExcel(testExcelPath);
+
+        roomService.importFromExcel(is);
+    }
 
     @Test
-    public void importExcel_EmptyFile() {}
+    public void importExcel_EmptyFile() throws IOException {
+        String testExcelPath = "excelForTest-empty.xlsm";
+        InputStream is = inputStreamFromTestExcel(testExcelPath);
+
+        assertThrows(Exception.class, () -> {
+            roomService.importFromExcel(is);
+        });
+    }
 
     @Test
-    public void importExcel_WrongCommaDelimiter() {}
+    public void importExcel_WrongRoomCapacityType() throws IOException {
+        String testExcelPath = "excelForTest-wrongRoomCapacityType.xlsm";
+        InputStream is = inputStreamFromTestExcel(testExcelPath);
 
-    @Test
-    public void importExcel_WrongRoomCapacityType() {}
-    */
+        assertThrows(Exception.class, () -> {
+            roomService.importFromExcel(is);
+        });
+    }
 
     // todo need rework. This method contains an ugly workaround with hardcoded values.
     @Test
-    public void importExcelMultipleRooms() throws Exception {
+    public void importExcel_overriteMultipleRooms() throws Exception {
+        String testExcelPath = "excelForTest.xlsm";
         // needs to be changed if the values in the testfile change.
         String[] roomNames = new String[]{"A-101", "A-102"};
         List<String[]> testRoomData = createRoomData(roomNames);
@@ -182,8 +216,7 @@ public class ImportRoomsFromFile {
         roomService.saveRoom(
                 new Room("A-102", "A", 8)
         );
-
-        InputStream is = inputStreamFromTestExcel();
+        InputStream is = inputStreamFromTestExcel(testExcelPath);
         roomService.importFromExcel(is);
 
         String[] newTestRoomPins = extractRoomPins(roomNames);
@@ -194,11 +227,12 @@ public class ImportRoomsFromFile {
     }
 
     /**
-     * Helper Method to read excel file
+     * Helper Method to load excel file
+     * @param testExcelPath Filename of excel file. Needs to be stored in resources folder
      * @return InputStream containing data as if it was loaded from an existing excel file
      */
-    private InputStream inputStreamFromTestExcel() throws IOException {
-        File excelFile = new ClassPathResource(PATH_TO_TEST_EXCEL).getFile();
+    private InputStream inputStreamFromTestExcel(String testExcelPath) throws IOException {
+        File excelFile = new ClassPathResource(testExcelPath).getFile();
         InputStream is = new FileInputStream(excelFile);
         return is;
     }
@@ -216,7 +250,7 @@ public class ImportRoomsFromFile {
             if(room.isPresent()){
                 roomPins[i] = room.get().getRoomPin();
             }else{
-                String errorMessage = "Raum " + roomNames[i] + " konnte nicht gefunden werden.";
+                String errorMessage = "Keine Raum-Pin vorhanden. Raum " + roomNames[i] + " konnte nicht gefunden werden.";
                 throw new NoSuchElementException(errorMessage);
             }
         }
