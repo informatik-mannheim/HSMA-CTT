@@ -18,30 +18,7 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -50,11 +27,31 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 
 @Controller
 @RequestMapping("/r")
 public class RoomController {
+    Logger logger = LoggerFactory.getLogger(RoomController.class);
+
     @Autowired
     private RoomService roomService;
     @Autowired
@@ -62,115 +59,130 @@ public class RoomController {
     @Autowired
     private RoomVisitService roomVisitService;
 
+    @Value("${allow_full_room_checkIn:false}")
+    private boolean allowFullRoomCheckIn;
+
+    /**
+     * Shows the check-in form page for the given room.
+     *
+     * @param roomId            The room id of the room.
+     * @param roomIdFromRequest The room id as a request param for the search function. RoomId has to be set to 'noId'.
+     * @param overrideFullRoom  Shows the form even if the room is full.
+     * @param model             The Spring model param.
+     * @return A spring template string.
+     */
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged,
                           @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
+                          @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
                           Model model) {
+        if (!allowFullRoomCheckIn) {
+            overrideFullRoom = false;
+        }
 
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
 
         String roomPin = "";
-        if(roomPinFromRequest.isPresent())
+        if (roomPinFromRequest.isPresent())
             roomPin = roomPinFromRequest.get();
 
-        Optional<Room> room = roomService.findByName(roomId);
-        if (!room.isPresent()) {
-            throw new RoomNotFoundException();
-        }
-        if (roomVisitService.isRoomFull(room.get())) {
-            return "forward:roomFull/" + room.get().getId();
+        val room = getRoomOrThrow(roomId);
+
+        if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
+            return "forward:roomFull/" + room.getId();
         }
 
-        Room.Data roomData = new Room.Data(room.get());
-        model.addAttribute("room", room.get());
-        model.addAttribute("visitorCount", roomVisitService.getVisitorCount(room.get()));
+        Room.Data roomData = new Room.Data(room);
+        model.addAttribute("room", room);
+        model.addAttribute("visitorCount", roomVisitService.getVisitorCount(room));
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
         model.addAttribute("privileged", privileged);
         model.addAttribute("roomPin", roomPin);
-
+        model.addAttribute("checkInOverwrite", overrideFullRoom);
         return "rooms/checkIn";
     }
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException{
-        Optional<Room> room = roomService.findByName(visitData.getRoomId());
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+        val room = getRoomOrThrow(visitData.getRoomId());
 
-        if(room.isPresent() && !visitData.getRoomPin().equals(room.get().getRoomPin()))
+        if(!visitData.getRoomPin().equals(room.getRoomPin()))
             throw new InvalidRoomPinException();
 
-        Visitor visitor = null;
-        try {
-            visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
-        } catch (InvalidEmailException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-        }
+        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
 
-        List<RoomVisit> notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
+        val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
         String autoCheckoutValue = null;
         if (notCheckedOutVisits.size() != 0) {
-            if (notCheckedOutVisits.size() > 1) {
-                // TODO: Logging: Log a warning because a visitor was checked into multiple
-                // rooms at once.
-            }
-
             val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
             autoCheckoutValue = checkedOutRoom.getName();
 
             // If the user is automatically checked out of the same room they're trying to
-            // check into,
-            // show them the checked out page instead (Auto checkout after scanning room qr
-            // code twice)
-            if (room.isPresent() && room.get().getId().equals(checkedOutRoom.getId())) {
+            // check into, show them the checked out page instead (Auto checkout after scanning room qr code twice)
+            if (room.getId().equals(checkedOutRoom.getId())) {
                 return "forward:checkedOut/";
             }
         }
 
-        model.addAttribute("autoCheckout", autoCheckoutValue);
-
-        if (room.isPresent()) {
-            if (roomVisitService.isRoomFull(room.get())) {
-                return "forward:roomFull/" + room.get().getId();
-            }
-
-            val visit = roomVisitService.visitRoom(visitor, room.get());
-            val currentVisitCount = roomVisitService.getVisitorCount(room.get());
-
-            visitData = new RoomVisit.Data(visit, currentVisitCount);
-            model.addAttribute("visitData", visitData);
-
-            return "rooms/checkedIn";
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (roomVisitService.isRoomFull(room)) {
+            return "forward:roomFull/" + room.getId();
         }
+
+        val visit = roomVisitService.visitRoom(visitor, room);
+        val currentVisitCount = roomVisitService.getVisitorCount(room);
+
+        visitData = new RoomVisit.Data(visit, currentVisitCount);
+        model.addAttribute("visitData", visitData);
+
+        return "rooms/checkedIn";
+    }
+
+    /**
+     * Check into a room even though it is full
+     */
+    @PostMapping("/checkInOverride")
+    @Transactional
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) {
+        if (!allowFullRoomCheckIn) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
+        }
+
+        val room = getRoomOrThrow(visitData.getRoomId());
+        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
+
+        roomVisitService.checkOutVisitor(visitor);
+
+        val visit = roomVisitService.visitRoom(visitor, room);
+        val currentVisitCount = roomVisitService.getVisitorCount(room);
+
+        visitData = new RoomVisit.Data(visit, currentVisitCount);
+        model.addAttribute("visitData", visitData);
+
+        return "rooms/checkedIn";
     }
 
     @PostMapping("/checkOut")
     public String checkOut(@ModelAttribute RoomVisit.Data visitData) {
-        Optional<Visitor> visitor = visitorService.findVisitorByEmail(visitData.getVisitorEmail());
+        val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
 
-        if (!visitor.isPresent()) {
-            throw new VisitorNotFoundException();
-        }
-        roomVisitService.checkOutVisitor(visitor.get());
+        roomVisitService.checkOutVisitor(visitor);
         return "redirect:/r/checkedOut";
     }
 
     @GetMapping("/{roomId}/checkOut")
     public String checkoutPage(@PathVariable String roomId, Model model) {
-        Optional<Room> room = roomService.findByName(roomId);
-        if (!room.isPresent()) {
-            throw new RoomNotFoundException();
-        }
-        Room.Data roomData = new Room.Data(room.get());
-        model.addAttribute("room", room.get());
+        val room = getRoomOrThrow(roomId);
+
+        Room.Data roomData = new Room.Data(room);
+        model.addAttribute("room", room);
         model.addAttribute("checkout", true);
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
@@ -180,33 +192,28 @@ public class RoomController {
 
     @GetMapping("/{roomId}/roomReset")
     public String roomReset(@PathVariable String roomId, Model model) {
-        Optional<Room> room = roomService.findByName(roomId);
-        if (!room.isPresent()) {
-            throw new RoomNotFoundException();
-        }
-        Room.Data roomData = new Room.Data(room.get());
+        val room = getRoomOrThrow(roomId);
+
+        Room.Data roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
         return "rooms/roomReset";
     }
 
     @PostMapping("/{roomId}/executeRoomReset")
     public String executeRoomReset(@PathVariable String roomId, Model model) {
-        Optional<Room> room = roomService.findByName(roomId);
+        val room = getRoomOrThrow(roomId);
 
-        roomVisitService.resetRoom(room.get());
+        roomVisitService.resetRoom(room);
         return "redirect:/r/" + roomId + "?&privileged=true";
     }
 
     @RequestMapping("/roomFull/{roomId}")
     public String roomFull(@PathVariable String roomId, Model model) {
-        Optional<Room> room = roomService.findByName(roomId);
-        if (!room.isPresent()) {
-            throw new RoomNotFoundException();
-        }
-        Room requestedRoom = room.get();
-        int visitorCount = roomVisitService.getVisitorCount(requestedRoom);
-        int maxCapacity = requestedRoom.getMaxCapacity();
-        Room.Data roomData = new Room.Data(room.get());
+        val room = getRoomOrThrow(roomId);
+
+        int visitorCount = roomVisitService.getVisitorCount(room);
+        int maxCapacity = room.getMaxCapacity();
+        Room.Data roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
@@ -215,7 +222,6 @@ public class RoomController {
             return "rooms/full";
         }
     }
-
 
     @RequestMapping("/checkedOut")
     public String checkedOutPage() {
@@ -230,7 +236,7 @@ public class RoomController {
     @PostMapping("/import")
     public String roomTableImport(@RequestParam("file") MultipartFile file, Model model) {
         String fileName = file.getOriginalFilename();
-        String extension = fileName.substring(fileName.indexOf("."), fileName.length());
+        String extension = fileName.substring(fileName.indexOf("."));
 
         try (InputStream is = file.getInputStream()) {
             if (extension.equals(".csv"))
@@ -260,5 +266,50 @@ public class RoomController {
 
     @ResponseStatus(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Not a supported filetype, only .csv or .xlsm will work!")
     public static class InvalidFileUploadException extends RuntimeException {
+    }
+
+    /**
+     * Gets a visitor by email or throws a VisitorNotFoundException if a visitor with that email doesn't exist (yet).
+     *
+     * @param email The visitors email.
+     * @return The visitor.
+     */
+    private Visitor getVisitorOrThrow(String email) {
+        Optional<Visitor> visitor = visitorService.findVisitorByEmail(email);
+
+        if (!visitor.isPresent()) {
+            throw new VisitorNotFoundException();
+        }
+
+        return visitor.get();
+    }
+
+    /**
+     * Gets an existing visitor by email or creates a new one. Throws a 'bad request' ResponseStatusException if an InvalidEmailException is thrown.
+     *
+     * @param email The visitors email.
+     * @return The visitor.
+     */
+    private Visitor getOrCreateVisitorOrThrow(String email) {
+        try {
+            return visitorService.findOrCreateVisitor(email);
+        } catch (InvalidEmailException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
+    }
+
+    /**
+     * Gets a room by id or throws a RoomNotFoundException.
+     *
+     * @param roomId The rooms id.
+     * @return The room.
+     */
+    private Room getRoomOrThrow(String roomId) {
+        Optional<Room> room = roomService.findByName(roomId);
+        if (room.isPresent()) {
+            return room.get();
+        } else {
+            throw new RoomNotFoundException();
+        }
     }
 }
