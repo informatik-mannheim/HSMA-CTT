@@ -154,6 +154,27 @@ public class RoomControllerTest {
     }
 
     @Test
+    public void checkInFullRoomWithOverride() throws Exception{
+        // find and fill testroom
+        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
+        fillRoom(testRoom, 10);
+
+        this.mockMvc.perform(
+                get("/r/" + TEST_ROOM_NAME + "?override=true").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(null));
+
+        this.mockMvc.perform(
+                post("/r/checkInOverride")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .with(csrf()))
+                .andExpect(forwardedUrl(null))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void checkInInvalidCredentials() throws Exception{
         // check in with empty username should
         this.mockMvc.perform(
