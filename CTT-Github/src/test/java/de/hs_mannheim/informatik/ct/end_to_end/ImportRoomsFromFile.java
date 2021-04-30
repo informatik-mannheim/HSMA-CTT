@@ -55,7 +55,7 @@ public class ImportRoomsFromFile {
         String roomName = "A001a";
         List<String[]> testRoomData = createRoomData(new String[]{roomName});
 
-        BufferedReader csvReader = createCsvReader(testRoomData);
+        BufferedReader csvReader = createCsvBuffer(testRoomData);
         roomService.importFromCsv(csvReader);
 
         Optional<Room> testRoom = roomService.findByName(roomName);
@@ -117,7 +117,7 @@ public class ImportRoomsFromFile {
 
         String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
-        BufferedReader csvReader = createCsvReader(testRoomData);
+        BufferedReader csvReader = createCsvBuffer(testRoomData);
         roomService.importFromCsv(csvReader);
 
         String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
@@ -134,7 +134,7 @@ public class ImportRoomsFromFile {
 
         String[] initialTestRoomPins = extractRoomPins(roomNames);
 
-        BufferedReader csvData = createCsvReader(testRoomData);
+        BufferedReader csvData = createCsvBuffer(testRoomData);
 
         roomService.importFromCsv(csvData);
 
@@ -158,7 +158,7 @@ public class ImportRoomsFromFile {
 
         String[] newRoomNames = new String[]{"TestR00m", "otherTestRoom", "test2", "room"};
         List<String[]> testRoomData2 = createRoomData(newRoomNames);
-        BufferedReader csvData = createCsvReader(testRoomData2);
+        BufferedReader csvData = createCsvBuffer(testRoomData2);
 
         roomService.importFromCsv(csvData);
 
@@ -263,13 +263,19 @@ public class ImportRoomsFromFile {
      *
      * @aparam roomData Arraylist holding room data.
      */
-    private BufferedReader createCsvReader(@NotNull List<String[]> roomData) {
+    private BufferedReader createCsvBuffer(@NotNull List<String[]> roomData) {
         StringBuilder buffer = new StringBuilder();
+        String[] last = roomData.get(0);
+        roomData.remove(last);
 
-        for (String[] room : roomData) {
-            buffer.append(Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER)));
-            buffer.append('\n');
+        if(!roomData.isEmpty()) {
+            for (String[] room : roomData) {
+                String roomStream = Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER));
+                buffer.append(roomStream + '\n');
+            }
         }
+
+        buffer.append(Stream.of(last).collect(Collectors.joining(COMMA_DELIMITER)));
 
         return new BufferedReader(new StringReader(buffer.toString()));
     }
@@ -282,8 +288,8 @@ public class ImportRoomsFromFile {
     private void saveRooms(List<String[]> roomData) throws NumberFormatException {
         for (String[] room : roomData) {
             roomService.saveRoom(new Room(
-                    room[0],                    // room name
-                    room[1],                    // building name
+                    room[1],                    // room name
+                    room[0],                    // building name
                     Integer.parseInt(room[2])   // parse room size from string to int
             ));
         }
@@ -302,8 +308,8 @@ public class ImportRoomsFromFile {
 
         for (String name : roomNames) {
             roomData.add(new String[]{
-                    name,
                     buildingName,
+                    name,
                     size
             });
         }
