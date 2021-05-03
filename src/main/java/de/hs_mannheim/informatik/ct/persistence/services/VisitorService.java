@@ -18,8 +18,10 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.val;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -28,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
 
 
 @Service
@@ -41,12 +42,21 @@ public class VisitorService {
     }
 
     @Transactional
-    public Visitor findOrCreateVisitor(String email) throws InvalidEmailException {
+    public Visitor findOrCreateVisitor(String email, String name, String number, String address) throws InvalidEmailException, InvalidExternalUserdataException {
         val visitor = findVisitorByEmail(email);
         if (visitor.isPresent()) {
             return visitor.get();
         } else if (EmailValidator.getInstance().isValid(email)) {
-            return visitorRepo.save(new Visitor(email));
+            if (email.endsWith("hs-mannheim.de")) {
+                return visitorRepo.save(new Visitor(email));
+            } else {
+                if (name != null && (number != null || address != null)) {
+                    return visitorRepo.save(new ExternalVisitor(email, name, number, address));
+                } else {
+                    throw new InvalidExternalUserdataException();
+                }
+            }
+
         } else {
             throw new InvalidEmailException();
         }

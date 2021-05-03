@@ -77,11 +77,14 @@
 
                 <h3 class="content-header form-header">Mailadresse eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
-                    <input style="min-width: 248px" id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer" value="" required>
+                    <input style="min-width: 248px" id="email-text" name="email" type="number" class="email"
+                           placeholder="Matrikelnummer" value="" required>
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
-                <div>
-                    <textarea id="guest-free-section" name="guest-free-section" cols="29" rows="5"></textarea>
+                <div id="guest-free-section">
+                    <input id="guest-name" name="guest-name">
+                    <input id="guest-address" name="guest-address">
+                    <input id="guest-number" name="guest-number">
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
                     <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox">
@@ -108,10 +111,12 @@
                 <div class="form-row checkin-only" style="margin-left: 24px;">
                     <input style="margin-left: 0" type="submit" value="Check-in">
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value="">
-                    <input type="hidden" name="rid" th:field="*{roomId}" />
-                </div>
-            </form>
-
+                    <input type="hidden" name="rid" th:field="*{roomId}"/>
+                    <input id="submit-form-name" type="hidden" name="name"/>
+                    <input id="submit-form-address" type="hidden" name="address"/>
+                    <input id="submit-form-number" type="hidden" name="number"/>
+                </form>
+            </div>
             <div class="form-row checkout-only">
                 <form action="#" th:action="@{/r/checkOut}" method="POST" id="submit-form-checkout" name="submit-form">
                     <input style="margin-left: 24px;" type="submit" value="Abmelden">

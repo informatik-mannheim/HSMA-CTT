@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         document.getElementById("submit-form-email").value = combinedEmail;
+        document.getElementById("submit-form-name").value = document.getElementById("guest-name").value;
+        document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
+        document.getElementById("submit-form-address").value = document.getElementById("guest-address").value;
     })
 
     document.getElementById("submit-form-checkout").addEventListener("submit", () => {

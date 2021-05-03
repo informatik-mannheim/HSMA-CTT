@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
@@ -67,22 +68,22 @@ public class VisitorServiceTest {
                 .thenAnswer(visitor -> visitor.getArgument(0, Visitor.class));
 
         // Empty email
-        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor(""));
+        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("",null, null, null));
 
         // Incomplete email
-        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("13337@"));
-        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12"));
-        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12@stud.hs"));
+        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("13337@",null, null, null));
+        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12",null, null, null));
+        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12@stud.hs",null, null, null));
 
         try {
             //Valid external emails
-            visitorService.findOrCreateVisitor("test@gmx.de");
-            visitorService.findOrCreateVisitor("test_test@gmail.com");
-            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu");
+            visitorService.findOrCreateVisitor("test@gmx.de",null, null, null);
+            visitorService.findOrCreateVisitor("test_test@gmail.com",null, null, null);
+            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu",null, null, null);
             // Valid internal emails
-            visitorService.findOrCreateVisitor("13337@stud.hs-mannheim.de");
-            visitorService.findOrCreateVisitor("p.prof@hs-mannheim.de");
-        } catch (InvalidEmailException e) {
+            visitorService.findOrCreateVisitor("13337@stud.hs-mannheim.de",null, null, null);
+            visitorService.findOrCreateVisitor("p.prof@hs-mannheim.de",null, null, null);
+        } catch (InvalidEmailException | InvalidExternalUserdataException e) {
             fail("Valid email caused exception");
         }
     }
@@ -92,19 +93,19 @@ public class VisitorServiceTest {
      * a constraint violation, Therefore ensure that save is ONLY called if the visitor wasn't found.
      */
     @Test
-    void finOrCreateNoDuplicateSave() throws InvalidEmailException {
+    void finOrCreateNoDuplicateSave() throws InvalidEmailException, InvalidExternalUserdataException {
         val email = "1234@stud.hs-mannheim.de";
         val visitor = new Visitor();
         // The visitor doesn't exist yet
 
         doReturn(Optional.empty()).when(visitorRepository).findByEmail(email);
-        visitorService.findOrCreateVisitor(email);
+        visitorService.findOrCreateVisitor(email,null, null, null);
 
         // The visitor exists now
         doReturn(Optional.of(visitor)).when(visitorRepository).findByEmail(email);
         Assertions.assertTrue(visitorService.findVisitorByEmail(email).isPresent());
         // This should return the visitor without creating a new one
-        visitorService.findOrCreateVisitor(email);
+        visitorService.findOrCreateVisitor(email,null, null, null);
 
         // Finally ensure that save was called exactly once
         verify(
