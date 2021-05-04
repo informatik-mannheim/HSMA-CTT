@@ -75,11 +75,9 @@ public class RoomService {
         return roomList;
     }
 
-    public void importFromCsv(BufferedReader csv) throws IOException {
-        boolean csvCorrect = checkCsvFormation(csv);
-        if (csvCorrect == false) {
-            throw new IOException("CSV of room import not correct formatted");
-        }
+    // TODO: Maybe check if csv is correctly formatted (or accept that the user
+    // uploads only correct files?)
+    public void importFromCsv(BufferedReader csv) {
         csv.lines().map((line) -> {
             String[] values = line.split(COMMA_DELIMITER);
             String building = values[0];
@@ -87,22 +85,6 @@ public class RoomService {
             int roomCapacity = Integer.parseInt(values[2]);
             return new Room(roomName, building, roomCapacity);
         }).forEach(this::saveRoom);
-    }
-    
-    public boolean checkCsvFormation(BufferedReader csv) throws IOException {
-        String line;
-        while ((line = csv.readLine()) != null) {
-            String[] values = line.split(COMMA_DELIMITER);
-            if (values[0].isEmpty() || values[1].isEmpty() || values[2].isEmpty()) {
-                return false;
-            }
-            try {
-                Double.parseDouble(values[2]);
-            } catch (NumberFormatException nfe) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public void importFromExcel(InputStream is) throws IOException {
