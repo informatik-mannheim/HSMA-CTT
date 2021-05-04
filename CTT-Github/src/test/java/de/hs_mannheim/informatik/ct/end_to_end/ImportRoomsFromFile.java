@@ -1,6 +1,6 @@
 package de.hs_mannheim.informatik.ct.end_to_end;
 
-import com.sun.istack.NotNull;
+import de.hs_mannheim.informatik.ct.RoomServiceHelper;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.junit.jupiter.api.Test;
@@ -11,25 +11,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-// todo split into:                     todo:
-//  - RoomServiceTest                   mock
-//  - ImportRoomsFromFile/RoomPinTests  comment
-//  - RoomServiceHelper
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,77 +37,19 @@ public class ImportRoomsFromFile {
     @Autowired
     private RoomService roomService;
 
-    private final String COMMA_DELIMITER = ";";
+    private RoomServiceHelper helper = new RoomServiceHelper();
 
     // CSV tests
     @Test
-    public void importCsv() throws IOException {
-        String roomName = "A001a";
-        List<String[]> testRoomData = createRoomData(new String[]{roomName});
-
-        BufferedReader csvReader = createCsvBuffer(testRoomData);
-        roomService.importFromCsv(csvReader);
-
-        Optional<Room> testRoom = roomService.findByName(roomName);
-
-        assertThat(testRoom.isPresent(), is(true));
-    }
-
-    @Test
-    public void importCsv_EmptyFile() {
-        String exceptedMessages = "CSV of room import not correct formatted";
-        BufferedReader csvReader = new BufferedReader(new StringReader(";;"));
-        Exception exception = assertThrows(Exception.class, () -> {
-            roomService.importFromCsv(csvReader);
-        });
-
-        assertThat(exception.getMessage(), equalTo(exceptedMessages));
-    }
-
-    @Test
-    public void importCsv_wrongCommaDelimiter() {
-        String exceptedMessages = "CSV of room import not correct formatted";
-        BufferedReader csvReaderSingleLine = new BufferedReader(
-                new StringReader("room,building,2"));
-
-        BufferedReader csvReaderTwoLines = new BufferedReader(
-                new StringReader("room;building;1\n" +
-                                    "room2;building,2"));
-
-        Exception exceptionSingleLine = assertThrows(Exception.class, () -> {
-            roomService.importFromCsv(csvReaderSingleLine);
-        });
-        Exception exceptionTwoLines = assertThrows(Exception.class, () -> {
-            roomService.importFromCsv(csvReaderTwoLines);
-        });
-
-        assertThat(exceptionSingleLine.getMessage(), equalTo(exceptedMessages));
-        assertThat(exceptionTwoLines.getMessage(), equalTo(exceptedMessages));
-    }
-
-    @Test
-    public void importCsv_wrongRoomCapacityType() {
-        String exceptedMessages = "CSV of room import not correct formatted";
-        BufferedReader csvReader = new BufferedReader(
-                new StringReader("room;building;zwölf"));
-
-        Exception exception = assertThrows(Exception.class, () -> {
-            roomService.importFromCsv(csvReader);
-        });
-
-        assertThat(exception.getMessage(), equalTo(exceptedMessages));
-    }
-
-    @Test
     public void importCsv_overrideSingleRoom() throws IOException {
         String roomName = "newTestRoom";
-        List<String[]> testRoomData = createRoomData(new String[]{roomName});
+        List<String[]> testRoomData = helper.createRoomData(new String[]{roomName});
 
-        saveRooms(testRoomData);
+        helper.saveRooms(testRoomData, roomService);
 
         String initialTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
 
-        BufferedReader csvReader = createCsvBuffer(testRoomData);
+        BufferedReader csvReader = helper.createCsvBuffer(testRoomData);
         roomService.importFromCsv(csvReader);
 
         String newTestRoomPin = roomService.findByName(roomName).get().getRoomPin();
@@ -128,17 +60,15 @@ public class ImportRoomsFromFile {
     @Test
     public void importCsv_overrideMultipleRooms() throws IOException {
         String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
-        List<String[]> testRoomData = createRoomData(roomNames);
+        List<String[]> testRoomData = helper.createRoomData(roomNames);
 
-        saveRooms(testRoomData);
+        helper.saveRooms(testRoomData, roomService);
 
         String[] initialTestRoomPins = extractRoomPins(roomNames);
 
-        BufferedReader csvData = createCsvBuffer(testRoomData);
+        BufferedReader csvData = helper.createCsvBuffer(testRoomData);
 
         roomService.importFromCsv(csvData);
-
-        //roomService.importFromCsv(csvReader);
 
         String[] newTestRoomPins = extractRoomPins(roomNames);
 
@@ -150,15 +80,15 @@ public class ImportRoomsFromFile {
     @Test
     public void importCsv_overrideExistingAndNewRooms() throws IOException {
         String[] existingRoomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
-        List<String[]> testRoomData = createRoomData(existingRoomNames);
+        List<String[]> testRoomData = helper.createRoomData(existingRoomNames);
 
-        saveRooms(testRoomData);
+        helper.saveRooms(testRoomData, roomService);
 
         String[] initialTestRoomPins = extractRoomPins(existingRoomNames);
 
         String[] newRoomNames = new String[]{"TestR00m", "otherTestRoom", "test2", "room"};
-        List<String[]> testRoomData2 = createRoomData(newRoomNames);
-        BufferedReader csvData = createCsvBuffer(testRoomData2);
+        List<String[]> testRoomData2 = helper.createRoomData(newRoomNames);
+        BufferedReader csvData = helper.createCsvBuffer(testRoomData2);
 
         roomService.importFromCsv(csvData);
 
@@ -170,9 +100,8 @@ public class ImportRoomsFromFile {
             }
         }
     }
-
+/**
     // Excel tests
-    // Todo methods to implement. Find a way to customize excel file
     @Test
     public void importExcel() throws IOException{
         String testExcelPath = "excelForTest.xlsm";
@@ -201,7 +130,6 @@ public class ImportRoomsFromFile {
         });
     }
 
-    // todo need rework. This method contains an ugly workaround with hardcoded values.
     @Test
     public void importExcel_overriteMultipleRooms() throws Exception {
         String testExcelPath = "excelForTest.xlsm";
@@ -227,22 +155,12 @@ public class ImportRoomsFromFile {
     }
 
     /**
-     * Helper Method to load excel file
-     * @param testExcelPath Filename of excel file. Needs to be stored in resources folder
-     * @return InputStream containing data as if it was loaded from an existing excel file
-     */
-    private InputStream inputStreamFromTestExcel(String testExcelPath) throws IOException {
-        File excelFile = new ClassPathResource(testExcelPath).getFile();
-        InputStream is = new FileInputStream(excelFile);
-        return is;
-    }
-
-    /**
      * Helper Method to extract room pins
      *
      * @param roomNames string array holding the room names
      * @return array holding the room pins
      */
+
     private String[] extractRoomPins(String[] roomNames) throws NoSuchElementException {
         String[] roomPins = new String[roomNames.length];
         for (int i = 0; i < roomNames.length; i++) {
@@ -257,64 +175,5 @@ public class ImportRoomsFromFile {
         return roomPins;
     }
 
-    /**
-     * Helper Method to create Buffered Reader from Array List. This is used to test a room import
-     * feature without generating and reading from a csv file.
-     *
-     * @aparam roomData Arraylist holding room data.
-     */
-    private BufferedReader createCsvBuffer(@NotNull List<String[]> roomData) {
-        StringBuilder buffer = new StringBuilder();
-        String[] last = roomData.get(0);
-        roomData.remove(last);
-
-        if(!roomData.isEmpty()) {
-            for (String[] room : roomData) {
-                String roomStream = Stream.of(room).collect(Collectors.joining(COMMA_DELIMITER));
-                buffer.append(roomStream + '\n');
-            }
-        }
-
-        buffer.append(Stream.of(last).collect(Collectors.joining(COMMA_DELIMITER)));
-
-        return new BufferedReader(new StringReader(buffer.toString()));
-    }
-
-    /**
-     * Helper method that saves Rooms from Array List into the data base
-     *
-     * @param roomData Array list containing room name, building name and room size for each room that should be created.
-     */
-    private void saveRooms(List<String[]> roomData) throws NumberFormatException {
-        for (String[] room : roomData) {
-            roomService.saveRoom(new Room(
-                    room[1],                    // room name
-                    room[0],                    // building name
-                    Integer.parseInt(room[2])   // parse room size from string to int
-            ));
-        }
-    }
-
-    /**
-     * builds Array List with fixed buildingName and roomSize from String Array containing room names
-     *
-     * @param roomNames Array containing room names
-     * @return Array List where every Array contains data to create and save a Room (room name, building name and room size).
-     */
-    private List<String[]> createRoomData(String[] roomNames) {
-        List<String[]> roomData = new ArrayList<>();
-        String buildingName = "A";
-        String size = "3";
-
-        for (String name : roomNames) {
-            roomData.add(new String[]{
-                    buildingName,
-                    name,
-                    size
-            });
-        }
-
-        return roomData;
-    }
 }
 
