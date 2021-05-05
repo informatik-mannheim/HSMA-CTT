@@ -17,7 +17,7 @@
     </div>
     <p>Bereits in diesem Raum angemeldet?</p>
     <p>
-        <a class="button" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden</a>
+        <a class="button" th:href="@{'/r/'+${roomData.roomId}+'/checkOut'}">Abmelden</a>
     </p>
 
 </div>
