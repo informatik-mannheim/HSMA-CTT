@@ -31,6 +31,8 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
     DB_PW=grEtwOBI4E
     # Add the user credentials for the site, see docker-compose for more information
     USER_CREDENTIALS=user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;
+    # AES Secret used to encrypt personal data in the database
+    DB_ENCRYPTION_SECRET=corona-ctt-20201
     ```
 
 1. Copy the `docker-compose.yml` and `nginx.conf` files from the repository. Neither should require further customization, if possible use the `.env` for this purpose.

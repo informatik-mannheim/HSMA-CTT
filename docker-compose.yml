@@ -20,6 +20,8 @@ services:
       - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;prof,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,PROF;admin,$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a,PROF,ADMIN;}
       # The URL to prefix absolute URLs with, since nginx handles the outside connections.
       - URL_OVERRIDE=${URL_OVERRIDE}
+      # AES Secret used to encrypt personal data in the database, override in .env
+      - DB_ENCRYPTION_SECRET=${DB_ENCRYPTION_SECRET:-corona-ctt-20201}
     restart: always
   db:
     image: postgres:13-alpine
