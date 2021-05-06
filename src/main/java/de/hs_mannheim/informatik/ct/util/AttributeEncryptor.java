@@ -1,18 +1,5 @@
 package de.hs_mannheim.informatik.ct.util;
 
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.util.Base64;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.AttributeConverter;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -30,6 +17,19 @@ import org.springframework.stereotype.Component;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.persistence.AttributeConverter;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Encryptor class which encrypts and decrypts column values tagged with @Convert using the AES algorithm provided by JDK.
@@ -65,5 +65,4 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
             throw new IllegalStateException(e);
         }
     }
-    
 }
