@@ -39,9 +39,12 @@ public class ImportRoomsFromFile {
 
     private RoomServiceHelper helper = new RoomServiceHelper();
 
+    // these tests verify that room pins won't change after usage of import functions provided by RoomService.java
+
     // CSV tests
+    // one room in csv, same room in DB
     @Test
-    public void importCsv_overrideSingleRoom() throws IOException {
+    public void importCsv_overrideSingleRoom_EmptyDB() throws IOException {
         String roomName = "newTestRoom";
         List<String[]> testRoomData = helper.createRoomData(new String[]{roomName});
 
@@ -57,8 +60,27 @@ public class ImportRoomsFromFile {
         assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
     }
 
+    // one room in csv, multiple rooms in DB
     @Test
-    public void importCsv_overrideMultipleRooms() throws IOException {
+    public void importCsv_overrideSingleRoom_FilledDB() throws IOException {
+        String[] roomNames = {"newTestRoom", "some", "other", "rooms", "roomRoom", "emptyRoom"};
+        List<String[]> testRoomData = helper.createRoomData(roomNames);
+
+        helper.saveRooms(testRoomData, roomService);
+
+        String initialTestRoomPin[] = extractRoomPins(roomNames);
+
+        BufferedReader csvReader = helper.createCsvBuffer(helper.createRoomData(new String[] {roomNames[0]}));
+        roomService.importFromCsv(csvReader);
+
+        String[] newTestRoomPin = extractRoomPins(roomNames);
+
+        assertThat(newTestRoomPin, equalTo(initialTestRoomPin));
+    }
+
+    // multiple rooms in csv, same rooms in DB but no others
+    @Test
+    public void importCsv_overrideMultipleRooms_EmptyDB() throws IOException {
         String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
         List<String[]> testRoomData = helper.createRoomData(roomNames);
 
@@ -72,13 +94,62 @@ public class ImportRoomsFromFile {
 
         String[] newTestRoomPins = extractRoomPins(roomNames);
 
-        for (int i = 0; i < initialTestRoomPins.length; i++) {
-            assertThat(initialTestRoomPins[i], equalTo(newTestRoomPins[i]));
-        }
+        assertThat(initialTestRoomPins, equalTo(newTestRoomPins));
     }
 
+    // multiple rooms in csv, same rooms and additional rooms in DB
     @Test
-    public void importCsv_overrideExistingAndNewRooms() throws IOException {
+    public void importCsv_overrideMultipleRooms_FilledDB() throws IOException {
+        String[] roomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
+        String[] additionalRoomNames = new String[]{"other", "rooms", "roomRoom", "emptyRoom"};
+
+        List<String[]> testRoomData = helper.createRoomData(roomNames);
+        List<String[]> additionalData = helper.createRoomData(additionalRoomNames);
+
+        helper.saveRooms(testRoomData, roomService);
+        helper.saveRooms(additionalData, roomService);
+
+        String[] initialTestRoomPins = extractRoomPins(roomNames);
+        String[] additionalInitialRoomPins = extractRoomPins(additionalRoomNames);
+
+        BufferedReader csvData = helper.createCsvBuffer(testRoomData);
+
+        roomService.importFromCsv(csvData);
+
+        String[] newTestRoomPins = extractRoomPins(roomNames);
+        String[] additionalNewRoomPins = extractRoomPins(additionalRoomNames);
+
+        // checks overwritten rooms
+        assertThat(initialTestRoomPins, equalTo(newTestRoomPins));
+        // checks not overwritten rooms
+        assertThat(additionalInitialRoomPins, equalTo(additionalNewRoomPins));
+    }
+
+    // existing and new rooms in csv
+    @Test
+    public void importCsv_overrideRoomsAndAddNew_EmptyDB() throws IOException {
+        String[] roomNamesDB = new String[]{"newTestRoom", "otherTestRoom"};
+        String[] roomNamesImport = new String[]{roomNamesDB[0], roomNamesDB[1], "roomRoom", "emptyRoom"};
+
+        List<String[]> dataDB = helper.createRoomData(roomNamesDB);
+        List<String[]> dataImport = helper.createRoomData(roomNamesImport);
+
+        helper.saveRooms(dataDB, roomService);
+
+        String[] initialTestRoomPins = extractRoomPins(roomNamesDB);
+
+        BufferedReader csvData = helper.createCsvBuffer(dataImport);
+
+        roomService.importFromCsv(csvData);
+
+        String[] newTestRoomPins = extractRoomPins(roomNamesDB);
+
+        assertThat(initialTestRoomPins, equalTo(newTestRoomPins));
+    }
+
+    // existing and new rooms in csv, additional rooms that won't get overwritten in DB
+    @Test
+    public void importCsv_overrideRoomsAndAddNew_FilledDB() throws IOException {
         String[] existingRoomNames = new String[]{"newTestRoom", "otherTestRoom", "test", "room"};
         List<String[]> testRoomData = helper.createRoomData(existingRoomNames);
 
