@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.localStorage;
     const emailText = document.getElementById("email-text");
-    const guestFreeSection = document.getElementById("guest-free-section")
+    const guestFreeSection = document.getElementsByClassName("guest-free-section")
     const emailLabel = document.getElementById("email-text-label");
     const postFixRadioButtons = document.querySelectorAll("input[type=radio][name='email-postfix']");
     let emailPostfix = null;
@@ -80,24 +80,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (postfix) {
             case "student":
+                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
-                guestFreeSection.style.display = "none"
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.display = "none"
+                }
                 break;
             case "internal":
+                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
-                guestFreeSection.style.display = "none"
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.display = "none"
+                }
                 break;
             default:
             case "external":
+                emailText.style.minWidth = "410px"
                 emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
-                guestFreeSection.style.display = "flex"
-                guestFreeSection.placeholder = "Bitte tragen Sie \nName/Adresse oder \nName/Telefon ein"
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.display = "flex"
+                }
                 break;
         }
 

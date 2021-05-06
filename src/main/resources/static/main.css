@@ -46,7 +46,7 @@ body {
 .header-bar#header-container {
     background-color: #22376f;
     width: calc(100% - 2em);
-    height: 4em;
+    height: 3em;
     padding: 1em;
     color: #eee;
     justify-content: center;
@@ -286,7 +286,8 @@ footer {
     margin-right: 1em;
 }
 
-#guest-free-section {
+.guest-free-section {
+    display: flex;
     font-family: 'Raleway', sans-serif;
         resize: none;
     margin-left: 24px;

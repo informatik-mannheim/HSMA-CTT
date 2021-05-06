@@ -39,7 +39,7 @@
         <div class="no-js">
             <form class="checkin-only" action="#" th:action="${checkInOverwrite} ? @{/r/checkInOverride} : @{/r/checkIn}" method="POST" name="submit-form">
                 <div class="form-row">
-                    <input style="flex-grow: 1; margin-left: 24px;" name="visitorEmail" type="email" class="email"
+                    <input style="flex-grow: 1; margin-left: 24px;min-width: 270px" name="visitorEmail" type="email" class="email"
                            placeholder="Vollständige E-Mail" value="" required>
                     <input type="hidden" name="rid" th:field="*{roomId}"/>
                 </div>
@@ -50,7 +50,7 @@
 
             <form class="checkout-only" action="#" th:action="@{/r/checkOut}" method="POST" name="submit-form">
                 <div class="form-row">
-                    <input style="flex-grow: 1;" name="visitorEmail" type="email" class="email"
+                    <input style="flex-grow: 1;min-width: 270px" name="visitorEmail;" type="email" class="email"
                            placeholder="Vollständige E-Mail" value="" required>
                     <input type="hidden" name="rid" th:field="*{roomId}"/>
                 </div>
@@ -77,14 +77,19 @@
 
                 <h3 class="content-header form-header">Mailadresse eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
-                    <input style="min-width: 248px" id="email-text" name="email" type="number" class="email"
+                    <input style="min-width: 270px" id="email-text" name="email" type="number" class="email"
                            placeholder="Matrikelnummer" value="" required>
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
-                <div id="guest-free-section">
-                    <input id="guest-name" name="guest-name">
-                    <input id="guest-address" name="guest-address">
-                    <input id="guest-number" name="guest-number">
+                <div class="guest-free-section form-row" style="max-width: 300px">
+                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1"
+                           placeholder="Nachname / Vorname">
+                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1"
+                           placeholder="Telefonnummer">
+                </div>
+                <div class="guest-free-section form-row wildeSache">
+                    <input class="email" id="guest-address" name="guest-address" style="min-width: 410px"
+                           placeholder="Adresse">
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
                     <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox">
