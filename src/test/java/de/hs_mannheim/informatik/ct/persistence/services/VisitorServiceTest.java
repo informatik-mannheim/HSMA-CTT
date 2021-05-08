@@ -34,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.naming.InvalidNameException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -75,11 +76,15 @@ public class VisitorServiceTest {
         Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12",null, null, null));
         Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("12@stud.hs",null, null, null));
 
+        // External Guest required mail, name and (number or address)
+        Assertions.assertThrows(InvalidEmailException.class, () -> visitorService.findOrCreateVisitor("","CoolName", "Number is a String", "null"));
+        Assertions.assertThrows(InvalidExternalUserdataException.class, () -> visitorService.findOrCreateVisitor("myEmail@gmx.de",null, "123456 call me", null));
+        Assertions.assertThrows(InvalidExternalUserdataException.class, () -> visitorService.findOrCreateVisitor("imagine@web.de","Dragons", null, null));
         try {
             //Valid external emails
-            visitorService.findOrCreateVisitor("test@gmx.de",null, null, null);
-            visitorService.findOrCreateVisitor("test_test@gmail.com",null, null, null);
-            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu",null, null, null);
+            visitorService.findOrCreateVisitor("test@gmx.de","Tester1", "123", null);
+            visitorService.findOrCreateVisitor("test_test@gmail.com","Tester2", "345", null);
+            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu","Tester3", "234", null);
             // Valid internal emails
             visitorService.findOrCreateVisitor("13337@stud.hs-mannheim.de",null, null, null);
             visitorService.findOrCreateVisitor("p.prof@hs-mannheim.de",null, null, null);
