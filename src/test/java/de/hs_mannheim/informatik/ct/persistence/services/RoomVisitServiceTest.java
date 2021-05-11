@@ -200,6 +200,26 @@ class RoomVisitServiceTest {
         assertThat(Duration.between(actualDate, expectedDate).toMinutes(), is(lessThan(1L)));
     }
 
+    @Test
+    void resetEmptyRoom(){ }
+
+    @Test
+    void resetFilledRoom(){}
+
+    @Test
+    void resetFullRoom(){}
+
+    // todo
+    //  reset room with variable time param
+    //      short
+    //      long
+    //      super-long
+    //  reset room leaving...
+    //      no
+    //      some
+    //      all
+    //  ...people in room
+
     private void testAutoCheckout(@NonNull LocalDateTime checkInTime, @NonNull LocalTime forcedEndTime, LocalDateTime expectedCheckoutTime) {
         val visitor = new Visitor("1");
         val visit = new RoomVisitHelper(new Room("A", "A007a", 2)).generateVisit(
@@ -229,6 +249,5 @@ class RoomVisitServiceTest {
             assertThat(convertToLocalDateTime(checkedOutVisit.getEndDate()), equalTo(expectedCheckoutTime));
             assertThat(checkedOutVisit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.AutomaticCheckout));
         }
-
     }
 }
