@@ -198,6 +198,7 @@ class RoomVisitServiceTest {
     }
 
     @Test
+<<<<<<< HEAD
     void resetEmptyRoom(){
         Room emptyRoom = new Room("A", "B", 2);
 
@@ -336,6 +337,26 @@ class RoomVisitServiceTest {
 
         assertThat(visit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.RoomReset));
     }
+=======
+    void resetEmptyRoom(){ }
+
+    @Test
+    void resetFilledRoom(){}
+
+    @Test
+    void resetFullRoom(){}
+
+    // todo
+    //  reset room with variable time param
+    //      short
+    //      long
+    //      super-long
+    //  reset room leaving...
+    //      no
+    //      some
+    //      all
+    //  ...people in room
+>>>>>>> 533bc83 (created todos)
 
     private void testAutoCheckout(@NonNull LocalDateTime checkInTime, @NonNull LocalTime forcedEndTime, LocalDateTime expectedCheckoutTime) {
         val visitor = new Visitor("1");
