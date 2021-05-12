@@ -95,7 +95,7 @@ public class RoomController {
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
 
         try {
-            if(!visitData.getRoomPin().equals(room.get().getRoomPin()))
+            if(room.isPresent() && !visitData.getRoomPin().equals(room.get().getRoomPin()))
                 throw new InvalidRoomPinException();
         } catch(InvalidRoomPinException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Pin");
