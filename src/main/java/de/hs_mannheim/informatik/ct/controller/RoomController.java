@@ -64,8 +64,16 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId,
-                          @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
+                          @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
+                          @RequestParam(required = false, defaultValue = "false") Boolean privileged, Model model) {
         // get roomId from form on landing page (index.html)
+        if(privileged){
+            System.out.println("Prof is entering request");
+        }else{
+            System.out.println("Student is entering request");
+        }
+        System.out.println(("RoomId: "+roomIdFromRequest));
+        System.out.println(("Privileged Ausgabe: "+privileged));
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
 
@@ -73,12 +81,14 @@ public class RoomController {
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
         }
-
+        System.out.println("Im Raum befinden sich aktuell "+roomVisitService.getVisitorCount(room.get()));
         if (roomVisitService.isRoomFull(room.get())) {
             return "forward:roomFull/" + room.get().getId();
         }
 
         Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("room", room.get());
+        model.addAttribute("roomVisitService", roomVisitService);
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
 
