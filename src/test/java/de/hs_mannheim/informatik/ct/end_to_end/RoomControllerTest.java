@@ -69,11 +69,14 @@ public class RoomControllerTest {
     private MockMvc mockMvc;
 
     private final String TEST_ROOM_NAME = "123";
+    private String TEST_ROOM_PIN;
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
     public void setUp(){
-        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
+        Room room = new Room(TEST_ROOM_NAME, "A", 10);
+        TEST_ROOM_PIN = room.getRoomPin();
+        roomService.saveRoom(room);
     }
 
     @Test
@@ -115,6 +118,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -130,6 +134,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -155,6 +160,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", "")
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().is(400))
                 .andExpect(status().reason("Invalid Email"));
@@ -169,6 +175,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(
@@ -190,6 +197,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(
