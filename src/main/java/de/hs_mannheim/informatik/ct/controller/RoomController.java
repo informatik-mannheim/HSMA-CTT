@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -92,6 +93,14 @@ public class RoomController {
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) {
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
+
+        try {
+            if(!visitData.getRoomPin().equals(room.get().getRoomPin()))
+                throw new InvalidRoomPinException();
+        } catch(InvalidRoomPinException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Pin");
+        }
+
         Visitor visitor = null;
         try {
             visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
