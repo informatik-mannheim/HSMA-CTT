@@ -32,10 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,6 +48,7 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDateTime;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.lessThan;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -75,6 +73,9 @@ class RoomVisitServiceTest {
 
     @MockBean
     private DateTimeService dateTimeService;
+
+    @MockBean
+    private RoomVisit roomVisit;
 
     @Captor
     private ArgumentCaptor<List<RoomVisit>> roomVisitCaptor;
@@ -201,15 +202,42 @@ class RoomVisitServiceTest {
     }
 
     @Test
-    void resetEmptyRoom(){ }
+    void resetRoom(){
+        Visitor visitor = new Visitor("visitor");
+        RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
+                visitor,
+                LocalDateTime.now(),
+                null
+        );
+        Room testRoom = visit.getRoom();
+
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits()).thenReturn(
+          Collections.singletonList(visit)
+        );
+
+        roomVisitService.resetRoom(testRoom);
+
+        Mockito.verify(roomVisitRepository).findNotCheckedOutVisits();
+
+        Mockito.verify(roomVisit, Mockito.atLeast(1)).checkOut(
+                ArgumentMatchers.any(Date.class),
+                RoomVisit.CheckOutSource.RoomReset
+        );
+
+        Mockito.verify(roomVisitRepository).saveAll(roomVisitCaptor.capture());
+
+        assertThat(roomVisitService.getVisitorCount(testRoom), equalTo(0));
+    }
 
     @Test
-    void resetFilledRoom(){}
+    void resetFilledRoom(){
+
+    }
 
     @Test
     void resetFullRoom(){}
 
-    // todo
+    // todo build tests for:
     //  reset room with variable time param
     //      short
     //      long
