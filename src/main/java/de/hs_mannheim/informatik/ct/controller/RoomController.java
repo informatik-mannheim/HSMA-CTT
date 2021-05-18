@@ -162,6 +162,7 @@ public class RoomController {
         }
         Room.Data roomData = new Room.Data(room.get());
         model.addAttribute("room", room.get());
+        model.addAttribute("checkout", true);
         model.addAttribute("roomVisitService", roomVisitService);
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
