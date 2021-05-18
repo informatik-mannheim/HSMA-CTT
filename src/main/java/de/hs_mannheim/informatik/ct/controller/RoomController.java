@@ -146,10 +146,9 @@ public class RoomController {
         if (!visitor.isPresent()) {
             throw new VisitorNotFoundException();
         }
-        System.out.print("Visitor: "+ visitor.get());
+        System.out.print("Visitor: " + visitor.get());
 
         roomVisitService.checkOutVisitor(visitor.get());
-
 
 
         return "redirect:/r/checkedOut";
@@ -161,19 +160,17 @@ public class RoomController {
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
         }
-
-
         Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("room", room.get());
+        model.addAttribute("roomVisitService", roomVisitService);
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
-
-        // The check-in page can handle both check-in and checkout with a css toggle
-        model.addAttribute("checkout", true);
         model.addAttribute("privileged", false);
         return "rooms/checkIn";
     }
+
     @GetMapping("/{roomId}/roomReset")
-    public String roomReset(@PathVariable String roomId, Model model){
+    public String roomReset(@PathVariable String roomId, Model model) {
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
@@ -182,11 +179,12 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         return "rooms/roomReset";
     }
+
     @GetMapping("/{roomId}/executeRoomReset")
-    public String executeRoomReset(@PathVariable String roomId, Model model){
+    public String executeRoomReset(@PathVariable String roomId, Model model) {
         Optional<Room> room = roomService.findByName(roomId);
         roomVisitService.resetRoom(room.get());
-        return "redirect:/r/noId?roomId="+ roomId+"&privileged=true";
+        return "redirect:/r/noId?roomId=" + roomId + "&privileged=true";
     }
 
     @RequestMapping("/roomFull/{roomId}")
@@ -202,7 +200,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "redirect:/r/noId?roomId="+ roomId;
+            return "redirect:/r/noId?roomId=" + roomId;
         } else {
             return "rooms/full";
         }
