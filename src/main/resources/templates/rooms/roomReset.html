@@ -1,0 +1,22 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{rooms/layout}">
+
+<head>
+    <title>Room reset</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h1 class="content-headers" style="margin-bottom: 0;">Raum reset</h1>
+    <p >Sind sie sicher, dass sie einen Raum reset ausführen möchten?</p>
+
+    <p>
+        <a class="button" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged=true'}">zurück</a>
+        <a style="background-color: #b92222" class="button" th:href="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}" >Raum reset</a>
+    </p>
+
+</div>
+</body>
+</html>

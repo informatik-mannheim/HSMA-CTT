@@ -66,6 +66,7 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged, Model model) {
+        // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
 
@@ -136,7 +137,6 @@ public class RoomController {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
     }
 
     @PostMapping("/checkOut")
@@ -146,11 +146,7 @@ public class RoomController {
         if (!visitor.isPresent()) {
             throw new VisitorNotFoundException();
         }
-        System.out.print("Visitor: " + visitor.get());
-
         roomVisitService.checkOutVisitor(visitor.get());
-
-
         return "redirect:/r/checkedOut";
     }
 

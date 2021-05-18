@@ -129,8 +129,6 @@
             <p style="margin-left: 24px; margin-top: 24px;" th:text="${roomVisitService.getVisitorCount(room)}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${roomVisitService.getVisitorCount(room)}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
             <a class="button" style="margin-left: 24px;" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged='+${privileged}}">Anzeige aktualisieren</a>
             <a id="raumReset" class="button" style="margin-left: 24px;"   th:href="@{${roomData.roomId}+ '/roomReset'}">Raum zurücksetzen</a>
-
-
         </div>
 
         <hr style="color: #cccccc; margin-top: 32px;"/>
