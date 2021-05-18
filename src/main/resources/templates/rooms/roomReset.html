@@ -10,11 +10,11 @@
 <body>
 <div layout:fragment="content">
     <h1 class="content-headers" style="margin-bottom: 0;">Raum reset</h1>
-    <p >Sind sie sicher, dass sie einen Raum reset ausführen möchten?</p>
+    <p >Wenn Sie den Raum zurücksetzen, werden alle Personen ausgecheckt. Sind Sie sicher, dass sie fortfahren wollen?</p>
 
     <p>
-        <a class="button" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged=true'}">zurück</a>
-        <a style="background-color: #b92222" class="button" th:href="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}" >Raum reset</a>
+        <a class="button" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged=true'}">Zurück</a>
+        <a style="background-color: #b92222" class="button" th:href="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}" >Raum zurücksetzen</a>
     </p>
 
 </div>
