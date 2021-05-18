@@ -10,12 +10,24 @@
         .checkin-only {
             display: none;
         }
+
     </style>
     <style th:unless="${checkout}">
         .checkout-only {
             display: none;
         }
+
     </style>
+    <style>
+        .hide {
+            display: none;
+        }
+        .show{
+            display: block;
+        }
+
+    </style>
+
 </head>
 
 <body>
@@ -24,19 +36,21 @@
     <h1 class="content content-headers checkout-only" style="margin-bottom: 0;">Check-out</h1>
 
     <p class="checkin-only"
-       th:text="${'Bitte machen Sie die folgenden Angaben, um sich in Raum ' + roomData.roomName + ' einzuchecken.'}">Geben Sie Ihre
+       th:text="${'Bitte machen Sie die folgenden Angaben, um sich in Raum ' + roomData.roomName + ' einzuchecken.'}">
+        Geben Sie Ihre
         E-Mail-Adresse an, um sich einzuchecken.</p>
     <p class="checkout-only">Geben Sie Ihre E-Mail-Adresse an, um bestehende Check-ins zu beenden.
     </p>
 
-    <div style="width: 30em; max-width: 100%;" class="content">
+    <div style="max-width: 100%;" class="content">
         <h3 class="content-headers">1. Anmeldung als ...</h3>
 
         <div class="no-js">
             <form class="checkin-only" action="#" th:action="@{checkIn}" method="POST" name="submit-form">
                 <div class="form-row">
-                    <input style="flex-grow: 1; margin-left: 24px;" name="visitorEmail" type="email" class="email" placeholder="Vollständige E-Mail" value="" required>
-                    <input type="hidden" name="rid" th:field="*{roomId}" />
+                    <input style="flex-grow: 1; margin-left: 24px;" name="visitorEmail" type="email" class="email"
+                           placeholder="Vollständige E-Mail" value="" required>
+                    <input type="hidden" name="rid" th:field="*{roomId}"/>
                 </div>
                 <div class="form-row">
                     <input style="margin-left: 24px" type="submit" value="Check-in">
@@ -45,8 +59,9 @@
 
             <form class="checkout-only" action="#" th:action="@{/r/checkOut}" method="POST" name="submit-form">
                 <div class="form-row">
-                    <input style="flex-grow: 1;" name="visitorEmail" type="email" class="email" placeholder="Vollständige E-Mail" value="" required>
-                    <input type="hidden" name="rid" th:field="*{roomId}" />
+                    <input style="flex-grow: 1;" name="visitorEmail" type="email" class="email"
+                           placeholder="Vollständige E-Mail" value="" required>
+                    <input type="hidden" name="rid" th:field="*{roomId}"/>
                 </div>
                 <div class="form-row">
                     <input style="margin-left: 24px;" type="submit" value="Abmelden">
@@ -56,7 +71,7 @@
 
         <div class="js-enabled">
             <form name="input-form">
-                <div class="form-row" >
+                <div class="form-row">
                     <input type="radio" id="email-postfix-student" value="student" name="email-postfix" checked>
                     <label class="radio-label" for="email-postfix-student">Student:in</label>
                 </div>
@@ -71,7 +86,8 @@
 
                 <h3 class="content-headers" style="margin-top: 32px;">2. Mailadresse eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
-                    <input id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer" value="" required>
+                    <input id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer"
+                           value="" required>
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
@@ -79,8 +95,14 @@
                     <label for="email-auto-sign-in">Für künftigen automatischen Check-in speichern</label>
                 </div>
             </form>
-
-            <h3 class="content-headers" style="margin-top: 32px;">3. Absenden</h3>
+            <div  th:classappend="${privileged}? 'show' : 'hide'">
+                <h3 class="content-headers" style="margin-top: 32px;">3. Immunitätsnachweise</h3>
+                <div style="margin-left: 22px;">
+                    <input  type="checkbox" id="immunitätsnachweise">
+                    <label for="immunitätsnachweise">Ich habe  die Immunitätsnachweise aller Anwesenden kontrolliert.</label>
+                </div>
+            </div>
+            <h3 class="content-headers" style="margin-top: 32px;">4. Absenden</h3>
             <div id="invalid-email-error" class="form-row hidden error">
                 <h4 style="margin-left: 24px;">Ungültige E-Mail!</h4>
             </div>
@@ -89,33 +111,35 @@
                 <form action="#" th:action="@{checkIn}" method="POST" id="submit-form" name="submit-form">
                     <input style="margin-left: 0" type="submit" value="Check-in">
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value="">
-                    <input type="hidden" name="rid" th:field="*{roomId}" />
+                    <input type="hidden" name="rid" th:field="*{roomId}"/>
                 </form>
             </div>
             <div class="form-row checkout-only">
-                <form  action="#" th:action="@{/r/checkOut}" method="POST" id="submit-form-checkout" name="submit-form">
+                <form action="#" th:action="@{/r/checkOut}" method="POST" id="submit-form-checkout" name="submit-form">
                     <input style="margin-left: 24px;" type="submit" value="Abmelden">
                     <input id="submit-form-email-checkout" name="visitorEmail" type="hidden" value="">
                 </form>
             </div>
 
-            <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in wird automatisch beendet.)</i></p>
+            <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in
+                wird automatisch beendet.)</i></p>
         </div>
-        <div class="priviledged-only">
-            <h3 class="content-headers" style="margin-top: 32px;">4. Raum rücksetzen</h3>
-            <p style="margin-left: 24px; margin-top: 24px;" th:text="${'Aktuell befinden sich in Raum ' + roomData.roomName +' befinden sich aktuell '+roomVisitService.getVisitorCount(room)+ ' Personen.'}"></p>
-            <button class="js-enabled" style="margin-left: 24px;" >Anzeige aktualisieren</button>
-            <button class="js-enabled" style="margin-left: 24px;" >Raum rurücksetzen</button>
+        <div class="priviledged-only" th:classappend="${privileged}? 'show' : 'hide'">
+            <h3 class="content-headers" style="margin-top: 32px;">5. Raum rücksetzen</h3>
+            <p style="margin-left: 24px; margin-top: 24px;" th:text="${roomVisitService.getVisitorCount(room)}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${roomVisitService.getVisitorCount(room)}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
+            <a class="button" style="margin-left: 24px;" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged='+${privileged}}">Anzeige aktualisieren</a>
+            <a id="raumReset" class="button" style="margin-left: 24px;"   th:href="@{${roomData.roomId}+ '/roomReset'}">Raum zurücksetzen</a>
+
 
         </div>
 
-        <hr style="color: #cccccc; margin-top: 32px;" />
+        <hr style="color: #cccccc; margin-top: 32px;"/>
 
         <div class="checkin-only" style="margin-top: 32px;">
-	       	<h3 class="content-headers">Oder nur vorherigen Check-in beenden?</h3>
-
-	        <a class="button no-js" style="margin-left: 24px;" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden...</a>
-	        <button class="js-enabled" style="margin-left: 24px;" id="checkout-button">Abmelden...</button>
+            <h3 class="content-headers">Oder nur vorherigen Check-in beenden?</h3>
+            <a class="button no-js" style="margin-left: 24px;"
+               th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden...</a>
+            <button class="js-enabled" style="margin-left: 24px;" id="checkout-button">Abmelden...</button>
         </div>
 
     </div>

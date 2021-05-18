@@ -66,14 +66,6 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged, Model model) {
-        // get roomId from form on landing page (index.html)
-        if(privileged){
-            System.out.println("Prof is entering request");
-        }else{
-            System.out.println("Student is entering request");
-        }
-        System.out.println(("RoomId: "+roomIdFromRequest));
-        System.out.println(("Privileged Ausgabe: "+privileged));
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
 
@@ -81,7 +73,6 @@ public class RoomController {
         if (!room.isPresent()) {
             throw new RoomNotFoundException();
         }
-        System.out.println("Im Raum befinden sich aktuell "+roomVisitService.getVisitorCount(room.get()));
         if (roomVisitService.isRoomFull(room.get())) {
             return "forward:roomFull/" + room.get().getId();
         }
@@ -91,6 +82,7 @@ public class RoomController {
         model.addAttribute("roomVisitService", roomVisitService);
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
+        model.addAttribute("privileged", privileged);
 
         return "rooms/checkIn";
     }
@@ -154,8 +146,11 @@ public class RoomController {
         if (!visitor.isPresent()) {
             throw new VisitorNotFoundException();
         }
+        System.out.print("Visitor: "+ visitor.get());
 
         roomVisitService.checkOutVisitor(visitor.get());
+
+
 
         return "redirect:/r/checkedOut";
     }
@@ -167,13 +162,31 @@ public class RoomController {
             throw new RoomNotFoundException();
         }
 
+
         Room.Data roomData = new Room.Data(room.get());
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
 
         // The check-in page can handle both check-in and checkout with a css toggle
         model.addAttribute("checkout", true);
+        model.addAttribute("privileged", false);
         return "rooms/checkIn";
+    }
+    @GetMapping("/{roomId}/roomReset")
+    public String roomReset(@PathVariable String roomId, Model model){
+        Optional<Room> room = roomService.findByName(roomId);
+        if (!room.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+        Room.Data roomData = new Room.Data(room.get());
+        model.addAttribute("roomData", roomData);
+        return "rooms/roomReset";
+    }
+    @GetMapping("/{roomId}/executeRoomReset")
+    public String executeRoomReset(@PathVariable String roomId, Model model){
+        Optional<Room> room = roomService.findByName(roomId);
+        roomVisitService.resetRoom(room.get());
+        return "redirect:/r/noId?roomId="+ roomId+"&privileged=true";
     }
 
     @RequestMapping("/roomFull/{roomId}")
