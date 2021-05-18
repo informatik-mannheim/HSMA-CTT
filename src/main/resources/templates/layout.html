@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.7.2/css/all.css">
 
 	<!-- Email Encryption: https://jumk.de/nospam/stopspam.html -->
-	<script type="text/javascript"> <!--
+	<script type="text/javascript">
 		function UnCryptMailto( s ){
 			var n = 0;
 			var r = "";
@@ -90,8 +90,9 @@
 		<div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
 
 		<main class="container float-left">
+<!--			Die Zeile darf bei Error Seiten nicht ausgeführt werden, ist aber wichtig beim Login, wenn die Daten falsch angegeben wurden-->
 			<p th:if="${message}" class="alert alert-info" style="color: blue" th:text="${message}"></p>
-			<p th:if="${error}" class="alert alert-danger" style="color: red" th:text="${error}"></p>	
+<!--			<p th:if="${error}" class="alert alert-danger" style="color: red" th:text="${error}"></p>	-->
 
 			<div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
 				<i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur zur Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so konfigurieren, dass Sie nach dem Verlassen der Seite wieder gelöscht werden.
