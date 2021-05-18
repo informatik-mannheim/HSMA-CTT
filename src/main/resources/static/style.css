@@ -91,6 +91,17 @@ input[id=roomId] {
     background-color: #3f6fd7;
 }
 
+.backButton{
+    margin:12px;
+    padding: 6px;
+    background-color: #22376f;
+    border-radius: 10px;
+}
+.backButton:hover{
+    text-decoration: none;
+    background-color: #3f6fd7;
+}
+
 .btn-for-collapsible i {
     float: right;
 }
@@ -149,4 +160,9 @@ html {
 
 .collapseMarginBottom{
     margin-bottom: 60px;
+}
+
+.errorMessage{
+    font-size: xx-large;
+    padding-bottom: 15px;
 }
