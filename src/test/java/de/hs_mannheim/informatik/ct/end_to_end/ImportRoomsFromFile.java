@@ -196,6 +196,9 @@ public class ImportRoomsFromFile {
         // needs to be changed if the values in the testfile change.
         String[] roomNames = new String[]{"A-101", "A-102"};
         List<String[]> testRoomData = helper.createRoomData(roomNames);
+
+        helper.saveRooms(testRoomData, roomService);
+
         String[] initialTestRoomPins = extractRoomPins(roomNames);
 
         roomService.saveRoom(
