@@ -10,13 +10,13 @@
 <body>
 <div layout:fragment="content">
     <h1 class="content-headers" style="margin-bottom: 0;">Raum reset</h1>
-    <p >Wenn Sie den Raum zurücksetzen, werden alle Personen ausgecheckt. Sind Sie sicher, dass sie fortfahren wollen?</p>
-
-    <p>
-        <a class="button" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged=true'}">Zurück</a>
-        <a style="background-color: #b92222" class="button" th:href="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}" >Raum zurücksetzen</a>
-    </p>
-
+    <p>Wenn Sie den Raum zurücksetzen, werden alle Personen ausgecheckt. Sind Sie sicher, dass sie fortfahren
+        wollen?</p>
+    <br/>
+    <form method="POST" th:action="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}">
+        <a class="button" th:href="@{'/r/'+${roomData.roomId}+'?&privileged=true'}">Zurück</a>
+        <input style="background-color: #b92222" type="submit" value="Raum zurücksetzen">
+    </form>
 </div>
 </body>
 </html>

@@ -179,8 +179,9 @@ public class RoomController {
     @PostMapping("/{roomId}/executeRoomReset")
     public String executeRoomReset(@PathVariable String roomId, Model model) {
         Optional<Room> room = roomService.findByName(roomId);
+
         roomVisitService.resetRoom(room.get());
-        return "redirect:/r/noId?roomId=" + roomId + "&privileged=true";
+        return "redirect:/r/" + roomId + "?&privileged=true";
     }
 
     @RequestMapping("/roomFull/{roomId}")
@@ -196,7 +197,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         if (visitorCount < maxCapacity) {
             model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "redirect:/r/noId?roomId=" + roomId;
+            return "redirect:/r/" + roomId;
         } else {
             return "rooms/full";
         }
