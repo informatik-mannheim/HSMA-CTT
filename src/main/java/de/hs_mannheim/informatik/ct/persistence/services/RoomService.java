@@ -100,9 +100,22 @@ public class RoomService {
         while (iter.hasNext()) {
             Row row = iter.next();
 
-            String building = row.getCell(32).getStringCellValue();
-            String roomName = row.getCell(34).getStringCellValue();
-            int roomCapacity = (int) row.getCell(35).getNumericCellValue();
+            String building, roomName;
+            int roomCapacity;
+            try {
+                building = row.getCell(32).getStringCellValue();
+                roomName = row.getCell(34).getStringCellValue();
+                roomCapacity = (int) row.getCell(35).getNumericCellValue();
+
+                // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
+                if(building.equals("") || roomName.equals("")) {
+                    continue;
+                }
+            } catch(NullPointerException e) {
+
+                // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
+                continue;
+            }
 
             rooms.add(new Room(roomName, building, roomCapacity));
         }
