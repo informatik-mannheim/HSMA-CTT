@@ -93,7 +93,7 @@
                     <label for="immunitätsnachweise">Ich habe  die Immunitätsnachweise aller Anwesenden kontrolliert.</label>
                 </div>
             </div>
-            <h3 class="content-headers" style="margin-top: 32px;">4. Absenden</h3>
+            <h3 class="content-headers" style="margin-top: 32px;" th:text="${privileged}? '4. Absenden': '3. Absenden'"></h3>
             <div id="invalid-email-error" class="form-row hidden error">
                 <h4 style="margin-left: 24px;">Ungültige E-Mail!</h4>
             </div>
