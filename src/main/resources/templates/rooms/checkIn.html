@@ -18,15 +18,6 @@
         }
 
     </style>
-    <style>
-        .hide {
-            display: none;
-        }
-        .show{
-            display: block;
-        }
-
-    </style>
 
 </head>
 
@@ -95,7 +86,7 @@
                     <label for="email-auto-sign-in">Für künftigen automatischen Check-in speichern</label>
                 </div>
             </form>
-            <div  th:classappend="${privileged}? 'show' : 'hide'">
+            <div  th:if="${privileged}">
                 <h3 class="content-headers" style="margin-top: 32px;">3. Immunitätsnachweise</h3>
                 <div style="margin-left: 22px;">
                     <input  type="checkbox" id="immunitätsnachweise">
@@ -124,10 +115,10 @@
             <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in
                 wird automatisch beendet.)</i></p>
         </div>
-        <div class="priviledged-only" th:classappend="${privileged}? 'show' : 'hide'">
+        <div class="priviledged-only" th:if="${privileged}">
             <h3 class="content-headers" style="margin-top: 32px;">5. Raum zurücksetzen</h3>
-            <p style="margin-left: 24px; margin-top: 24px;" th:text="${roomVisitService.getVisitorCount(room)}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${roomVisitService.getVisitorCount(room)}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
-            <a class="button" style="margin-left: 24px;" th:href="@{'/r/noId?roomId='+${roomData.roomId}+'&privileged='+${privileged}}">Anzeige aktualisieren</a>
+            <p style="margin-left: 24px; margin-top: 24px;" th:text="${visitorCount}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${visitorCount}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
+            <a class="button" style="margin-left: 24px;" th:href="@{${roomData.roomId}+'&privileged='+${privileged}}">Anzeige aktualisieren</a>
             <a id="raumReset" class="button" style="margin-left: 24px;"   th:href="@{${roomData.roomId}+ '/roomReset'}">Raum zurücksetzen</a>
         </div>
 
