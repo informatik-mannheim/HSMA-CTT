@@ -150,7 +150,7 @@ public class RoomController {
         return "redirect:/r/checkedOut";
     }
 
-    @PostMapping("/{roomId}/checkOut")
+    @GetMapping("/{roomId}/checkOut")
     public String checkoutPage(@PathVariable String roomId, Model model) {
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
