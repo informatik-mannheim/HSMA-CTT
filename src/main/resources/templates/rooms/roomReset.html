@@ -1,0 +1,22 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{rooms/layout}">
+
+<head>
+    <title>Room reset</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h1 class="content-headers" style="margin-bottom: 0;">Raum reset</h1>
+    <p>Wenn Sie den Raum zurücksetzen, werden alle Personen ausgecheckt. Sind Sie sicher, dass sie fortfahren
+        wollen?</p>
+    <br/>
+    <form method="POST" th:action="@{'/r/'+${roomData.roomId}+'/executeRoomReset'}">
+        <a class="button" th:href="@{'/r/'+${roomData.roomId}+'?&privileged=true'}">Zurück</a>
+        <input style="background-color: #b92222" type="submit" value="Raum zurücksetzen">
+    </form>
+</div>
+</body>
+</html>
