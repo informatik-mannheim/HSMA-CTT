@@ -1,5 +1,6 @@
 package de.hs_mannheim.informatik.ct.controller;
 
+import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ErrorController {
+
+//    TODO InvalidExternalVisitorException has to be add after merge
 
 
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
@@ -39,6 +42,12 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleInvalidEmail(InvalidEmailException invalidEmail, WebRequest request) {
         return "error/invalidEmail";
+    }
+
+    @ExceptionHandler({EventNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleEventNotFound(EventNotFoundException eventNotFound, WebRequest request) {
+        return "error/eventNotFound";
     }
 
     @RequestMapping("/error")
