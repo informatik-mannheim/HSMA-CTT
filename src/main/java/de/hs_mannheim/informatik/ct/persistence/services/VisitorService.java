@@ -50,7 +50,7 @@ public class VisitorService {
             if (email.endsWith("hs-mannheim.de")) {
                 return visitorRepo.save(new Visitor(email));
             } else {
-                if (name != null && (number != null || address != null)) {
+                if (!name.equals("") && (!number.equals("") || !address.equals(""))) {
                     return visitorRepo.save(new ExternalVisitor(email, name, number, address));
                 } else {
                     throw new InvalidExternalUserdataException();
