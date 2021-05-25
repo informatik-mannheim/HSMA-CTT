@@ -27,6 +27,7 @@ import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.NonNull;
 import lombok.val;
+import org.apache.commons.math3.exception.util.ArgUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.*;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDateTime;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -50,6 +49,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.lessThan;
+import static org.mockito.Mockito.validateMockitoUsage;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -202,40 +202,85 @@ class RoomVisitServiceTest {
     }
 
     @Test
-    void resetRoom(){
-        Visitor visitor = new Visitor("visitor");
-        RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
-                visitor,
-                LocalDateTime.now(),
-                null
-        );
-        Room testRoom = visit.getRoom();
+    void resetEmptyRoom(){
+        val emptyRoom = new Room("A", "B", 2);
 
-        Mockito.when(roomVisitRepository.findNotCheckedOutVisits()).thenReturn(
-          Collections.singletonList(visit)
-        );
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits(emptyRoom))
+                .thenReturn(Collections.EMPTY_LIST);
 
-        roomVisitService.resetRoom(testRoom);
+        roomVisitService.resetRoom(emptyRoom);
 
-        Mockito.verify(roomVisitRepository).findNotCheckedOutVisits();
+        Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(emptyRoom);
 
-        Mockito.verify(roomVisit, Mockito.atLeast(1)).checkOut(
-                ArgumentMatchers.any(Date.class),
-                RoomVisit.CheckOutSource.RoomReset
-        );
-
-        Mockito.verify(roomVisitRepository).saveAll(roomVisitCaptor.capture());
-
-        assertThat(roomVisitService.getVisitorCount(testRoom), equalTo(0));
+        Mockito.verify(roomVisitRepository, Mockito.times(1))
+                .saveAll(roomVisitCaptor.capture());
     }
 
     @Test
     void resetFilledRoom(){
+        val today = LocalDate.of(2021, Month.APRIL, 2);
+        val now = LocalDateTime.of(today, LocalTime.of(18, 1));
+        val visitor = new Visitor("visitor");
+        val visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
+                visitor,
+                now,
+                null
+        );
 
+        Room filledRoom = visit.getRoom();
+
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits(filledRoom))
+                .thenReturn(Collections.singletonList(visit));
+
+        Mockito.when(dateTimeService.getDateNow())
+                .thenReturn(java.util.Date.from(today.atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()));
+
+        roomVisitService.resetRoom(filledRoom);
+
+        Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(filledRoom);
+
+        Mockito.verify(roomVisitRepository, Mockito.times(1))
+                .saveAll(roomVisitCaptor.capture());
+
+        assertThat(roomVisitService.getVisitorCount(filledRoom), equalTo(0));
     }
 
     @Test
-    void resetFullRoom(){}
+    void resetFullRoom(){
+        val today = LocalDate.of(2021, Month.APRIL, 2);
+        val now = LocalDateTime.of(today, LocalTime.of(18, 1));
+        val fullRoom = new Room("A", "B", 2);
+        val roomVisits = new ArrayList<RoomVisit>();
+
+        for(int i = 0; i < 10; i++){
+            val visitor = new Visitor("visitor" + i);
+            val visit = new RoomVisitHelper(fullRoom).generateVisit(
+                    visitor,
+                    now,
+                    null
+            );
+            roomVisits.add(visit);
+        }
+
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits(fullRoom))
+                .thenReturn(roomVisits);
+
+        Mockito.when(dateTimeService.getDateNow())
+                .thenReturn(java.util.Date.from(today.atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()));
+
+        roomVisitService.resetRoom(fullRoom);
+
+        Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(fullRoom);
+
+        Mockito.verify(roomVisitRepository, Mockito.times(1))
+                .saveAll(roomVisitCaptor.capture());
+
+        assertThat(roomVisitService.getVisitorCount(fullRoom), equalTo(0));
+    }
 
     // todo build tests for:
     //  reset room with variable time param
