@@ -203,7 +203,7 @@ class RoomVisitServiceTest {
 
     @Test
     void resetEmptyRoom(){
-        val emptyRoom = new Room("A", "B", 2);
+        Room emptyRoom = new Room("A", "B", 2);
 
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(emptyRoom))
                 .thenReturn(Collections.EMPTY_LIST);
@@ -218,10 +218,10 @@ class RoomVisitServiceTest {
 
     @Test
     void resetFilledRoom(){
-        val today = LocalDate.of(2021, Month.APRIL, 2);
-        val now = LocalDateTime.of(today, LocalTime.of(18, 1));
-        val visitor = new Visitor("visitor");
-        val visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
+        LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
+        LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
+        Visitor visitor = new Visitor("visitor");
+        RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
                 visitor,
                 now,
                 null
@@ -249,14 +249,14 @@ class RoomVisitServiceTest {
 
     @Test
     void resetFullRoom(){
-        val today = LocalDate.of(2021, Month.APRIL, 2);
-        val now = LocalDateTime.of(today, LocalTime.of(18, 1));
-        val fullRoom = new Room("A", "B", 2);
-        val roomVisits = new ArrayList<RoomVisit>();
+        LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
+        LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
+        Room fullRoom = new Room("A", "B", 2);
+        List<RoomVisit> roomVisits = new ArrayList<RoomVisit>();
 
         for(int i = 0; i < 10; i++){
-            val visitor = new Visitor("visitor" + i);
-            val visit = new RoomVisitHelper(fullRoom).generateVisit(
+            Visitor visitor = new Visitor("visitor" + i);
+            RoomVisit visit = new RoomVisitHelper(fullRoom).generateVisit(
                     visitor,
                     now,
                     null
@@ -281,6 +281,7 @@ class RoomVisitServiceTest {
 
         assertThat(roomVisitService.getVisitorCount(fullRoom), equalTo(0));
     }
+
 
     // todo build tests for:
     //  reset room with variable time param
