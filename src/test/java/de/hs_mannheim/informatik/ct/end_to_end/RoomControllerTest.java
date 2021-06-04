@@ -70,6 +70,7 @@ public class RoomControllerTest {
 
     private final String TEST_ROOM_NAME = "123";
     private String TEST_ROOM_PIN;
+    private final String TEST_ROOM_PIN_INVALID = "";
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
@@ -164,6 +165,20 @@ public class RoomControllerTest {
                         .with(csrf()))
                 .andExpect(status().is(400))
                 .andExpect(status().reason("Invalid Email"));
+    }
+
+    @Test
+    public void checkInInvalidRoomPin() throws Exception{
+        // check in with empty username should
+        this.mockMvc.perform(
+                post("/r/checkIn")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+                        .with(csrf()))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Invalid Pin"));
     }
 
     @Test
