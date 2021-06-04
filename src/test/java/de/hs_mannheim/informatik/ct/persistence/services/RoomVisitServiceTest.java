@@ -22,18 +22,17 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.NonNull;
 import lombok.val;
 import org.apache.commons.math3.exception.util.ArgUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -47,9 +46,7 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDateTime;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.lessThan;
-import static org.mockito.Mockito.validateMockitoUsage;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -81,6 +78,8 @@ class RoomVisitServiceTest {
     private ArgumentCaptor<List<RoomVisit>> roomVisitCaptor;
 
     private AutoCloseable mocks;
+    private LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
+    private LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
 
     @BeforeEach
     public void openMocks() {
@@ -218,27 +217,28 @@ class RoomVisitServiceTest {
 
     @Test
     void resetFilledRoom(){
-        LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
-        LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
         Visitor visitor = new Visitor("visitor");
         RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 2)).generateVisit(
                 visitor,
-                now,
+                this.now,
                 null
         );
 
+        // setup
         Room filledRoom = visit.getRoom();
 
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(filledRoom))
                 .thenReturn(Collections.singletonList(visit));
 
         Mockito.when(dateTimeService.getDateNow())
-                .thenReturn(java.util.Date.from(today.atStartOfDay()
+                .thenReturn(java.util.Date.from(this.today.atStartOfDay()
                         .atZone(ZoneId.systemDefault())
                         .toInstant()));
 
+        // method call
         roomVisitService.resetRoom(filledRoom);
 
+        // behavior validation
         Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(filledRoom);
 
         Mockito.verify(roomVisitRepository, Mockito.times(1))
@@ -249,31 +249,34 @@ class RoomVisitServiceTest {
 
     @Test
     void resetFullRoom(){
-        LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
-        LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
-        Room fullRoom = new Room("A", "B", 2);
+
+        Room fullRoom = new Room("A", "B", 10);
         List<RoomVisit> roomVisits = new ArrayList<RoomVisit>();
 
+        // fill roomVisits with Visitors who visit the room
         for(int i = 0; i < 10; i++){
             Visitor visitor = new Visitor("visitor" + i);
             RoomVisit visit = new RoomVisitHelper(fullRoom).generateVisit(
                     visitor,
-                    now,
+                    this.now,
                     null
             );
             roomVisits.add(visit);
         }
 
+        // setup
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(fullRoom))
                 .thenReturn(roomVisits);
 
         Mockito.when(dateTimeService.getDateNow())
-                .thenReturn(java.util.Date.from(today.atStartOfDay()
+                .thenReturn(java.util.Date.from(this.today.atStartOfDay()
                         .atZone(ZoneId.systemDefault())
                         .toInstant()));
 
+        // method call
         roomVisitService.resetRoom(fullRoom);
 
+        // behavior validation
         Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(fullRoom);
 
         Mockito.verify(roomVisitRepository, Mockito.times(1))
@@ -282,17 +285,56 @@ class RoomVisitServiceTest {
         assertThat(roomVisitService.getVisitorCount(fullRoom), equalTo(0));
     }
 
+    @Test
+    void resetRoom_withEndDate(){
+        Room testRoom = new Room("A", "B", 1);
+        Visitor visitor = new Visitor("visitor");
+        RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 1)).generateVisit(
+                visitor,
+                this.now,
+                this.now.plusMinutes(1)
+        );
 
-    // todo build tests for:
-    //  reset room with variable time param
-    //      short
-    //      long
-    //      super-long
-    //  reset room leaving...
-    //      no
-    //      some
-    //      all
-    //  ...people in room
+        // setup
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits(testRoom))
+                .thenReturn(Collections.singletonList(visit));
+
+        Mockito.when(dateTimeService.getDateNow())
+                .thenReturn(java.util.Date.from(today.atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()));
+
+        // method call and assertion on thrown error
+        Assertions.assertThrows(AssertionError.class, () -> roomVisitService.resetRoom(testRoom));
+
+        assertThat(visit.getVisitor(), equalTo(visitor));
+        // todo debug this line (CheckOutSource is 'UserCheckout')
+        assertThat(visit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.NotCheckedOut));
+    }
+
+    @Test
+    void resetRoom_chekOutSource(){
+        Room testRoom = new Room("A", "B", 1);
+        Visitor visitor = new Visitor("visitor");
+        RoomVisit visit = new RoomVisitHelper(new Room("A", "B", 1)).generateVisit(
+                visitor,
+                this.now,
+                null
+        );
+
+        // setup
+        Mockito.when(roomVisitRepository.findNotCheckedOutVisits(testRoom))
+                .thenReturn(Collections.singletonList(visit));
+
+        Mockito.when(dateTimeService.getDateNow())
+                .thenReturn(java.util.Date.from(this.today.atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()));
+
+        roomVisitService.resetRoom(testRoom);
+
+        assertThat(visit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.RoomReset));
+    }
 
     private void testAutoCheckout(@NonNull LocalDateTime checkInTime, @NonNull LocalTime forcedEndTime, LocalDateTime expectedCheckoutTime) {
         val visitor = new Visitor("1");
