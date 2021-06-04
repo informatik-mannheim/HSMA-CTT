@@ -97,8 +97,7 @@
             <form action="#" th:action="@{checkIn}" method="POST" id="submit-form" name="submit-form">
                 <h3 class="content-header form-header">Raum-PIN eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
-                    <input id="pin" name="roomPin" placeholder="XXXX" minlength="4" maxlength="4">
-                    <label for="roomPin" style="margin-left: 5px;">Pin</label>
+                    <input id="pin" name="roomPin" style="font-size: 1em;" placeholder="PIN" minlength="4" maxlength="4" th:value="${roomPin}">
                 </div>
                 <h3 class="content-header form-header">Absenden</h3>
                 <div id="invalid-email-error" class="form-row hidden error">
