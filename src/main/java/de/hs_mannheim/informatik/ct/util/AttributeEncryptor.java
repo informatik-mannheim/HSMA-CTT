@@ -52,7 +52,6 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
     public String convertToDatabaseColumn(String attribute) {
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
-
             return Base64.getEncoder().encodeToString(cipher.doFinal(attribute.getBytes()));
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
             throw new IllegalStateException(e);
