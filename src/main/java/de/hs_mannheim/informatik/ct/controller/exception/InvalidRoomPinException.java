@@ -1,4 +1,6 @@
 package de.hs_mannheim.informatik.ct.controller.exception;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,5 +20,6 @@ package de.hs_mannheim.informatik.ct.controller.exception;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Invalid Pin")
 public class InvalidRoomPinException extends Exception{
 }
