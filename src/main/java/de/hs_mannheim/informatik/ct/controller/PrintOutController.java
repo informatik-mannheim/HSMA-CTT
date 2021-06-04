@@ -84,6 +84,8 @@ public class PrintOutController {
         val outFileName = String.format("Gebäude %s.docx", building);
 
         val result = new DeferredResult<ResponseEntity<byte[]>>(120 * 1000L);
+
+
         CompletableFuture.runAsync(() -> {
             try (val buffer = new ByteArrayOutputStream()) {
                 contentService.writeRoomsPrintOutDocx(
@@ -93,6 +95,8 @@ public class PrintOutController {
                                 RoomController.getRoomCheckinPath(room),
                                 request
                         ));
+
+
 
 
                 val response = ResponseEntity

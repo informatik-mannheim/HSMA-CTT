@@ -14,7 +14,7 @@
         <h5 class="mb-4">Raumschilder herunterladen</h5>
         <ul>
             <th:block th:each="building : ${buildings}">
-                <li><a th:href="@{rooms/{building}(building=${building})}" th:text="${'Gebäude ' + building + '.docx'}"></a></li>
+                <li><a th:href="@{rooms/{building}(building=${building})}" th:text="${'Eine Zip für alles ' + building + '.docx'}"></a></li>
             </th:block>
         </ul>
     </div>

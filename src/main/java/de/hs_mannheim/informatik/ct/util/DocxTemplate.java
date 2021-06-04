@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.util;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -44,7 +45,7 @@ import java.util.stream.StreamSupport;
 public class DocxTemplate<T> {
     private XWPFDocument document;
     private final File templateFile;
-    private List<T> dataSource;
+    private T dataSource;
     private final TextTemplate<T> textFormatter;
     private final Function<T, byte[]> imageGenerator;
 
@@ -66,25 +67,29 @@ public class DocxTemplate<T> {
         this.imageGenerator = imageGenerator;
     }
 
-    public XWPFDocument generate(List<T> dataSource) throws IOException, XmlException {
-        try (val templateStream = new FileInputStream(templateFile)) {
-            document = new XWPFDocument(templateStream);
-        }
+    public XWPFDocument generate(T dataSource) throws IOException, XmlException {
 
-        this.dataSource = dataSource;
-        val imageIds = addImagesToDocMedia();
-        val templateBuffer = getTemplateBuffer();
-        // The section properties is at the end of body and sets headers, footers, etc.
-        val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
+            try (val templateStream = new FileInputStream(templateFile)) {
+                document = new XWPFDocument(templateStream);
+            }
 
-        // Remove template page from final doc
-        document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
+            this.dataSource = dataSource;
+            val imageIds = addImagesToDocMedia();
+            val templateBuffer = getTemplateBuffer();
+            // The section properties is at the end of body and sets headers, footers, etc.
+            val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
 
-        // Generate new Pages
-        val pageDataSource = StreamSupport.stream(
-                ZipPageData(dataSource, imageIds).spliterator(),
-                false).collect(Collectors.toList());
+            // Remove template page from final doc
+            document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
 
+
+            // Generate new Pages
+//            Todo only create one page
+            val pageDataSource = StreamSupport.stream(
+                    ZipPageData(dataSource, imageIds).spliterator(),
+                    false).collect(Collectors.toList());
+
+//
         val templateXml = getParagraphTemplateXml(templateBuffer);
 
         pageDataSource
@@ -96,25 +101,27 @@ public class DocxTemplate<T> {
                     for (int paragraphIndex = 0; paragraphIndex < paragraphs.value.size(); paragraphIndex++) {
                         val paragraph = document.createParagraph();
                         paragraph.getCTP().set(paragraphs.value.get(paragraphIndex));
-                        val isLastPage = paragraphs.index == dataSource.size() - 1;
+                        val isLastPage = paragraphs.index == 0;
                         if (!isLastPage && paragraphIndex == paragraphs.value.size() - 1) {
                             paragraph.setPageBreak(true);
                         }
                     }
                 });
-        // Reapply the section properties
-        document.getDocument().getBody().setSectPr(sectionProperties);
+            // Reapply the section properties
+            document.getDocument().getBody().setSectPr(sectionProperties);
 
         return document;
     }
 
     private List<String> addImagesToDocMedia() {
         val doc = document;
-        val indexDataSource = new ArrayList<Indexed<T>>(dataSource.size());
-        for (int i = 0; i < dataSource.size(); i++) {
-            indexDataSource.add(new Indexed<>(i, dataSource.get(i)));
+
+
+        val indexDataSource = new ArrayList<Indexed<T>>(1);
+        for (int i = 0; i < 1; i++) {
+            indexDataSource.add(new Indexed<>(i, dataSource));
         }
-        val indexedList =  indexDataSource
+        val indexedList = indexDataSource
                 .parallelStream()
                 .unordered()
                 .map(indexData -> new Indexed<>(indexData.index, imageGenerator.apply(indexData.value)))
@@ -198,8 +205,10 @@ public class DocxTemplate<T> {
         return template;
     }
 
-    private Iterable<Indexed<PageData<T>>> ZipPageData(Iterable<T> data, Iterable<String> qrImageIds) {
-        val dataIterator = data.iterator();
+    private Iterable<Indexed<PageData<T>>> ZipPageData(T data, Iterable<String> qrImageIds) {
+        List <T> test = new ArrayList<T>();
+        test.add(data);
+        val dataIterator = test.iterator();
         val idIterator = qrImageIds.iterator();
         return () -> new Iterator<Indexed<PageData<T>>>() {
             int index = 0;
