@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -65,10 +66,17 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
-                          @RequestParam(required = false, defaultValue = "false") Boolean privileged, Model model) {
+                          @RequestParam(required = false, defaultValue = "false") Boolean privileged,
+                          @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
+                          Model model) {
+
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
+
+        String roomPin = "";
+        if(roomPinFromRequest.isPresent())
+            roomPin = roomPinFromRequest.get();
 
         Optional<Room> room = roomService.findByName(roomId);
         if (!room.isPresent()) {
@@ -84,14 +92,19 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
         model.addAttribute("privileged", privileged);
+        model.addAttribute("roomPin", roomPin);
 
         return "rooms/checkIn";
     }
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) {
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException{
         Optional<Room> room = roomService.findByName(visitData.getRoomId());
+
+        if(room.isPresent() && !visitData.getRoomPin().equals(room.get().getRoomPin()))
+            throw new InvalidRoomPinException();
+
         Visitor visitor = null;
         try {
             visitor = visitorService.findOrCreateVisitor(visitData.getVisitorEmail());
