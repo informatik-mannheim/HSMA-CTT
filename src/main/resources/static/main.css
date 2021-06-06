@@ -4,6 +4,7 @@ body {
     background-color: #ccc;
     display: flex;
     min-height: 100vh;
+    counter-reset: header;
 }
 
 .js-enabled {
@@ -97,8 +98,17 @@ body {
     background-position: center;
 }
 
-.content-headers {
+.content-header {
     color: #22376f;
+}
+
+.form-header {
+    margin-top: 32px;
+}
+
+.form-header::before {
+    counter-increment: header;
+    content: counter(header) ". ";
 }
 
 p {
