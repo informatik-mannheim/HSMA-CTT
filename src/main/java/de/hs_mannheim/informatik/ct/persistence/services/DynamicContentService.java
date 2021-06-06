@@ -48,7 +48,8 @@ public class DynamicContentService {
     @Autowired
     private Utilities utilities;
 
-    private final Path docxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout.docx");
+    private final Path defaultDocxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout.docx");
+    private final Path privilegedDocxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout-privileged.docx");
 
     public byte[] getQRCodePNGImage(UriComponents uri, int width, int height) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -61,19 +62,11 @@ public class DynamicContentService {
     }
 
     public void writeRoomsPrintOutDocx(List<Room> rooms, OutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-        List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter);
+        List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter, false);
 
-        for (XWPFDocument document: ListOfDocuments){
-            try  {
-                System.out.println("Alle Räume: " + rooms);
-                System.out.println("Wir haben soeben ein neues Dokument erstellt " + document);
-                document.write(outputStream);
-            } catch (IOException e){
-System.err.println("Das gar nicht so gut derr Error hier" + e);
-            }
+        for (XWPFDocument document : ListOfDocuments) {
+            document.write(outputStream);
         }
-
-
     }
 
     public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
@@ -82,12 +75,12 @@ System.err.println("Das gar nicht so gut derr Error hier" + e);
         }
     }
 
-    private List<XWPFDocument> getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
+    private List<XWPFDocument> getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
 
         List<XWPFDocument> listOfDocuments = new ArrayList<XWPFDocument>();
 
         for (int i = 0; i < rooms.size(); i++) {
-            System.out.println("Wir erzeugen ein neues File juhuu");
+            DocxTemplate templateGenerator;
 
 
             DocxTemplate.TextTemplate<Room> textReplacer = (room, templatePlaceholder) -> {
@@ -115,16 +108,17 @@ System.err.println("Das gar nicht so gut derr Error hier" + e);
                 return getQRCodePNGImage(qrUri, 500, 500);
             };
 
-            val templateGenerator = new DocxTemplate<>(docxTemplatePath.toFile(), textReplacer, qrGenerator);
-
-
-        templateGenerator.generate(rooms.get(i)).write(new FileOutputStream(new File("templates/printout/WriteInGetRooms"+i+".docx")));
+            if (privileged) {
+                templateGenerator = new DocxTemplate<>(privilegedDocxTemplatePath.toFile(), textReplacer, qrGenerator);
+            } else {
+                templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
+            }
+//          Saving generated templates in local folder for testing purposes
+//            templateGenerator.generate(rooms.get(i)).write(new FileOutputStream(new File("templates/printout/WriteInGetRooms" + i + ".docx")));
 
             listOfDocuments.add(templateGenerator.generate(rooms.get(i)));
 
         }
         return listOfDocuments;
     }
-
-
 }

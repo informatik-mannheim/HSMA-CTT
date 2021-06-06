@@ -84,7 +84,6 @@ public class DocxTemplate<T> {
 
 
             // Generate new Pages
-//            Todo only create one page
             val pageDataSource = StreamSupport.stream(
                     ZipPageData(dataSource, imageIds).spliterator(),
                     false).collect(Collectors.toList());

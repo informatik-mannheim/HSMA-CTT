@@ -95,10 +95,6 @@ public class PrintOutController {
                                 RoomController.getRoomCheckinPath(room),
                                 request
                         ));
-
-
-
-
                 val response = ResponseEntity
                         .ok()
                         .contentType(
