@@ -40,12 +40,6 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
-// todo
-//  findNotCheckedOutVisits()
-//  findNotCheckedOutVisits(Visitor)
-//  findNotCheckedOutVisits(Room)
-//  getRoomVisitorCount(Room)
-
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class RoomVisitRepositoryTest {
