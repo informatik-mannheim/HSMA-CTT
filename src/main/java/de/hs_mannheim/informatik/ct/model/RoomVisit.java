@@ -61,7 +61,6 @@ public class RoomVisit implements Visit {
         this.startDate = startDate;
     }
 
-
     @Override
     public String getLocationName() {
         return room.getName();
