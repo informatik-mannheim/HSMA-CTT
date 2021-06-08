@@ -51,21 +51,6 @@ public class RoomVisitRepositoryTest {
 
     private List<RoomVisit> visits;
 
-    @BeforeEach
-    public void setUp(){
-        Room room = new Room("Test", "Test", 20);
-        RoomVisitHelper roomVisitHelper = new RoomVisitHelper(entityManager.persist(room));
-        Visitor visitor = entityManager.persist(new Visitor("email"));
-
-        this.visits = Stream.of(
-                roomVisitHelper.generateVisit(
-                        visitor,
-                        LocalDateTime.now(),
-                        null
-                )
-        ).collect(Collectors.toList());
-    }
-
     @Test
     public void deleteExpiredVisits() {
         val roomVisitHelper = new RoomVisitHelper(entityManager.persist(
@@ -110,6 +95,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void findNotCheckedOutVisitsTest(){
+        altSetUp();
         roomVisitRepository.saveAll(this.visits);
         entityManager.flush();
 
@@ -120,6 +106,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void findNotCheckedOutVisits_RoomParam(){
+        altSetUp();
         Room room = this.visits.get(0).getRoom();
 
         roomVisitRepository.saveAll(this.visits);
@@ -132,6 +119,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void findNotCheckedOutVisits_VisitorParam(){
+        altSetUp();
         Visitor visitor = this.visits.get(0).getVisitor();
 
         roomVisitRepository.saveAll(this.visits);
@@ -144,6 +132,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void getRoomVisitorCount_smallRoom(){
+        altSetUp();
         Room smallRoom = new Room("room", "a", 5);
 
         List<RoomVisit> fewVisits = generateVisitsForRoom(smallRoom, 2);
@@ -155,6 +144,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void getRoomVisitorCount_mediumRoom(){
+        altSetUp();
         Room mediumRoom = new Room("medium", "a", 10);
 
         List<RoomVisit> someVisits = generateVisitsForRoom(mediumRoom, 5);
@@ -166,6 +156,7 @@ public class RoomVisitRepositoryTest {
 
     @Test
     public void getRoomVisitorCount_fullRoom(){
+        altSetUp();
         Room filledRoom = new Room("full", "a", 10);
 
         List<RoomVisit> manyVisits = generateVisitsForRoom(filledRoom, 10);
@@ -175,6 +166,22 @@ public class RoomVisitRepositoryTest {
         assertThat(roomVisitRepository.getRoomVisitorCount(filledRoom), equalTo(10));
     }
 
+    /**
+     * alternativ setup method. If this is set as default @Before Method some methods wont run
+     */
+    private void altSetUp(){
+        Room room = new Room("Test", "Test", 20);
+        RoomVisitHelper roomVisitHelper = new RoomVisitHelper(entityManager.persist(room));
+        Visitor visitor = entityManager.persist(new Visitor("email"));
+
+        this.visits = Stream.of(
+                roomVisitHelper.generateVisit(
+                        visitor,
+                        LocalDateTime.now(),
+                        null
+                )
+        ).collect(Collectors.toList());
+    }
     /**
      * Generates a List of RoomVisits for given Room. The Visitor names are created as visitor0 - visitorX where X is @param visitorAmount
      * @param room Room object the generated visitors will visit.

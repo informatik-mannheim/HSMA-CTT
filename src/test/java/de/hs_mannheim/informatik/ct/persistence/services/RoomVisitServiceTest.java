@@ -247,7 +247,6 @@ class RoomVisitServiceTest {
 
     @Test
     void resetFullRoom(){
-
         Room fullRoom = new Room("A", "B", 10);
         List<RoomVisit> roomVisits = new ArrayList<RoomVisit>();
 
@@ -300,9 +299,7 @@ class RoomVisitServiceTest {
                         .toInstant()));
 
         // method call
-        try {
-            roomVisitService.resetRoom(testRoom);
-        } catch(AssertionError e){ }
+        roomVisitService.resetRoom(testRoom);
 
         // behavior validation
         Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(testRoom);
