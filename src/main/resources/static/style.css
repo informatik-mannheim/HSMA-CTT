@@ -104,7 +104,7 @@ html {
 }
 
 #collapseButtonInfo:hover {
-    background-color: #27ae60;
+    background-color: #3f6fd7;
 }
 
 #collapseBtnCheckIn {
@@ -151,9 +151,6 @@ html {
     margin-bottom: 60px;
 }
 
-
-
-
 .btn-for-faq.btn:hover {
     background-color: #28346c;
     color: white;
@@ -165,4 +162,7 @@ html {
      margin: 15px 0 15px 0;
      background-color: #d6d6d6;
      text-align: left;
+}
+#faq-page-container {
+    margin: 50px 0px 100px 0px;
 }
