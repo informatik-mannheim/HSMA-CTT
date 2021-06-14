@@ -40,8 +40,7 @@ import java.time.*;
 import java.util.*;
 
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDateTime;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 
@@ -285,9 +284,10 @@ class RoomVisitServiceTest {
     @Test
     void resetRoomExpiredRecords()  {
         Visitor expiredVisitor = new Visitor("exp");
-        Visitor notexpiredVisitor = new Visitor("nexp");
+        Visitor notExpiredVisitor = new Visitor("nexp");
         Room testRoom = new Room("A", "B", 4);
-        List<RoomVisit> visits = new RoomVisitHelper(testRoom).generateExpirationTestData(expiredVisitor, notexpiredVisitor);
+        // adds expired and not expired visitors
+        List<RoomVisit> visits = new RoomVisitHelper(testRoom).generateExpirationTestData(expiredVisitor, notExpiredVisitor);
 
         // setup
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(testRoom))
@@ -299,14 +299,14 @@ class RoomVisitServiceTest {
                         .toInstant()));
 
         // method call
-        roomVisitService.resetRoom(testRoom);
+        Assertions.assertThrows(AssertionError.class, () -> roomVisitService.resetRoom(testRoom));
 
         // behavior validation
         Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(testRoom);
 
         assertThat(roomVisitService.getVisitorCount(testRoom), equalTo(0));
         for(RoomVisit visit : visits){
-            assertThat(visit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.RoomReset));
+            assertThat(visit.getCheckOutSource(), not(RoomVisit.CheckOutSource.NotCheckedOut));
         }
     }
 
