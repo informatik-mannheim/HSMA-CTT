@@ -305,7 +305,7 @@ class RoomVisitServiceTest {
                         .toInstant()));
 
         // method call
-        roomVisitService.resetRoom(testRoom);
+        Assertions.assertThrows(AssertionError.class, () -> roomVisitService.resetRoom(testRoom));
 
         // behavior validation
         Mockito.verify(roomVisitRepository).findNotCheckedOutVisits(testRoom);
