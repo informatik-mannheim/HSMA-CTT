@@ -4,37 +4,47 @@
       layout:decorate="~{layout}">
 
 <head>
-    <title>Willkommen</title>
+    <title>FAQ</title>
     <script src='/faq.js'></script>
 
 </head>
 
 <body>
 <div layout:fragment="content">
-
     <h4>Frequently Asked Questions</h4>
-<template id="try">
-    <div id="faqContainer" >
-        <div class="btn-container">
-            <button class="btn btn-block btn-for-collapsible btn-for-faq" id="random" type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseInfo1" aria-expanded="false" aria-controls="collapseInfo">
-                Question 1<i class="fa fa-plus-square"></i>
-            </button>
+    <template id="try">
+        <div id="faqContainer">
+            <div class="btn-container">
+                <button class="btn btn-block btn-for-collapsible btn-for-faq" id="random" type="button"
+                        data-toggle="collapse"
+                        data-target="#collapseInfo1" aria-expanded="false" aria-controls="collapseInfo">
+                    Question 1<i class="fa fa-plus-square"></i>
+                </button>
+            </div>
+            <div class="collapse card card-body" id="random2">
+            </div>
         </div>
-        <div class="collapse card card-body" id="random2">
-            <a href="https://www.colorhexa.com/27ae60"></a>
-        </div>
-    </div>
-</template>
+    </template>
     <div id="faq-page-container" style="margin-top: 50px">
-
+        <div>
+            <div class="btn-container">
+                <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
+                        data-toggle="collapse"
+                        data-target="#randomZ" aria-expanded="false" aria-controls="collapseInfo">
+                    Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?<i
+                        class="fa fa-plus-square"></i>
+                </button>
+            </div>
+            <div class="collapse card card-body">
+                <p>Wenn du positiv getestet wurdest ist es sehr wichtig, dass du eine E-Mail an <a
+                        href="javascript:linkTo_UnCryptMailto('nbjmup;dpspob/{wAit.nbooifjn/ef')">cocona.zv@hs-mannheim.de</a>
+                    schreibst und darin deine Kontaktdaten sowie das Datum des positiven Tests mitteilst.</p>
+            </div>
+        </div>
     </div>
-
-
 
 </div>
+
 </body>
-
-
 </html>
+
