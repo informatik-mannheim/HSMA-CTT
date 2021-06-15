@@ -75,7 +75,7 @@ public class DynamicContentService {
         }
     }
 
-    private List<XWPFDocument> getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
+    public List<XWPFDocument> getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
 
         List<XWPFDocument> listOfDocuments = new ArrayList<XWPFDocument>();
 
