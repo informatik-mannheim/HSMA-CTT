@@ -85,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
                 for (let i = 0; i < guestFreeSection.length; i++){
-                    guestFreeSection[i].style.display = "none"
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
                 }
                 break;
             case "internal":
@@ -94,7 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
                 for (let i = 0; i < guestFreeSection.length; i++){
-                    guestFreeSection[i].style.display = "none"
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
                 }
                 break;
             default:
@@ -104,7 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.type = "email";
                 emailPostfix = null;
                 for (let i = 0; i < guestFreeSection.length; i++){
-                    guestFreeSection[i].style.display = "flex"
+                    guestFreeSection[i].style.visibility = "visible";
+                    guestFreeSection[i].style.maxHeight = "100%";
                 }
                 break;
         }

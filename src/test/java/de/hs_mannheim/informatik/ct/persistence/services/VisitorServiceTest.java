@@ -85,6 +85,8 @@ public class VisitorServiceTest {
             visitorService.findOrCreateVisitor("test@gmx.de","Tester1", "123", null);
             visitorService.findOrCreateVisitor("test_test@gmail.com","Tester2", "345", null);
             visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu","Tester3", "234", null);
+            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu","Tester3", "234", "That's were I live");
+            visitorService.findOrCreateVisitor("t.est@fc-md.umd.edu","Tester3", null, "beautiful place");
             // Valid internal emails
             visitorService.findOrCreateVisitor("13337@stud.hs-mannheim.de",null, null, null);
             visitorService.findOrCreateVisitor("p.prof@hs-mannheim.de",null, null, null);

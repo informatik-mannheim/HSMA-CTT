@@ -19,34 +19,11 @@ package de.hs_mannheim.informatik.ct.controller;
  */
 
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-
-import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -140,7 +117,7 @@ public class RoomController {
         if(!visitData.getRoomPin().equals(room.getRoomPin()))
             throw new InvalidRoomPinException();
 
-        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
+        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail(), visitData.getName(), visitData.getNumber(), visitData.getAddress());
 
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
@@ -180,7 +157,7 @@ public class RoomController {
         }
 
         val room = getRoomOrThrow(visitData.getRoomId());
-        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
+        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail(), visitData.getName(), visitData.getNumber(), visitData.getAddress());
 
         roomVisitService.checkOutVisitor(visitor);
 
@@ -314,11 +291,14 @@ public class RoomController {
      * @param email The visitors email.
      * @return The visitor.
      */
-    private Visitor getOrCreateVisitorOrThrow(String email) {
+    private Visitor getOrCreateVisitorOrThrow(String email, String name,String number,String address) {
         try {
-            return visitorService.findOrCreateVisitor(email);
+            return visitorService.findOrCreateVisitor(email, name,number, address);
         } catch (InvalidEmailException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
+        catch (InvalidExternalUserdataException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
         }
     }
 
