@@ -18,37 +18,38 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.util.AttributeEncryptor;
 import lombok.*;
 
-
-import javax.persistence.*;
-
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 @Entity
+
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(indexes = @Index(columnList = "email"))
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Visitor {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(unique = true, nullable = false)
+public class ExternalVisitor extends Visitor {
+    @Column
     @NonNull
-    @Convert(converter = AttributeEncryptor.class)
-    private String email;
+    private String name;
+    @Column
+    private String number;
+    @Column
+    private String address;
 
-    public Visitor(String email) {
-        this.email = email;
+    public static ExternalVisitor visitorWithPhone(String email, String name, String number) {
+        return new ExternalVisitor(email, name, number, null);
     }
 
-    @Override
-    public String toString() {
-        return "{email='" + email + "'}";
+    public static ExternalVisitor visitorWithAddress(String email, String name, String address) {
+        return new ExternalVisitor(email, name, null, address);
     }
+
+    public ExternalVisitor(String email, String name, String number, String address) {
+        super(email);
+        this.name = name;
+        this.number = number;
+        this.address = address;
+    }
+
 }
