@@ -28,6 +28,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class VisitorService {
             if (email.endsWith("hs-mannheim.de")) {
                 return visitorRepo.save(new Visitor(email));
             } else {
-                if (!name.equals("") && (!number.equals("") || !address.equals(""))) {
+                if (!StringUtils.isEmptyOrWhitespace(name) && (!StringUtils.isEmptyOrWhitespace(number) || !StringUtils.isEmptyOrWhitespace(address))) {
                     return visitorRepo.save(new ExternalVisitor(email, name, number, address));
                 } else {
                     throw new InvalidExternalUserdataException();
