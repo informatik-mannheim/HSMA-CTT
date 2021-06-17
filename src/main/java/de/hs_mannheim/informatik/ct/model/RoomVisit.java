@@ -91,9 +91,20 @@ public class RoomVisit implements Visit {
         private String visitorEmail;
         private Date startDate = null;
         private Date endDate = null;
+        private String name;
+        private String address;
+        private String number;
         private String roomPin;
 
         public Data(RoomVisit visit, int currentVisitorCount) {
+
+            if (visit.visitor instanceof ExternalVisitor){
+                var externalVisitor = (ExternalVisitor)visit.visitor;
+                this.address = externalVisitor.getAddress();
+                this.name = externalVisitor.getName();
+                this.number = externalVisitor.getNumber();
+            }
+
             this.roomId = visit.room.getId();
             this.roomName = visit.room.getName();
             this.roomCapacity = visit.room.getMaxCapacity();
