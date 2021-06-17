@@ -199,6 +199,23 @@ public class RoomController {
         return "rooms/roomReset";
     }
 
+    @GetMapping("/event-manager-portal")
+    public String eventManagerPortal(@RequestParam(required = true, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
+
+        String roomId = roomIdFromRequest.isPresent() ? roomIdFromRequest.get() : "";
+
+        val room = getRoomOrThrow(roomId);
+        val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
+        val isRoomOvercrowded = room.getMaxCapacity()<=currentRoomVisitorCount;
+
+        val roomData = new Room.Data(room);
+        model.addAttribute("roomData", roomData);
+        model.addAttribute("currentRoomVisitorCount", currentRoomVisitorCount);
+        model.addAttribute("isRoomOvercrowded", isRoomOvercrowded);
+
+        return "rooms/veranstaltungsleitenden-portal";
+    }
+
     @PostMapping("/{roomId}/executeRoomReset")
     public String executeRoomReset(@PathVariable String roomId, Model model) {
         val room = getRoomOrThrow(roomId);
