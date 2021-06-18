@@ -19,6 +19,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 
+import de.hs_mannheim.informatik.ct.model.CheckOutSource;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -315,7 +316,7 @@ class RoomVisitServiceTest {
 
         assertThat(roomVisitService.getVisitorCount(testRoom), equalTo(0));
         for(RoomVisit visit : visits){
-            assertThat(visit.getCheckOutSource(), not(RoomVisit.CheckOutSource.NotCheckedOut));
+            assertThat(visit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
         }
     }
 
@@ -339,7 +340,7 @@ class RoomVisitServiceTest {
 
         roomVisitService.resetRoom(testRoom);
 
-        assertThat(visit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.RoomReset));
+        assertThat(visit.getCheckOutSource(), equalTo(CheckOutSource.RoomReset));
     }
 
     private void testAutoCheckout(@NonNull LocalDateTime checkInTime, @NonNull LocalTime forcedEndTime, LocalDateTime expectedCheckoutTime) {
@@ -369,7 +370,7 @@ class RoomVisitServiceTest {
             assertThat(capturedArgument.size(), equalTo(1));
             val checkedOutVisit = capturedArgument.get(0);
             assertThat(convertToLocalDateTime(checkedOutVisit.getEndDate()), equalTo(expectedCheckoutTime));
-            assertThat(checkedOutVisit.getCheckOutSource(), equalTo(RoomVisit.CheckOutSource.AutomaticCheckout));
+            assertThat(checkedOutVisit.getCheckOutSource(), equalTo(CheckOutSource.AutomaticCheckout));
         }
     }
 }

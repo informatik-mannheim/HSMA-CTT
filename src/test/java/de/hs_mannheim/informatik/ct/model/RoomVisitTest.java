@@ -76,9 +76,10 @@ public class RoomVisitTest {
                 TimeUtil.convertToDate(now),
                 visitor,
                 checkOutSourceProvider.getCheckOutSource());
-        roomVisit.checkOut(TimeUtil.convertToDate(now), RoomVisit.CheckOutSource.RoomReset);
+        roomVisit.checkOut(TimeUtil.convertToDate(now), CheckOutSource.RoomReset);
 
-        assertThat(roomVisit.getCheckOutSource(), not(RoomVisit.CheckOutSource.NotCheckedOut));
+        assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
     }
+
 
 }
