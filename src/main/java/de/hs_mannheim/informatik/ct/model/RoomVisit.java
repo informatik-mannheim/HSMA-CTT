@@ -61,16 +61,18 @@ public class RoomVisit implements Visit {
         this.startDate = startDate;
     }
 
-
     @Override
     public String getLocationName() {
         return room.getName();
     }
 
     public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
-        assert endDate == null && checkOutSource == CheckOutSource.NotCheckedOut;
-        endDate = checkOutDate;
-        checkOutSource = reason;
+        if(endDate == null) {
+            endDate = checkOutDate;
+            checkOutSource = reason;
+        }else if(checkOutSource != CheckOutSource.NotCheckedOut){
+            checkOutSource = CheckOutSource.AutomaticCheckout;
+        }
     }
 
     public CheckOutSource getCheckOutSource() {
