@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.persistence;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.CheckOutSource;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -36,10 +37,10 @@ public class RoomVisitHelper {
 
     public RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
         Date endDate = null;
-        RoomVisit.CheckOutSource checkOutSource = RoomVisit.CheckOutSource.NotCheckedOut;
+        CheckOutSource checkOutSource = CheckOutSource.NotCheckedOut;
         if (end != null) {
             endDate = TimeUtil.convertToDate(end);
-            checkOutSource = RoomVisit.CheckOutSource.UserCheckout;
+            checkOutSource = CheckOutSource.UserCheckout;
         }
 
         return new RoomVisit(
