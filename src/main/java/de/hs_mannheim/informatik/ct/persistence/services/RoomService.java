@@ -83,7 +83,8 @@ public class RoomService {
             String building = values[0];
             String roomName = values[1];
             int roomCapacity = Integer.parseInt(values[2]);
-            return new Room(roomName, building, roomCapacity);
+            String type = values[3];
+            return new Room(roomName, building, roomCapacity, type);
         }).forEach(this::saveRoom);
     }
 
