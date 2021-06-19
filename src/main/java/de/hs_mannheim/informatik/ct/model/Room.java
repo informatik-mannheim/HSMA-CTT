@@ -46,7 +46,7 @@ public class Room {
 
     public Room(String name, String buildingName, int maxCapacity, RoomType type) {
         this(name, buildingName, maxCapacity);
-        this.type = RoomType.HOERSAAL;
+        this.type = type;
     }
 
     public static enum RoomType {
