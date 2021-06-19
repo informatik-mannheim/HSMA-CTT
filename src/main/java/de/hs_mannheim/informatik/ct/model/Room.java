@@ -43,6 +43,17 @@ public class Room {
         this.roomPin = String.format("%04d", new Random().nextInt(10000));
     }
 
+    public Room(String name, String buildingName, int maxCapacity, RoomType type) {
+        this(name, buildingName, maxCapacity);
+        this.type = RoomType.HOERSAAL;
+    }
+
+    public static enum RoomType {
+        HOERSAAL,
+        BUERO,
+        LABOR,
+    }
+
     public String getId() {
         return getName();
     }
