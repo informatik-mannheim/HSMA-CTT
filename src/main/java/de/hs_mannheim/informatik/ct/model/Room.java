@@ -35,6 +35,7 @@ public class Room {
     private String buildingName;
     private int maxCapacity;
     private String roomPin;
+    private RoomType type;
 
     public Room(String name, String buildingName, int maxCapacity) {
         this.name = name;
