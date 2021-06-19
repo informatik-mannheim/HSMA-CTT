@@ -35,7 +35,7 @@ public class Room {
     private String buildingName;
     private int maxCapacity;
     private String roomPin;
-    private RoomType type;
+    private String type;
 
     public Room(String name, String buildingName, int maxCapacity) {
         this.name = name;
@@ -44,15 +44,9 @@ public class Room {
         this.roomPin = String.format("%04d", new Random().nextInt(10000));
     }
 
-    public Room(String name, String buildingName, int maxCapacity, RoomType type) {
+    public Room(String name, String buildingName, int maxCapacity, String type) {
         this(name, buildingName, maxCapacity);
         this.type = type;
-    }
-
-    public static enum RoomType {
-        HOERSAAL,
-        BUERO,
-        LABOR,
     }
 
     public String getId() {
