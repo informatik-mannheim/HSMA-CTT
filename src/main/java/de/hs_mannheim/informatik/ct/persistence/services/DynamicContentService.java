@@ -24,6 +24,7 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
 import de.hs_mannheim.informatik.ct.util.DocxTemplate;
+import javassist.bytecode.ByteArray;
 import lombok.val;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -42,6 +43,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.io.IOException;  // Import the IOException class to handle errors
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class DynamicContentService {
@@ -61,11 +64,24 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public void writeRoomsPrintOutDocx(List<Room> rooms, OutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
+    public void writeRoomsPrintOutDocx(List<Room> rooms, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
         List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter, false);
 
+        int counter = 0;
+        outputStream.putNextEntry(new ZipEntry(rooms.get(0).getBuildingName() + "/"));
         for (XWPFDocument document : ListOfDocuments) {
-            document.write(outputStream);
+
+            try {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                document.write(out);
+                out.close();
+                byte[] xwpfDocumentBytes = out.toByteArray();
+                outputStream.putNextEntry(new ZipEntry(rooms.get(0).getBuildingName() + "/" + rooms.get(counter).getName() + ".docx"));
+                outputStream.write(xwpfDocumentBytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            counter++;
         }
     }
 
@@ -114,7 +130,7 @@ public class DynamicContentService {
                 templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
             }
 //          Saving generated templates in local folder for testing purposes
-//            templateGenerator.generate(rooms.get(i)).write(new FileOutputStream(new File("templates/printout/WriteInGetRooms" + i + ".docx")));
+//            templateGenerator.generate(rooms.get(i)).write(new FileOutputStream(new File("templates/printout/WriteInGetRooms" + rooms.get(i).getName() + ".docx")));
 
             listOfDocuments.add(templateGenerator.generate(rooms.get(i)));
 

@@ -82,91 +82,32 @@ public class PrintOutController {
     }
 
 
-    private DeferredResult<ResponseEntity<byte[]>> asyncCallHelper(String building, List<Room> oneRoom, HttpServletRequest request){
-        val outFileName = String.format("Gebäude %s.docx", building);
-        val result = new DeferredResult<ResponseEntity<byte[]>>(120 * 1000L);
-        CompletableFuture.runAsync(() -> {
-            try (val buffer = new ByteArrayOutputStream()) {
+//    TODO IMPORTANT this side can be access without being logged in
+    @GetMapping(value = "/rooms/download", produces = "application/zip")
+    public void getRoomPrintout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        //setting headers
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.addHeader("Content-Disposition", "attachment; filename=\"allRoomNotes.zip\"");
+
+
+        ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
+
+        for (String building : buildingService.getAllBuildings()) {
+            val roomsInBuilding = buildingService.getAllRoomsInBuilding(building);
+            try {
                 contentService.writeRoomsPrintOutDocx(
-                        oneRoom,
-                        buffer,
+                        roomsInBuilding,
+                        zos,
                         room -> utilities.getUriToLocalPath(
                                 RoomController.getRoomCheckinPath(room),
                                 request
-                        ));
-                val response = ResponseEntity
-                        .ok()
-                        .contentType(
-                                MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + outFileName)
-                        .body(buffer.toByteArray());
-                result.setResult(response);
-            } catch (IOException | XmlException e) {
+                        )
+                );
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
-        return result;
-    }
-
-    @GetMapping(value = "/rooms/zip")
-    public ZipOutputStream getRoomPrintout(
-            HttpServletRequest request) throws IOException {
-
-
-
-        FileOutputStream fos = new FileOutputStream("hello-world.zip");
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        ZipOutputStream zos = new ZipOutputStream(bos);
-
-        try {
-            for (int i = 0; i < 10; i++) {
-                // not available on BufferedOutputStream
-                zos.putNextEntry(new ZipEntry("hello-world." + i + ".txt"));
-                zos.write("Hello World!".getBytes());
-                // not available on BufferedOutputStream
-                zos.closeEntry();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            zos.close();
         }
-
-        return zos;
-
-
-//        System.out.println("Das hier ist die Request: " + request);
-//
-//        DeferredResult<ResponseEntity<byte[]>> test = null;
-//
-//        for (String allBuildings: buildingService.getAllBuildings()){
-//            val roomsInBuilding = buildingService.getAllRoomsInBuilding(allBuildings);
-//            test = asyncCallHelper(allBuildings, roomsInBuilding, request);
-//            break;
-//        }
-//        return test;
-
-
-    }
-
-    @GetMapping(value = "rooms/zip-download", produces="application/zip")
-    public void zipDownload(HttpServletResponse response) throws IOException {
-        ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream());
-        for (String building :getr  {
-
-            getRoomsPrintOutDox
-            String fileBasePath = null;
-            FileSystemResource resource = new FileSystemResource(fileBasePath + fileName);
-            ZipEntry zipEntry = new ZipEntry(resource.getFilename());
-            zipEntry.setSize(resource.contentLength());
-            zipOut.putNextEntry(zipEntry);
-            StreamUtils.copy(resource.getInputStream(), zipOut);
-            zipOut.closeEntry();
-        }
-        zipOut.finish();
-        zipOut.close();
-        response.setStatus(HttpServletResponse.SC_OK);
-        String zipFileName = "itDoBeWorking";
-        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + zipFileName + "\"");
+        zos.close();
     }
 }
