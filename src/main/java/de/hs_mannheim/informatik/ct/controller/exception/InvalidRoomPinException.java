@@ -1,4 +1,6 @@
-package de.hs_mannheim.informatik.ct.model;
+package de.hs_mannheim.informatik.ct.controller.exception;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,37 +20,6 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.util.AttributeEncryptor;
-import lombok.*;
-
-
-import javax.persistence.*;
-
-
-
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(indexes = @Index(columnList = "email"))
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Visitor {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(unique = true, nullable = false)
-    @NonNull
-    @Convert(converter = AttributeEncryptor.class)
-    private String email;
-
-    public Visitor(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "{email='" + email + "'}";
-    }
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Invalid Pin")
+public class InvalidRoomPinException extends Exception{
 }

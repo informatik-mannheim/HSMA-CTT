@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -69,11 +70,15 @@ public class RoomControllerTest {
     private MockMvc mockMvc;
 
     private final String TEST_ROOM_NAME = "123";
+    private String TEST_ROOM_PIN;
+    private final String TEST_ROOM_PIN_INVALID = "";
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
     public void setUp(){
-        roomService.saveRoom(new Room(TEST_ROOM_NAME, "A", 10));
+        Room room = new Room(TEST_ROOM_NAME, "A", 10);
+        TEST_ROOM_PIN = room.getRoomPin();
+        roomService.saveRoom(room);
     }
 
     @Test
@@ -99,7 +104,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void accessingImportWithoutAdminLogin() throws Exception{
+    public void accessingImportWithoutAdminLogin() throws Exception {
         // /import (should not be accessible without admin login)
         // todo find a way to check for redirect without 'http://localhost'
         this.mockMvc.perform(
@@ -115,6 +120,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -130,6 +136,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -148,6 +155,27 @@ public class RoomControllerTest {
     }
 
     @Test
+    public void checkInFullRoomWithOverride() throws Exception{
+        // find and fill testroom
+        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
+        fillRoom(testRoom, 10);
+
+        this.mockMvc.perform(
+                get("/r/" + TEST_ROOM_NAME + "?override=true").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(null));
+
+        this.mockMvc.perform(
+                post("/r/checkInOverride")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .with(csrf()))
+                .andExpect(forwardedUrl(null))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void checkInInvalidCredentials() throws Exception{
         // check in with empty username should
         this.mockMvc.perform(
@@ -155,9 +183,24 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", "")
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().is(400))
                 .andExpect(status().reason("Invalid Email"));
+    }
+
+    @Test
+    public void checkInInvalidRoomPin() throws Exception{
+        // check in with empty username should
+        this.mockMvc.perform(
+                post("/r/checkIn")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+                        .with(csrf()))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Invalid Pin"));
     }
 
     @Test
@@ -169,6 +212,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(
@@ -190,6 +234,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(
@@ -204,7 +249,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void roomNotFoundException() throws Exception{
+    public void roomNotFoundException() throws Exception {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
@@ -212,21 +257,22 @@ public class RoomControllerTest {
     }
 
     /**
-     *  Helper method that creates users to fill room.
-     *  An address is created by combining iterator value with '@stud.hs-mannheim.de'.
-     *  To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
-     * @param room the room that should get filled.
+     * Helper method that creates users to fill room.
+     * An address is created by combining iterator value with '@stud.hs-mannheim.de'.
+     * To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
+     *
+     * @param room   the room that should get filled.
      * @param amount the amount the room will be filled.
      */
-    public void fillRoom(Room room, int amount) throws InvalidEmailException {
+    public void fillRoom(Room room, int amount) throws InvalidEmailException, InvalidExternalUserdataException {
 
         for (int i = 0; i < amount; i++) {
             String randomUserEmail = String.format("%d@stud.hs-mannheim.de", i);
 
-            if(randomUserEmail != TEST_USER_EMAIL){
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
+            if (randomUserEmail != TEST_USER_EMAIL) {
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de", null, null, null), room);
             } else {
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de"), room);
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de", null, null, null), room);
             }
         }
     }
