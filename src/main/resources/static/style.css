@@ -150,3 +150,19 @@ html {
 .collapseMarginBottom{
     margin-bottom: 60px;
 }
+
+.btn-for-faq.btn:hover {
+    background-color: #28346c;
+    color: white;
+}
+.btn-for-faq.btn:focus {
+    box-shadow: none;
+}
+.btn-for-faq.btn {
+     margin: 15px 0 15px 0;
+     background-color: #d6d6d6;
+     text-align: left;
+}
+#faq-page-container {
+    margin-bottom: 100px;
+}
