@@ -39,10 +39,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -200,28 +199,43 @@ public class RoomController {
     }
 
     @GetMapping("/event-manager-portal")
-    public String eventManagerPortal(@RequestParam(required = true, value = "roomId") Optional<String> roomIdFromRequest, Model model) {
+    public String eventManagerPortal(
+            @RequestParam(required = true, value = "roomId") Optional<String> roomIdFromRequest,
+            Model model
+    )
+    throws UnsupportedEncodingException {
 
         String roomId = roomIdFromRequest.isPresent() ? roomIdFromRequest.get() : "";
 
         val room = getRoomOrThrow(roomId);
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity()<=currentRoomVisitorCount;
+        val redirectURI = URLEncoder.encode("/r/event-manager-portal?roomId="+roomId, "UTF-8");
+        val roomResetEndpoint = "/r/"+roomId+"/executeRoomReset?redirectURI="+redirectURI;
 
         val roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
         model.addAttribute("currentRoomVisitorCount", currentRoomVisitorCount);
         model.addAttribute("isRoomOvercrowded", isRoomOvercrowded);
+        model.addAttribute("roomResetEndpoint", roomResetEndpoint);
 
         return "rooms/veranstaltungsleitenden-portal";
     }
 
     @PostMapping("/{roomId}/executeRoomReset")
-    public String executeRoomReset(@PathVariable String roomId, Model model) {
+    public String executeRoomReset(
+            @PathVariable String roomId, Model model,
+            @RequestParam(required = false, value = "redirectURI") Optional<String> redirectURIRequest
+                                   ) throws UnsupportedEncodingException {
         val room = getRoomOrThrow(roomId);
 
+        String redirectURI = "/r/" + roomId + "?&privileged=true";
+        if(redirectURIRequest.isPresent())
+            redirectURI = URLDecoder.decode(redirectURIRequest.get(), "UTF-8");
+
         roomVisitService.resetRoom(room);
-        return "redirect:/r/" + roomId + "?&privileged=true";
+
+        return "redirect:"+redirectURI;
     }
 
     @RequestMapping("/roomFull/{roomId}")
