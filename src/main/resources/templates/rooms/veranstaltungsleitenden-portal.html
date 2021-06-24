@@ -1,7 +1,7 @@
 <html lang="de" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{rooms/layout-veranstaltungsleitenden-portal}">
+	layout:decorate="~{rooms/layout}">
 
 <head>
 <meta http-equiv="refresh" content="30" >
@@ -18,49 +18,37 @@
 			Gebäude <span th:text="${roomData.building}"></span>
 		</h4>
 		
-		<div class="row">
+		<div class="col align-stretch">
 
-			<div class="col-md-6">
+			<div class="row justify-around">
 
-				<div class="row">
-
-					<div class="col-md-6">
-
-						<div class="card">
-							<div class="card-body">
-								<p class="text-center">Raumkapazität nach IfSG</p>
-								<p class="text-center"><strong th:text="${roomData.maxCapacity+' '}"></strong>Personen</p>
-							</div>
-						</div>
-
-					</div>
-
-					<div class="col-md-6">
-
-						<div class="card">
-							<div class="card-body">
-								<p class="text-center">eingecheckte Personen</p>
-								<p class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
-							</div>
-						</div>
-
-					</div>
-
+				<div class="card flex-1">
+					<h5 class="text-center">Raumkapazität nach IfSG</h5>
+					<p class="text-center"><strong th:text="${roomData.maxCapacity+' '}"></strong>Personen</p>
 				</div>
 
-				<div class="card">
-					<div class="card-body">
-						<p class="card-text">
-							Wenn die Zahl der im Raum eingecheckten Personen die Raumkapazität überschreitet, können Sie den Raum zurücksetzen.
-							Nach dem Zurücksetzen des Raumes müssen sich alle Personen erneut einchecken.
-						</p>
-						<a class="btn btn-primary">Raum zurücksetzen</a>
-					</div>
+				<div class="card flex-1">
+					<h5 class="text-center">eingecheckte Personen</h5>
+					<p class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
 				</div>
 
 			</div>
 
-			<div class="col-md-6">
+			<div class="card">
+				<div class="card-body">
+					<p>
+						Wenn die Zahl der im Raum eingecheckten Personen die Raumkapazität überschreitet, können Sie den Raum zurücksetzen.
+						Nach dem Zurücksetzen des Raumes müssen sich alle Personen erneut einchecken.
+					</p>
+				</div>
+				<div class="card-footer">
+					<form method="POST" th:action="@{*{roomResetEndpoint}}">
+						<button type="submit" class="hs-button">Raum zurücksetzen</button>
+					</form>
+				</div>
+			</div>
+
+			<form>
 
 				<div class="card">
 					<div class="card-body">
@@ -80,7 +68,7 @@
 							</li>
 						</ul>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions">
+							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions" required>
 							<label class="form-check-label" for="confirm_conditions">
 								Ich habe geprüft, ob alle anwesenden Personen mindestens eines der oben genannten Kriterien erfüllen.
 							</label>
@@ -91,20 +79,13 @@
 				<div class="card">
 					<div class="card-body">
 						<p class="card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
-						<a class="btn btn-primary">Raum verlassen</a>
+					</div>
+					<div class="card-footer">
+						<button type="submit" class="hs-button">Raum verlassen</button>
 					</div>
 				</div>
 
-			</div>
-
-		</div>
-
-		<div class="row">
-
-			<div class="col">
-
-
-			</div>
+			</form>
 
 		</div>
 
