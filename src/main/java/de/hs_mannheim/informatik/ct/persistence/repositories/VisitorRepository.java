@@ -34,10 +34,10 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
     @Modifying
     @Query("DELETE FROM Visitor visitor " +
             "WHERE visitor NOT IN (" +
-            "   SELECT roomVisit.visitor " +
-            "   FROM RoomVisit roomVisit) " +
+            " SELECT roomVisit.visitor " +
+            "FROM RoomVisit roomVisit) " +
             "AND visitor NOT IN (" +
-            "   SELECT visit.visitor " +
-            "   FROM EventVisit visit)")
+            "SELECT visit.visitor " +
+            "FROM EventVisit visit)")
     void removeVisitorsWithNoVisits();
 }

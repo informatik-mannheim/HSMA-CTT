@@ -22,6 +22,8 @@ services:
       - URL_OVERRIDE=${URL_OVERRIDE}
       # AES Secret used to encrypt personal data in the database, override in .env
       - DB_ENCRYPTION_SECRET=${DB_ENCRYPTION_SECRET:-corona-ctt-20201}
+      # Override current names of the study rooms
+      - CTT_STUDYROOMS=L11;L12;L13;L14;L15;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
     restart: always
   db:
     image: postgres:13-alpine

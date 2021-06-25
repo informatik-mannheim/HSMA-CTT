@@ -21,15 +21,11 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
 import java.util.Date;
 import java.util.List;
 
-import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.*;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import de.hs_mannheim.informatik.ct.model.Visitor;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.RoomVisit;
 
 
 public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
@@ -71,4 +67,30 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
             "ORDER BY visitTarget.startDate")
     List<Contact<RoomVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 
+    /**
+     * Gets the total number of people currently checked in in a study room
+     *
+     * @param studyRooms room names of all study rooms
+     * @return total number of people currently checked in in a study room
+     */
+    @Query("SELECT COUNT (*) " +
+            "FROM RoomVisit rv " +
+            "WHERE rv.room.name IN :studyRooms " +
+            "AND rv.endDate is null")
+    int getTotalStudyRoomsVisitorCount(@Param("studyRooms") String[] studyRooms);
+
+    /**
+     * Gets all study rooms
+     *
+     * @param studyRooms room names of all study rooms
+     * @return List of study rooms with room infos (roomName, buildingName, maxCapacity) and current visitor count
+     */
+    @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.StudyRoom" +
+            "(r.name, r.buildingName, r.maxCapacity, COUNT (rv.room.name) AS visitorCount) " +
+            "FROM Room r " +
+            "LEFT JOIN RoomVisit rv ON (r.name = rv.room.name) " +
+            "WHERE r.name IN :studyRooms " +
+            "AND rv.endDate IS null " +
+            "GROUP BY  r.name")
+    List<StudyRoom> getAllStudyRooms(@Param("studyRooms") String[] studyRooms);
 }
