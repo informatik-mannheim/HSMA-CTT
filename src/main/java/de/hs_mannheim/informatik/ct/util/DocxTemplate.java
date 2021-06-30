@@ -69,24 +69,24 @@ public class DocxTemplate<T> {
 
     public XWPFDocument generate(T dataSource) throws IOException, XmlException {
 
-            try (val templateStream = new FileInputStream(templateFile)) {
-                document = new XWPFDocument(templateStream);
-            }
+        try (val templateStream = new FileInputStream(templateFile)) {
+            document = new XWPFDocument(templateStream);
+        }
 
-            this.dataSource = dataSource;
-            val imageIds = addImagesToDocMedia();
-            val templateBuffer = getTemplateBuffer();
-            // The section properties is at the end of body and sets headers, footers, etc.
-            val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
+        this.dataSource = dataSource;
+        val imageIds = addImagesToDocMedia();
+        val templateBuffer = getTemplateBuffer();
+        // The section properties is at the end of body and sets headers, footers, etc.
+        val sectionProperties = (CTSectPr) document.getDocument().getBody().getSectPr().copy();
 
-            // Remove template page from final doc
-            document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
+        // Remove template page from final doc
+        document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
 
 
-            // Generate new Pages
-            val pageDataSource = StreamSupport.stream(
-                    ZipPageData(dataSource, imageIds).spliterator(),
-                    false).collect(Collectors.toList());
+        // Generate new Pages
+        val pageDataSource = StreamSupport.stream(
+                ZipPageData(dataSource, imageIds).spliterator(),
+                false).collect(Collectors.toList());
 
 //
         val templateXml = getParagraphTemplateXml(templateBuffer);
@@ -106,8 +106,8 @@ public class DocxTemplate<T> {
                         }
                     }
                 });
-            // Reapply the section properties
-            document.getDocument().getBody().setSectPr(sectionProperties);
+        // Reapply the section properties
+        document.getDocument().getBody().setSectPr(sectionProperties);
 
         return document;
     }
@@ -205,7 +205,7 @@ public class DocxTemplate<T> {
     }
 
     private Iterable<Indexed<PageData<T>>> ZipPageData(T data, Iterable<String> qrImageIds) {
-        List <T> test = new ArrayList<T>();
+        List<T> test = new ArrayList<T>();
         test.add(data);
         val dataIterator = test.iterator();
         val idIterator = qrImageIds.iterator();

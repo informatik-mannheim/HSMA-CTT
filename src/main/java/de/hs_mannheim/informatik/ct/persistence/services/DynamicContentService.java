@@ -129,9 +129,6 @@ public class DynamicContentService {
             } else {
                 templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
             }
-//          Saving generated templates in local folder for testing purposes
-//            templateGenerator.generate(rooms.get(i)).write(new FileOutputStream(new File("templates/printout/WriteInGetRooms" + rooms.get(i).getName() + ".docx")));
-
             listOfDocuments.add(templateGenerator.generate(rooms.get(i)));
 
         }

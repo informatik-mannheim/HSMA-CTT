@@ -77,19 +77,17 @@ public class PrintOutController {
 
     @GetMapping(value = "/rooms")
     public String getRoomPrintoutList(Model model) {
-        model.addAttribute("buildings", buildingService.getAllBuildings());
         return "rooms/roomPrintout";
     }
 
 
-//    TODO IMPORTANT this side can be access without being logged in
+    //    TODO IMPORTANT this side can be access without being logged in
     @GetMapping(value = "/rooms/download", produces = "application/zip")
     public void getRoomPrintout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //setting headers
         response.setStatus(HttpServletResponse.SC_OK);
         response.addHeader("Content-Disposition", "attachment; filename=\"allRoomNotes.zip\"");
-
 
         ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
 
