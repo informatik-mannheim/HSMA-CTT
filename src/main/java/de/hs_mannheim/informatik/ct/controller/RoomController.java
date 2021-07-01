@@ -104,12 +104,16 @@ public class RoomController {
         model.addAttribute("privileged", privileged);
         model.addAttribute("roomPin", roomPin);
         model.addAttribute("checkInOverwrite", overrideFullRoom);
+
         return "rooms/checkIn";
     }
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+    public String checkIn(
+            @ModelAttribute RoomVisit.Data visitData,
+            Model model
+    ) throws InvalidRoomPinException {
         val room = getRoomOrThrow(visitData.getRoomId());
 
         if(!visitData.getRoomPin().equals(room.getRoomPin()))
@@ -186,6 +190,7 @@ public class RoomController {
         model.addAttribute("roomData", roomData);
         model.addAttribute("visitData", new RoomVisit.Data(roomData));
         model.addAttribute("privileged", false);
+
         return "rooms/checkIn";
     }
 
@@ -198,19 +203,19 @@ public class RoomController {
         return "rooms/roomReset";
     }
 
-    @GetMapping("/event-manager-portal")
+    @GetMapping("/{roomId}/event-manager-portal")
     public String eventManagerPortal(
-            @RequestParam(required = true, value = "roomId") Optional<String> roomIdFromRequest,
+            @PathVariable String roomId,
+            @RequestParam(required = true, value = "visitorEmail") String encodedVisitorEmail,
             Model model
     )
     throws UnsupportedEncodingException {
 
-        String roomId = roomIdFromRequest.isPresent() ? roomIdFromRequest.get() : "";
-
+        val visitorEmail = URLDecoder.decode(encodedVisitorEmail, "UTF-8");
         val room = getRoomOrThrow(roomId);
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity()<=currentRoomVisitorCount;
-        val redirectURI = URLEncoder.encode("/r/event-manager-portal?roomId="+roomId, "UTF-8");
+        val redirectURI = URLEncoder.encode("/r/"+roomId+"/event-manager-portal?visitorEmail="+encodedVisitorEmail, "UTF-8");
         val roomResetEndpoint = "/r/"+roomId+"/executeRoomReset?redirectURI="+redirectURI;
 
         val roomData = new Room.Data(room);
@@ -218,6 +223,8 @@ public class RoomController {
         model.addAttribute("currentRoomVisitorCount", currentRoomVisitorCount);
         model.addAttribute("isRoomOvercrowded", isRoomOvercrowded);
         model.addAttribute("roomResetEndpoint", roomResetEndpoint);
+        model.addAttribute("redirectURI", redirectURI);
+        model.addAttribute("visitorEmail", visitorEmail);
 
         return "rooms/veranstaltungsleitenden-portal";
     }
