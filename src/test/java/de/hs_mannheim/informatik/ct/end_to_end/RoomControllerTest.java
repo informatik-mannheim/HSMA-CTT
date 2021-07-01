@@ -131,6 +131,7 @@ public class RoomControllerTest {
     public void openEventManagerPortal() throws Exception {
         this.mockMvc.perform(
                 get("/r/"+TEST_ROOM_NAME+"/event-manager-portal")
+                        .param("visitorEmail", TEST_USER_EMAIL)
                 )
                 .andExpect(status().isOk());
     }
