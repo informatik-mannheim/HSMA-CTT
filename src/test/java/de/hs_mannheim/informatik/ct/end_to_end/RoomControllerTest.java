@@ -37,6 +37,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -122,6 +125,38 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void openEventManagerPortal() throws Exception {
+        this.mockMvc.perform(
+                get("/r/"+TEST_ROOM_NAME+"/event-manager-portal")
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void resetRoomWithDefaultRedirectURI() throws Exception {
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/r/" + TEST_ROOM_NAME + "?&privileged=true"));
+    }
+
+    @Test
+    public void resetRoomWithCustomRedirectURI() throws Exception {
+        String redirectURI = URLEncoder.encode("/r/"+TEST_ROOM_NAME+"/event-manager-portal", "UTF-8");
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("redirectURI", redirectURI)
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(URLDecoder.decode(redirectURI, "UTF-8")));
     }
 
     @Test
