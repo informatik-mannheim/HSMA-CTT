@@ -64,7 +64,6 @@ public class ErrorController {
         return "error/error";
     }
 
-
     @ExceptionHandler({Exception.class})
     public String anyException() {
         return "index";
