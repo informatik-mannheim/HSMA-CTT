@@ -18,8 +18,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -64,9 +66,10 @@ public class RoomVisitTest {
     @MockBean
     private Visitor visitor;
 
+    private LocalDateTime now = LocalDateTime.now();
+
     @Test
     void checkout(){
-        LocalDateTime now = LocalDateTime.now();
         RoomVisit checkOutSourceProvider = new RoomVisit(visitor, room, TimeUtil.convertToDate(now));
 
         RoomVisit roomVisit = new RoomVisit(
@@ -76,10 +79,42 @@ public class RoomVisitTest {
                 TimeUtil.convertToDate(now),
                 visitor,
                 checkOutSourceProvider.getCheckOutSource());
+
         roomVisit.checkOut(TimeUtil.convertToDate(now), CheckOutSource.RoomReset);
 
         assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
     }
 
+    @Test
+    void checkout_checkOutSources(){
+        Date validDate = TimeUtil.convertToDate(now);
 
+        // no matter which check out source is used. The user will get checked out
+        for(CheckOutSource checkOutSource : CheckOutSource.values()){
+            RoomVisit roomVisit = checkOutCall(validDate, checkOutSource);
+            assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
+        }
+    }
+
+    @Test
+    void checkout_endDate(){
+        Date tomorrow = TimeUtil.convertToDate(now.plus(Duration.ofDays(1)));
+        Date yesterday = TimeUtil.convertToDate(now.minus(Duration.ofDays(1)));
+
+
+    }
+
+    private RoomVisit checkOutCall(Date checkOutDate, CheckOutSource checkOutSource){
+        RoomVisit roomVisit = new RoomVisit(
+                room,
+                null,
+                TimeUtil.convertToDate(now.minusDays(1)),
+                checkOutDate,
+                visitor,
+                checkOutSource
+        );
+
+        roomVisit.checkOut(TimeUtil.convertToDate(now), CheckOutSource.RoomReset);
+        return roomVisit;
+    }
 }

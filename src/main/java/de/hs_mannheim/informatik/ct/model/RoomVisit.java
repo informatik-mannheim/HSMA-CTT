@@ -67,10 +67,12 @@ public class RoomVisit implements Visit {
     }
 
     public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
-        if(endDate == null) {
+        // normal check out
+        if(endDate == null && reason != CheckOutSource.NotCheckedOut) {
             endDate = checkOutDate;
             checkOutSource = reason;
-        }else if(checkOutSource != CheckOutSource.NotCheckedOut){
+        // enddate was set but user did not got checked out
+        }else if(checkOutSource == CheckOutSource.NotCheckedOut){
             checkOutSource = CheckOutSource.AutomaticCheckout;
         }
     }
