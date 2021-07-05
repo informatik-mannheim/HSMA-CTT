@@ -81,23 +81,30 @@ public class PrintOutController {
     }
 
 
-    //    TODO IMPORTANT this side can be access without being logged in
-    @GetMapping(value = "/rooms/download", produces = "application/zip")
-    public void getRoomPrintout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    @RequestMapping(value = "/rooms/download", produces = "application/zip")
+    public void getRoomPrintout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(value = "priv", required = true) boolean priv) throws IOException {
 
         //setting headers
         response.setStatus(HttpServletResponse.SC_OK);
-        response.addHeader("Content-Disposition", "attachment; filename=\"allRoomNotes.zip\"");
+        if (priv){
+            response.addHeader("Content-Disposition", "attachment; filename=\"PrivilegedRoomNotes.zip\"");
+        } else{
+            response.addHeader("Content-Disposition", "attachment; filename=\"RoomNotes.zip\"");
+        }
+
 
         ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
 
-        for (String building : buildingService.getAllBuildings()) {
-            val roomsInBuilding = buildingService.getAllRoomsInBuilding(building);
+        for (Room room : roomService.getAllRooms()) {
             try {
                 contentService.writeRoomsPrintOutDocx(
-                        roomsInBuilding,
+                        priv,
                         zos,
-                        room -> utilities.getUriToLocalPath(
+                        uriToPath -> utilities.getUriToLocalPath(
                                 RoomController.getRoomCheckinPath(room),
                                 request
                         )

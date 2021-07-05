@@ -3,12 +3,9 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -108,10 +105,10 @@ public class RoomService {
                 roomCapacity = (int) row.getCell(35).getNumericCellValue();
 
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
-                if(building.equals("") || roomName.equals("")) {
+                if (building.equals("") || roomName.equals("")) {
                     continue;
                 }
-            } catch(NullPointerException e) {
+            } catch (NullPointerException e) {
 
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
                 continue;
@@ -123,6 +120,18 @@ public class RoomService {
         this.saveAllRooms(rooms);
 
         workbook.close();
+    }
+
+    public List<Room> getAllRooms() {
+        List<Room> allRooms = new ArrayList<Room>();
+        BuildingService buildingService = new BuildingService();
+        RoomService roomService = new RoomService();
+        System.out.println("Alle Gebäude: " + buildingService.getAllBuildings());
+        for (String building : buildingService.getAllBuildings()) {
+            allRooms.addAll(buildingService.getAllRoomsInBuilding(building));
+        }
+
+        return allRooms;
     }
 
 }

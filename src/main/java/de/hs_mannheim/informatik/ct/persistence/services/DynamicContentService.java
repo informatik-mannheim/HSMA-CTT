@@ -19,6 +19,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 import de.hs_mannheim.informatik.ct.controller.Utilities;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -64,11 +65,14 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public void writeRoomsPrintOutDocx(List<Room> rooms, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-        List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter, false);
+    public void writeRoomsPrintOutDocx(boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
+        List<Room> rooms = new RoomService().getAllRooms();
+        System.out.println("So viele Räume haben wir: " + rooms.size());
+        List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter, privileged);
+
+
 
         int counter = 0;
-        outputStream.putNextEntry(new ZipEntry(rooms.get(0).getBuildingName() + "/"));
         for (XWPFDocument document : ListOfDocuments) {
 
             try {
@@ -76,7 +80,7 @@ public class DynamicContentService {
                 document.write(out);
                 out.close();
                 byte[] xwpfDocumentBytes = out.toByteArray();
-                outputStream.putNextEntry(new ZipEntry(rooms.get(0).getBuildingName() + "/" + rooms.get(counter).getName() + ".docx"));
+                outputStream.putNextEntry(new ZipEntry(rooms.get(counter).getBuildingName() + "/" + rooms.get(counter).getName() + ".docx"));
                 outputStream.write(xwpfDocumentBytes);
             } catch (IOException e) {
                 e.printStackTrace();

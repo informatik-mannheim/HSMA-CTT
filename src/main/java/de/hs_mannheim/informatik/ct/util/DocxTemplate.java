@@ -18,7 +18,6 @@ package de.hs_mannheim.informatik.ct.util;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -33,13 +32,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 
 public class DocxTemplate<T> {
@@ -84,28 +81,17 @@ public class DocxTemplate<T> {
 
 
         // Generate new Pages
-        val pageDataSource = StreamSupport.stream(
-                ZipPageData(dataSource, imageIds).spliterator(),
-                false).collect(Collectors.toList());
+        PageData<T> pageDataSource = ZipPageData(dataSource, imageIds);
 
-//
         val templateXml = getParagraphTemplateXml(templateBuffer);
 
-        pageDataSource
-                .parallelStream()
-                .unordered()
-                .map(data -> new Indexed<>(data.index, applyPageParagraphXml(templateXml, data.value)))
-                .sorted(Comparator.comparingInt(o -> o.index))
-                .forEachOrdered(paragraphs -> {
-                    for (int paragraphIndex = 0; paragraphIndex < paragraphs.value.size(); paragraphIndex++) {
-                        val paragraph = document.createParagraph();
-                        paragraph.getCTP().set(paragraphs.value.get(paragraphIndex));
-                        val isLastPage = paragraphs.index == 0;
-                        if (!isLastPage && paragraphIndex == paragraphs.value.size() - 1) {
-                            paragraph.setPageBreak(true);
-                        }
-                    }
-                });
+        List<XmlObject> paragraphs = applyPageParagraphXml(templateXml, pageDataSource);
+        for (int paragraphIndex = 0; paragraphIndex < templateXml.size(); paragraphIndex++) {
+            val paragraph = document.createParagraph();
+            paragraph.getCTP().set(paragraphs.get(paragraphIndex));
+        }
+
+
         // Reapply the section properties
         document.getDocument().getBody().setSectPr(sectionProperties);
 
@@ -114,7 +100,6 @@ public class DocxTemplate<T> {
 
     private List<String> addImagesToDocMedia() {
         val doc = document;
-
 
         val indexDataSource = new ArrayList<Indexed<T>>(1);
         for (int i = 0; i < 1; i++) {
@@ -160,6 +145,7 @@ public class DocxTemplate<T> {
         return replacedParagraphs;
     }
 
+
     private List<String> getParagraphTemplateXml(byte[] templateBuffer) throws IOException {
         try (val templateStream = new ByteArrayInputStream(templateBuffer); val template = new XWPFDocument(templateStream)) {
             return template.getParagraphs()
@@ -204,33 +190,18 @@ public class DocxTemplate<T> {
         return template;
     }
 
-    private Iterable<Indexed<PageData<T>>> ZipPageData(T data, Iterable<String> qrImageIds) {
-        List<T> test = new ArrayList<T>();
-        test.add(data);
-        val dataIterator = test.iterator();
-        val idIterator = qrImageIds.iterator();
-        return () -> new Iterator<Indexed<PageData<T>>>() {
-            int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return dataIterator.hasNext() && idIterator.hasNext();
-            }
-
-            @Override
-            public Indexed<PageData<T>> next() {
-                return new Indexed<>(index++, new PageData<>(dataIterator.next(), idIterator.next()));
-            }
-        };
+    private PageData<T> ZipPageData(T data, Iterable<String> qrImageIds) {
+        return new PageData(data, qrImageIds.iterator().next());
     }
 
     public interface TextTemplate<T> {
         String apply(T data, String templatePlaceholder);
     }
 
+
     @Data
     @AllArgsConstructor
-    private static class PageData<T> {
+    private class PageData<T> {
         private T data;
         private String qrCodeId;
     }
