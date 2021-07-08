@@ -38,6 +38,8 @@ import lombok.NonNull;
 
 @Service
 public class RoomService {
+
+
     private final String COMMA_DELIMITER = ";";
 
     @Autowired
@@ -121,17 +123,4 @@ public class RoomService {
 
         workbook.close();
     }
-
-    public List<Room> getAllRooms() {
-        List<Room> allRooms = new ArrayList<Room>();
-        BuildingService buildingService = new BuildingService();
-        RoomService roomService = new RoomService();
-        System.out.println("Alle Gebäude: " + buildingService.getAllBuildings());
-        for (String building : buildingService.getAllBuildings()) {
-            allRooms.addAll(buildingService.getAllRoomsInBuilding(building));
-        }
-
-        return allRooms;
-    }
-
 }

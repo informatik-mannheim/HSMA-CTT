@@ -19,13 +19,11 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  */
 
 import de.hs_mannheim.informatik.ct.controller.Utilities;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
 import de.hs_mannheim.informatik.ct.util.DocxTemplate;
-import javassist.bytecode.ByteArray;
 import lombok.val;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -65,28 +63,17 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public void writeRoomsPrintOutDocx(boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-        List<Room> rooms = new RoomService().getAllRooms();
-        System.out.println("So viele Räume haben wir: " + rooms.size());
-        List<XWPFDocument> ListOfDocuments = getRoomsPrintOutDox(rooms, uriConverter, privileged);
+    public void writeRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
 
-
-
-        int counter = 0;
-        for (XWPFDocument document : ListOfDocuments) {
-
-            try {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
+            XWPFDocument document = getRoomPrintOutDocx(room, uriConverter, privileged);
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 document.write(out);
-                out.close();
                 byte[] xwpfDocumentBytes = out.toByteArray();
-                outputStream.putNextEntry(new ZipEntry(rooms.get(counter).getBuildingName() + "/" + rooms.get(counter).getName() + ".docx"));
+                outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
                 outputStream.write(xwpfDocumentBytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            counter++;
-        }
     }
 
     public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
@@ -95,32 +82,28 @@ public class DynamicContentService {
         }
     }
 
-    public List<XWPFDocument> getRoomsPrintOutDox(List<Room> rooms, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
+    public XWPFDocument getRoomPrintOutDocx(Room room, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
 
-        List<XWPFDocument> listOfDocuments = new ArrayList<XWPFDocument>();
-
-        for (int i = 0; i < rooms.size(); i++) {
             DocxTemplate templateGenerator;
 
-
-            DocxTemplate.TextTemplate<Room> textReplacer = (room, templatePlaceholder) -> {
+            DocxTemplate.TextTemplate<Room> textReplacer = (roomContent, templatePlaceholder) -> {
                 switch (templatePlaceholder) {
                     case "g":
-                        return room.getBuildingName();
+                        return roomContent.getBuildingName();
                     case "r":
-                        return room.getName();
+                        return roomContent.getName();
                     case "l":
-                        return uriConverter.apply(room).toUriString();
+                        return uriConverter.apply(roomContent).toUriString();
                     case "p":
-                        return Integer.toString(room.getMaxCapacity());
+                        return Integer.toString(roomContent.getMaxCapacity());
                     case "c":
-                        return room.getRoomPin();
+                        return roomContent.getRoomPin();
                     default:
                         throw new UnsupportedOperationException("Template contains invalid placeholder: " + templatePlaceholder);
                 }
             };
 
-            Function<Room, byte[]> qrGenerator = room -> {
+            Function<Room, byte[]> qrGenerator = roomQr -> {
                 // TODO: This is a hack to integrate the PIN code into the QR Code but not in the hyperlink.
                 val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
                         .queryParam("pin", room.getRoomPin())
@@ -133,9 +116,7 @@ public class DynamicContentService {
             } else {
                 templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
             }
-            listOfDocuments.add(templateGenerator.generate(rooms.get(i)));
 
-        }
-        return listOfDocuments;
+        return templateGenerator.generate(room);
     }
 }

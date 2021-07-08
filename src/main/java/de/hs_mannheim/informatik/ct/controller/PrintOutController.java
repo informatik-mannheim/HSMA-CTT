@@ -22,35 +22,21 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import lombok.val;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.xmlbeans.XmlException;
-import org.hibernate.engine.jdbc.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
@@ -62,6 +48,7 @@ public class PrintOutController {
 
     @Autowired
     private BuildingService buildingService;
+
 
     @Autowired
     private DynamicContentService contentService;
@@ -81,38 +68,48 @@ public class PrintOutController {
     }
 
 
-
     @RequestMapping(value = "/rooms/download", produces = "application/zip")
-    public void getRoomPrintout(
+    public ResponseEntity<StreamingResponseBody> getRoomPrintout(
             HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(value = "priv", required = true) boolean priv) throws IOException {
 
         //setting headers
         response.setStatus(HttpServletResponse.SC_OK);
-        if (priv){
-            response.addHeader("Content-Disposition", "attachment; filename=\"PrivilegedRoomNotes.zip\"");
-        } else{
-            response.addHeader("Content-Disposition", "attachment; filename=\"RoomNotes.zip\"");
-        }
 
-
+        List<Room> allRooms = buildingService.getAllRooms();
         ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
 
-        for (Room room : roomService.getAllRooms()) {
-            try {
-                contentService.writeRoomsPrintOutDocx(
-                        priv,
-                        zos,
-                        uriToPath -> utilities.getUriToLocalPath(
-                                RoomController.getRoomCheckinPath(room),
-                                request
-                        )
-                );
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        System.out.println("Alle Räume von Controller" + allRooms.size());
+
+        StreamingResponseBody responseBody = outputStream -> {
+            for (Room room : allRooms) {
+                try {
+                    contentService.writeRoomPrintOutDocx(
+                            room,
+                            priv,
+                            zos,
+                            uriToPath -> utilities.getUriToLocalPath(
+                                    RoomController.getRoomCheckinPath(room),
+                                    request
+                            )
+                    );
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+        };
+
+
+        if (priv) {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"PrivilegedRoomNotes.zip\"")
+                    .body(responseBody);
+        } else {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"RoomNotes.zip\"")
+                    .body(responseBody);
         }
-        zos.close();
     }
+    
 }
