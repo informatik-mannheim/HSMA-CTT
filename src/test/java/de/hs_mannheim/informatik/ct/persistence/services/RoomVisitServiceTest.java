@@ -79,12 +79,6 @@ class RoomVisitServiceTest {
     private LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
     private LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
 
-    private LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
-    private LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
-
-    private LocalDate today = LocalDate.of(2021, Month.APRIL, 2);
-    private LocalDateTime now = LocalDateTime.of(today, LocalTime.of(18, 1));
-
     @BeforeEach
     public void openMocks() {
         mocks = MockitoAnnotations.openMocks(this);
@@ -333,6 +327,7 @@ class RoomVisitServiceTest {
         // setup
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(testRoom))
                 .thenReturn(Collections.singletonList(visit));
+
         Mockito.when(dateTimeService.getDateNow())
                 .thenReturn(java.util.Date.from(this.today.atStartOfDay()
                         .atZone(ZoneId.systemDefault())
