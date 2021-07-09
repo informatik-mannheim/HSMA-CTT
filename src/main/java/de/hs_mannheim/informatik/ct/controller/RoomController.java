@@ -113,13 +113,14 @@ public class RoomController {
     public String checkIn(
             @ModelAttribute RoomVisit.Data visitData,
             Model model
-    ) throws InvalidRoomPinException {
+    ) throws InvalidRoomPinException, UnsupportedEncodingException {
         val room = getRoomOrThrow(visitData.getRoomId());
 
         if(!visitData.getRoomPin().equals(room.getRoomPin()))
             throw new InvalidRoomPinException();
 
-        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
+        val visitorEmail = visitData.getVisitorEmail();
+        val visitor = getOrCreateVisitorOrThrow(visitorEmail);
 
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
@@ -140,9 +141,15 @@ public class RoomController {
         }
 
         val visit = roomVisitService.visitRoom(visitor, room);
-        val currentVisitCount = roomVisitService.getVisitorCount(room);
 
+        if(visitData.isPrivileged()) {
+            val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
+            return "redirect:/r/"+room.getId()+"/event-manager-portal?visitorEmail="+encodedVisitorEmail;
+        }
+
+        val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
+
         model.addAttribute("visitData", visitData);
 
         return "rooms/checkedIn";
@@ -153,19 +160,25 @@ public class RoomController {
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) {
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException{
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
 
+        val visitorEmail = visitData.getVisitorEmail();
         val room = getRoomOrThrow(visitData.getRoomId());
-        val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail());
+        val visitor = getOrCreateVisitorOrThrow(visitorEmail);
 
         roomVisitService.checkOutVisitor(visitor);
 
         val visit = roomVisitService.visitRoom(visitor, room);
-        val currentVisitCount = roomVisitService.getVisitorCount(room);
 
+        if(visitData.isPrivileged()) {
+            val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
+            return "redirect:/r/"+room.getId()+"/event-manager-portal?visitorEmail="+encodedVisitorEmail;
+        }
+
+        val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
         model.addAttribute("visitData", visitData);
 
