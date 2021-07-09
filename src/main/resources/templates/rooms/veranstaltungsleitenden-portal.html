@@ -48,7 +48,7 @@
 				</div>
 			</div>
 
-			<form>
+			<form method="POST" th:action="@{/r/checkOut}">
 
 				<div class="card">
 					<div class="card-body">
@@ -76,19 +76,18 @@
 					</div>
 				</div>
 
-			</form>
+				<div class="card">
 
-			<div class="card">
-				<form method="POST" th:action="@{/r/checkOut}">
-					<div class="card-body">
-						<p class="card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
-					</div>
-					<div class="card-footer">
-						<button type="submit" class="hs-button">Raum verlassen</button>
-					</div>
-					<input type="hidden" name="visitorEmail" th:value="${visitorEmail}"/>
-				</form>
-			</div>
+						<div class="card-body">
+							<p class="card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
+						</div>
+						<div class="card-footer">
+							<button type="submit" class="hs-button">Raum verlassen</button>
+						</div>
+						<input type="hidden" name="visitorEmail" th:value="${visitorEmail}"/>
+				</div>
+
+			</form>
 
 		</div>
 
