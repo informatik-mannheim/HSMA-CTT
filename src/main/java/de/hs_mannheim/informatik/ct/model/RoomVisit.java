@@ -92,6 +92,7 @@ public class RoomVisit implements Visit {
         private Date startDate = null;
         private Date endDate = null;
         private String roomPin;
+        private boolean privileged;
 
         public Data(RoomVisit visit, int currentVisitorCount) {
             this.roomId = visit.room.getId();
