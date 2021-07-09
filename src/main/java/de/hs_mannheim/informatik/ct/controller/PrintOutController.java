@@ -22,6 +22,7 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -34,8 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
@@ -71,37 +71,29 @@ public class PrintOutController {
     @RequestMapping(value = "/rooms/download", produces = "application/zip")
     public ResponseEntity<StreamingResponseBody> getRoomPrintout(
             HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam(value = "priv", required = true) boolean priv) throws IOException {
-
-        //setting headers
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        List<Room> allRooms = buildingService.getAllRooms();
-        ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
-
-        System.out.println("Alle Räume von Controller" + allRooms.size());
+            @RequestParam(value = "privileged") boolean privileged) {
+        val allRooms = buildingService.getAllRooms();
 
         StreamingResponseBody responseBody = outputStream -> {
-            for (Room room : allRooms) {
-                try {
+            try (ZipOutputStream zos = new ZipOutputStream(outputStream)) {
+                for (Room room : allRooms) {
                     contentService.writeRoomPrintOutDocx(
                             room,
-                            priv,
+                            privileged,
                             zos,
                             uriToPath -> utilities.getUriToLocalPath(
                                     RoomController.getRoomCheckinPath(room),
                                     request
                             )
                     );
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
 
 
-        if (priv) {
+        if (privileged) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"PrivilegedRoomNotes.zip\"")
                     .body(responseBody);
@@ -111,5 +103,5 @@ public class PrintOutController {
                     .body(responseBody);
         }
     }
-    
+
 }

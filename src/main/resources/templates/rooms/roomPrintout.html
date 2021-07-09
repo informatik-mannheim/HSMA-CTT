@@ -13,9 +13,9 @@
     <div class="border border-secondary p-2">
         <h5 class="mb-4">Raumschilder herunterladen</h5>
 
-        <a th:href="@{rooms/download(priv=false)}" th:text="${'Alle Raumaushänge herunterladen'}"></a>
+        <a th:href="@{rooms/download(privileged=false)}" th:text="${'Alle Raumaushänge herunterladen'}"></a>
         <br>
-        <a th:href="@{rooms/download(priv=true)}" th:text="${'Alle priviligierten Raumaushänge herunterladen'}"></a>
+        <a th:href="@{rooms/download(privileged=true)}" th:text="${'Alle priviligierten Raumaushänge herunterladen'}"></a>
 
     </div>
 </div>

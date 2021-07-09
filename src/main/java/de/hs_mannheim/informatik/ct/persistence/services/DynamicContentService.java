@@ -64,16 +64,9 @@ public class DynamicContentService {
     }
 
     public void writeRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-
             XWPFDocument document = getRoomPrintOutDocx(room, uriConverter, privileged);
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                document.write(out);
-                byte[] xwpfDocumentBytes = out.toByteArray();
-                outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
-                outputStream.write(xwpfDocumentBytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
+            document.write(outputStream);
     }
 
     public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
