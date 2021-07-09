@@ -61,16 +61,18 @@ public class RoomVisit implements Visit {
         this.startDate = startDate;
     }
 
-
     @Override
     public String getLocationName() {
         return room.getName();
     }
 
     public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
-        assert endDate == null && checkOutSource == CheckOutSource.NotCheckedOut;
-        endDate = checkOutDate;
-        checkOutSource = reason;
+        if(endDate == null) {
+            endDate = checkOutDate;
+            checkOutSource = reason;
+        }else if(checkOutSource != CheckOutSource.NotCheckedOut){
+            checkOutSource = CheckOutSource.AutomaticCheckout;
+        }
     }
 
     public CheckOutSource getCheckOutSource() {
@@ -91,10 +93,21 @@ public class RoomVisit implements Visit {
         private String visitorEmail;
         private Date startDate = null;
         private Date endDate = null;
+        private String name;
+        private String address;
+        private String number;
         private String roomPin;
         private boolean privileged;
 
         public Data(RoomVisit visit, int currentVisitorCount) {
+
+            if (visit.visitor instanceof ExternalVisitor){
+                var externalVisitor = (ExternalVisitor)visit.visitor;
+                this.address = externalVisitor.getAddress();
+                this.name = externalVisitor.getName();
+                this.number = externalVisitor.getNumber();
+            }
+
             this.roomId = visit.room.getId();
             this.roomName = visit.room.getName();
             this.roomCapacity = visit.room.getMaxCapacity();

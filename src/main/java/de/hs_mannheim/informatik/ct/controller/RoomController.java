@@ -23,6 +23,7 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -120,7 +121,7 @@ public class RoomController {
             throw new InvalidRoomPinException();
 
         val visitorEmail = visitData.getVisitorEmail();
-        val visitor = getOrCreateVisitorOrThrow(visitorEmail);
+        val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
 
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
 
@@ -167,7 +168,7 @@ public class RoomController {
 
         val visitorEmail = visitData.getVisitorEmail();
         val room = getRoomOrThrow(visitData.getRoomId());
-        val visitor = getOrCreateVisitorOrThrow(visitorEmail);
+        val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
 
         roomVisitService.checkOutVisitor(visitor);
 
@@ -341,11 +342,14 @@ public class RoomController {
      * @param email The visitors email.
      * @return The visitor.
      */
-    private Visitor getOrCreateVisitorOrThrow(String email) {
+    private Visitor getOrCreateVisitorOrThrow(String email, String name,String number,String address) {
         try {
-            return visitorService.findOrCreateVisitor(email);
+            return visitorService.findOrCreateVisitor(email, name,number, address);
         } catch (InvalidEmailException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
+        catch (InvalidExternalUserdataException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
         }
     }
 

@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -106,7 +107,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void accessingImportWithoutAdminLogin() throws Exception{
+    public void accessingImportWithoutAdminLogin() throws Exception {
         // /import (should not be accessible without admin login)
         // todo find a way to check for redirect without 'http://localhost'
         this.mockMvc.perform(
@@ -284,7 +285,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void roomNotFoundException() throws Exception{
+    public void roomNotFoundException() throws Exception {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
@@ -292,21 +293,22 @@ public class RoomControllerTest {
     }
 
     /**
-     *  Helper method that creates users to fill room.
-     *  An address is created by combining iterator value with '@stud.hs-mannheim.de'.
-     *  To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
-     * @param room the room that should get filled.
+     * Helper method that creates users to fill room.
+     * An address is created by combining iterator value with '@stud.hs-mannheim.de'.
+     * To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
+     *
+     * @param room   the room that should get filled.
      * @param amount the amount the room will be filled.
      */
-    public void fillRoom(Room room, int amount) throws InvalidEmailException {
+    public void fillRoom(Room room, int amount) throws InvalidEmailException, InvalidExternalUserdataException {
 
         for (int i = 0; i < amount; i++) {
             String randomUserEmail = String.format("%d@stud.hs-mannheim.de", i);
 
-            if(randomUserEmail != TEST_USER_EMAIL){
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
+            if (randomUserEmail != TEST_USER_EMAIL) {
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de", null, null, null), room);
             } else {
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de"), room);
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de", null, null, null), room);
             }
         }
     }

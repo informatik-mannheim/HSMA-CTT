@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.controller;
 
 import de.hs_mannheim.informatik.ct.model.*;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -163,9 +164,12 @@ public class CtController implements ErrorController {
 					} else {
 						Visitor b = null;
 						try {
-							b = visitorService.findOrCreateVisitor(email);
+							b = visitorService.findOrCreateVisitor(email, null, null, null);
 						} catch (InvalidEmailException e) {
 							model.addAttribute("error", "Ungültige Mail-Adresse");
+							return "eintragen";
+						} catch (InvalidExternalUserdataException e) {
+							model.addAttribute("error", "Ungültige Userdata");
 							return "eintragen";
 						}
 
@@ -316,6 +320,9 @@ public class CtController implements ErrorController {
 	public String howToInkognito() {
 		return "howToInkognito";
 	}
+
+	@RequestMapping("/faq")
+	public String showFaq() { return "faq";	}
 
 	// ------------
 	// ErrorControllerImpl
