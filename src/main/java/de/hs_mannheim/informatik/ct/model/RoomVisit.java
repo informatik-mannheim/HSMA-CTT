@@ -25,7 +25,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 
-
 @Entity
 @Getter
 @AllArgsConstructor
@@ -68,11 +67,11 @@ public class RoomVisit implements Visit {
 
     public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
         // normal check out
-        if(endDate == null && reason != CheckOutSource.NotCheckedOut) {
+        // or enddate was set but user did not got checked out
+        if (endDate == null && reason != CheckOutSource.NotCheckedOut) {
             endDate = checkOutDate;
             checkOutSource = reason;
-        // enddate was set but user did not got checked out
-        }else if(checkOutSource == CheckOutSource.NotCheckedOut){
+        } else if (checkOutSource == CheckOutSource.NotCheckedOut) {
             checkOutSource = CheckOutSource.AutomaticCheckout;
         }
     }
@@ -102,8 +101,8 @@ public class RoomVisit implements Visit {
 
         public Data(RoomVisit visit, int currentVisitorCount) {
 
-            if (visit.visitor instanceof ExternalVisitor){
-                var externalVisitor = (ExternalVisitor)visit.visitor;
+            if (visit.visitor instanceof ExternalVisitor) {
+                var externalVisitor = (ExternalVisitor) visit.visitor;
                 this.address = externalVisitor.getAddress();
                 this.name = externalVisitor.getName();
                 this.number = externalVisitor.getNumber();
