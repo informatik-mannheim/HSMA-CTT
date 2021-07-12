@@ -68,6 +68,7 @@ public class RoomVisitTest {
 
         roomVisit.checkOut(TimeUtil.convertToDate(now), CheckOutSource.RoomReset);
 
+        assertThat(roomVisit.getEndDate(), notNullValue());
         assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
     }
 
@@ -78,6 +79,7 @@ public class RoomVisitTest {
         // no matter which check out source is used. The user will get checked out
         for(CheckOutSource checkOutSource : CheckOutSource.values()){
             RoomVisit roomVisit = checkOutCall(validDate, checkOutSource);
+            assertThat(roomVisit.getEndDate(), notNullValue());
             assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
         }
     }
@@ -102,6 +104,7 @@ public class RoomVisitTest {
             );
 
             roomVisit.checkOut(TimeUtil.convertToDate(now), CheckOutSource.RoomReset);
+            assertThat(roomVisit.getEndDate(), notNullValue());
             assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
         }
     }
@@ -128,6 +131,7 @@ public class RoomVisitTest {
             );
 
             scheduledMaintenanceTasks.signOutAllVisitors(LocalTime.now());
+            assertThat(roomVisit.getEndDate(), notNullValue());
             assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
         }
     }
@@ -136,11 +140,11 @@ public class RoomVisitTest {
     /* Database entry that caused visitors to not get checked out automatically
      *         id  | end_date | start_date                 | room_name | visitor_id | check_out_source
      *         ---- - +-------------------------+-------------------------+-----------+------------+------------------
-     *         188 |          |2021 - 07 - 01 12:29:54.322 | L114      | r1        | 0
-     *         192 |          |2021 - 07 - 01 12:42:29.346 | L206      | r2        | 0
-     *         194 |          |2021 - 07 - 01 12:43:08.854 | L206      | r3        | 0
-     *         133 |          |2021 - 06 - 20 12:07:31.253 | K019a     | r4        |
-     *         123 |          |2021 - 06 - 17 15:05:49.142 | L312      | r5        |
+     *         188 |          |2021 - 07 - 01 12:29:54.322 | r1        | 187        | 0
+     *         192 |          |2021 - 07 - 01 12:42:29.346 | r2        | 191        | 0
+     *         194 |          |2021 - 07 - 01 12:43:08.854 | r3        | 193        | 0
+     *         133 |          |2021 - 06 - 20 12:07:31.253 | r4        | 27         |
+     *         123 |          |2021 - 06 - 17 15:05:49.142 | r5        | 122        |
      */
 
     /**
