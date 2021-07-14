@@ -68,7 +68,7 @@ public class PrintOutController {
     }
 
 
-    @RequestMapping(value = "/rooms/download", produces = "application/zip")
+    @RequestMapping(value = "/rooms/download")
     public ResponseEntity<StreamingResponseBody> getRoomPrintout(
             HttpServletRequest request,
             @RequestParam(value = "privileged") boolean privileged) {
@@ -96,10 +96,12 @@ public class PrintOutController {
         if (privileged) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"PrivilegedRoomNotes.zip\"")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/zip")
                     .body(responseBody);
         } else {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"RoomNotes.zip\"")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/zip")
                     .body(responseBody);
         }
     }
