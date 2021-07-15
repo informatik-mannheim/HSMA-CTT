@@ -39,11 +39,13 @@ public class VisitorService {
     private VisitorRepository visitorRepo;
 
     public Optional<Visitor> findVisitorByEmail(String email) {
+        email = email.toLowerCase();
         return visitorRepo.findByEmail(email);
     }
 
     @Transactional
     public Visitor findOrCreateVisitor(String email, String name, String number, String address) throws InvalidEmailException, InvalidExternalUserdataException {
+        email = email.toLowerCase();
         val visitor = findVisitorByEmail(email);
         if (visitor.isPresent()) {
             return visitor.get();
