@@ -63,7 +63,7 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public void writeRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
+    public synchronized void writeRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
             XWPFDocument document = getRoomPrintOutDocx(room, uriConverter, privileged);
             outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
             document.write(outputStream);
