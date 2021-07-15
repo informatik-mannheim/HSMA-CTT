@@ -3,8 +3,6 @@ package de.hs_mannheim.informatik.ct.controller;
 import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +51,7 @@ public class ErrorController {
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        System.out.println("Request Status: " + status);
 
         if (status != null) {
             Integer statusCode = Integer.valueOf(status.toString());
@@ -61,7 +60,7 @@ public class ErrorController {
             }
 
         }
-        return "error/error";
+        return "error";
     }
 
     @ExceptionHandler({Exception.class})
