@@ -74,10 +74,10 @@ public class RoomController {
      */
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
-    public String checkIn(@PathVariable String roomId,
+    public String checkIn(@PathVariable String roomId, //does roompin has to be required?
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged,
-                          @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
+                          @RequestParam(required = false, value = "roomPin") Optional<String> roomPinFromRequest,
                           @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
                           Model model) {
         if (!allowFullRoomCheckIn) {
@@ -87,12 +87,14 @@ public class RoomController {
         // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
-
-        String roomPin = "";
-        if (roomPinFromRequest.isPresent())
-            roomPin = roomPinFromRequest.get();
-
         val room = getRoomOrThrow(roomId);
+        String roomPin = roomPinFromRequest.get();
+        // check if roomPin is correct
+        if( !(roomPin.equals(room.getRoomPin()))){
+            // throw wrong room pin exception
+            System.out.println("Falsche Raumpin");
+        }
+
 
         if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
             return "forward:roomFull/" + room.getId();
@@ -112,15 +114,19 @@ public class RoomController {
     @PostMapping("/checkIn")
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+        System.out.println("Enter Method!!!!!! " + visitData.getRoomId() + " | " + visitData.getRoomPin() + " | " + visitData.getVisitorEmail());
         val room = getRoomOrThrow(visitData.getRoomId());
-
-        if(!visitData.getRoomPin().equals(room.getRoomPin()))
+        System.out.println("Room0: " + room.toString());
+        /* if(!visitData.getRoomPin().equals(room.getRoomPin())){
+            System.out.println("Room01: "+room.toString());
             throw new InvalidRoomPinException();
+        }*/
 
+        System.out.println("Room0: " + room.toString());
         val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail(), visitData.getName(), visitData.getNumber(), visitData.getAddress());
-
+        System.out.println("visitor: " + visitor.toString());
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
-
+        System.out.println("Room: " + room.toString());
         String autoCheckoutValue = null;
         if (notCheckedOutVisits.size() != 0) {
             val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
@@ -139,7 +145,7 @@ public class RoomController {
 
         val visit = roomVisitService.visitRoom(visitor, room);
         val currentVisitCount = roomVisitService.getVisitorCount(room);
-
+        System.out.println("VisitorCount: " + currentVisitCount);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
         model.addAttribute("visitData", visitData);
 
@@ -291,13 +297,12 @@ public class RoomController {
      * @param email The visitors email.
      * @return The visitor.
      */
-    private Visitor getOrCreateVisitorOrThrow(String email, String name,String number,String address) {
+    private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) {
         try {
-            return visitorService.findOrCreateVisitor(email, name,number, address);
+            return visitorService.findOrCreateVisitor(email, name, number, address);
         } catch (InvalidEmailException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-        }
-        catch (InvalidExternalUserdataException e){
+        } catch (InvalidExternalUserdataException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
         }
     }
@@ -311,6 +316,7 @@ public class RoomController {
     private Room getRoomOrThrow(String roomId) {
         Optional<Room> room = roomService.findByName(roomId);
         if (room.isPresent()) {
+            System.out.println(room.toString());
             return room.get();
         } else {
             throw new RoomNotFoundException();

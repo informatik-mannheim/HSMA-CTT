@@ -73,11 +73,20 @@ label[for=roomId] {
     font-size: large;
 }
 
+label[for=roomPin] {
+    font-size: large;
+}
+
 input[id=roomId] {
     border-radius: 10px;
     padding-left: 10px;
     padding-right: 10px;
+}
 
+input[id=roomPin] {
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #sendRoom {
@@ -89,6 +98,9 @@ input[id=roomId] {
 
 #sendRoom:hover {
     background-color: #3f6fd7;
+}
+table[id=manualCheckIn] td {
+    padding-right: 10px;
 }
 
 .btn-for-collapsible i {
