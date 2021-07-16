@@ -58,6 +58,7 @@ public class EventVisitService implements VisitService<EventVisit> {
 
     /**
      * Holt alle Besuche eines Besuchers, bei denen er sich noch nicht abgemeldet hat. Normalerweise sollte das nur höchstens einer sein.
+     *
      * @param visitor Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
@@ -67,13 +68,14 @@ public class EventVisitService implements VisitService<EventVisit> {
 
     /**
      * Meldet den Besucher aus allen angemeldeten Veranstaltungen ab.
+     *
      * @param visitor Besucher für den nach nicht abgemeldeten Besuchen gesucht wird.
      * @return Alle nicht abgemeldeten Besuche.
      */
     @Transactional
     public List<EventVisit> signOutVisitor(Visitor visitor, Date end) {
         List<EventVisit> eventVisits = getNotSignedOutVisits(visitor);
-        for (EventVisit visit: eventVisits) {
+        for (EventVisit visit : eventVisits) {
             signOut(visitor, visit.getEvent(), end);
         }
 

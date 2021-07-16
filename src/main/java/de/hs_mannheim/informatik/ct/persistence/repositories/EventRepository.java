@@ -26,11 +26,10 @@ import java.util.Date;
 import java.util.List;
 
 
-
 public interface EventRepository extends JpaRepository<Event, Long> {
-	List<Event> findAllByOrderByDatumAsc();
+    List<Event> findAllByOrderByDatumAsc();
 
-	List<Event> findByDatumGreaterThan(Date startDate);
+    List<Event> findByDatumGreaterThan(Date startDate);
 
-	List<Event> findByRoom(Room room);
+    List<Event> findByRoom(Room room);
 }
