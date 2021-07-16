@@ -95,7 +95,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 	public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
 		List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
 		notSignedOutVisits.forEach((visit) -> {
-			visit.checkOut(dateTimeService.getDateNow(), RoomVisit.CheckOutSource.UserCheckout);
+			visit.checkOut(dateTimeService.getDateNow(), CheckOutSource.UserCheckout);
 			roomVisitRepository.save(visit);
 		});
 
@@ -133,7 +133,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 						return null;
 					}
 
-					roomVisit.checkOut(convertToDate(endDate), RoomVisit.CheckOutSource.AutomaticCheckout);
+					roomVisit.checkOut(convertToDate(endDate), CheckOutSource.AutomaticCheckout);
 
 					return roomVisit;
 				}))
@@ -160,7 +160,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 	public void resetRoom(@NonNull Room room) {
 		val notCheckedOutVisits = roomVisitRepository.findNotCheckedOutVisits(room);
 		for(val visit: notCheckedOutVisits) {
-			visit.checkOut(dateTimeService.getDateNow(), RoomVisit.CheckOutSource.RoomReset);
+			visit.checkOut(dateTimeService.getDateNow(), CheckOutSource.RoomReset);
 		}
 
 		roomVisitRepository.saveAll(notCheckedOutVisits);
