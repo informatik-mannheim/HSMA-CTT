@@ -86,11 +86,10 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
      * @return List of study rooms with room infos (roomName, buildingName, maxCapacity) and current visitor count
      */
     @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.StudyRoom" +
-            "(r.name, r.buildingName, r.maxCapacity, COUNT (rv.room.name) AS visitorCount) " +
+            "(r.name, r.buildingName, MAX(r.maxCapacity), COUNT (rv.room.name) AS visitorCount) " +
             "FROM Room r " +
-            "LEFT JOIN RoomVisit rv ON (r.name = rv.room.name) " +
+            "LEFT JOIN RoomVisit rv ON (r.name = rv.room.name) AND rv.endDate IS null " +
             "WHERE r.name IN :studyRooms " +
-            "AND rv.endDate IS null " +
-            "GROUP BY  r.name")
+            "GROUP BY r.name, r.buildingName")
     List<StudyRoom> getAllStudyRooms(@Param("studyRooms") String[] studyRooms);
 }
