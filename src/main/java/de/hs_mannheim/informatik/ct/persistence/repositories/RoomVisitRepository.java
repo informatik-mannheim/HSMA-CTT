@@ -33,41 +33,42 @@ import de.hs_mannheim.informatik.ct.model.RoomVisit;
 
 
 public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
-	@Query("SELECT visit " +
-			"FROM RoomVisit visit " +
-			"WHERE visit.visitor = :visitor and visit.endDate is null")
-	List<RoomVisit> findNotCheckedOutVisits(@Param(value = "visitor") Visitor visitor);
+    @Query("SELECT visit " +
+            "FROM RoomVisit visit " +
+            "WHERE visit.visitor = :visitor and visit.endDate is null")
+    List<RoomVisit> findNotCheckedOutVisits(@Param(value = "visitor") Visitor visitor);
 
-	@Query("SELECT COUNT (visit) " +
-			"FROM RoomVisit visit " +
-			"WHERE visit.room = :room and visit.endDate is null ")
-	int getRoomVisitorCount(@Param(value = "room") Room room);
+    @Query("SELECT COUNT (visit) " +
+            "FROM RoomVisit visit " +
+            "WHERE visit.room = :room and visit.endDate is null ")
+    int getRoomVisitorCount(@Param(value = "room") Room room);
 
-	/**
-	 * Finds all visitors that haven't checked out yet.
-	 * @return All visitors that haven't checked out yet.
-	 */
-	@Query("SELECT visit " +
-			"FROM RoomVisit visit " +
-			"WHERE visit.endDate is null")
-	List<RoomVisit> findNotCheckedOutVisits();
+    /**
+     * Finds all visitors that haven't checked out yet.
+     *
+     * @return All visitors that haven't checked out yet.
+     */
+    @Query("SELECT visit " +
+            "FROM RoomVisit visit " +
+            "WHERE visit.endDate is null")
+    List<RoomVisit> findNotCheckedOutVisits();
 
-	@Query("SELECT visit " +
-			"FROM RoomVisit visit " +
-			"WHERE visit.room = :room AND visit.endDate is null")
-	List<RoomVisit> findNotCheckedOutVisits(@NonNull Room room);
+    @Query("SELECT visit " +
+            "FROM RoomVisit visit " +
+            "WHERE visit.room = :room AND visit.endDate is null")
+    List<RoomVisit> findNotCheckedOutVisits(@NonNull Room room);
 
-	void deleteByEndDateBefore(Date endDate);
+    void deleteByEndDateBefore(Date endDate);
 
-	@Query("SELECT NEW de.hs_mannheim.informatik.ct.model.Contact(visitTarget, visitOther) " +
-			"FROM RoomVisit visitTarget," +
-			"RoomVisit visitOther " +
-			"WHERE visitTarget.visitor = :visitor AND " +
-			"visitTarget.visitor != visitOther.visitor AND " +
-			"visitTarget.room = visitOther.room AND " +
-			"visitTarget.startDate <= visitOther.endDate AND " +
-			"visitOther.startDate <= visitTarget.endDate " +
-			"ORDER BY visitTarget.startDate")
-	List<Contact<RoomVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
+    @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.Contact(visitTarget, visitOther) " +
+            "FROM RoomVisit visitTarget," +
+            "RoomVisit visitOther " +
+            "WHERE visitTarget.visitor = :visitor AND " +
+            "visitTarget.visitor != visitOther.visitor AND " +
+            "visitTarget.room = visitOther.room AND " +
+            "visitTarget.startDate <= visitOther.endDate AND " +
+            "visitOther.startDate <= visitTarget.endDate " +
+            "ORDER BY visitTarget.startDate")
+    List<Contact<RoomVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 
 }

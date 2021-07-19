@@ -57,7 +57,7 @@ public class RoomVisitTest {
     private LocalDateTime now = LocalDateTime.now();
 
     @Test
-    void checkout(){
+    void checkout() {
         RoomVisit roomVisit = new RoomVisit(
                 room,
                 null,
@@ -73,11 +73,11 @@ public class RoomVisitTest {
     }
 
     @Test
-    void checkout_checkOutSources(){
+    void checkout_checkOutSources() {
         Date validDate = TimeUtil.convertToDate(now);
 
         // no matter which check out source is used. The user will get checked out
-        for(CheckOutSource checkOutSource : CheckOutSource.values()){
+        for (CheckOutSource checkOutSource : CheckOutSource.values()) {
             RoomVisit roomVisit = checkOutCall(validDate, checkOutSource);
             assertThat(roomVisit.getEndDate(), notNullValue());
             assertThat(roomVisit.getCheckOutSource(), not(CheckOutSource.NotCheckedOut));
@@ -93,7 +93,7 @@ public class RoomVisitTest {
         Visitor[] visitors = createVisitors_automaticCheckOutFailureData();
         Room[] rooms = createRooms_automaticCheckoutFailureData();
 
-        for(int i = 0; i < visitors.length; i++){
+        for (int i = 0; i < visitors.length; i++) {
             RoomVisit roomVisit = new RoomVisit(
                     rooms[i],
                     idArray[i],
@@ -120,7 +120,7 @@ public class RoomVisitTest {
 
         ScheduledMaintenanceTasks scheduledMaintenanceTasks = new ScheduledMaintenanceTasks();
 
-        for(int i = 0; i < visitors.length; i++){
+        for (int i = 0; i < visitors.length; i++) {
             RoomVisit roomVisit = new RoomVisit(
                     rooms[i],
                     idArray[i],
@@ -149,9 +149,10 @@ public class RoomVisitTest {
 
     /**
      * Creates objects after a db dump where users did not get checked automatically
+     *
      * @return visitors that did not get checked out
      */
-    private Visitor[] createVisitors_automaticCheckOutFailureData(){
+    private Visitor[] createVisitors_automaticCheckOutFailureData() {
         Visitor visitor1 = new Visitor(187L, "v1");
         Visitor visitor2 = new Visitor(191L, "v2");
         Visitor visitor3 = new Visitor(193L, "v3");
@@ -163,9 +164,10 @@ public class RoomVisitTest {
 
     /**
      * Creates objects after a db dump where users did not get checked automatically
+     *
      * @return censored rooms
      */
-    private Room[] createRooms_automaticCheckoutFailureData(){
+    private Room[] createRooms_automaticCheckoutFailureData() {
         Room room1 = new Room("r1", "L", 10);
         Room room2 = new Room("r2", "L", 10);
         Room room4 = new Room("r3", "K", 10);
@@ -176,11 +178,12 @@ public class RoomVisitTest {
 
     /**
      * Imitates check out for given checkOutSource by creating RoomVisit and checking out visitor.
-     * @param checkOutDate Date Object specifying user check out
+     *
+     * @param checkOutDate   Date Object specifying user check out
      * @param checkOutSource Entry from CheckOutSource specifying why user got checked out
      * @return room visit with user checked out
      */
-    private RoomVisit checkOutCall(Date checkOutDate, CheckOutSource checkOutSource){
+    private RoomVisit checkOutCall(Date checkOutDate, CheckOutSource checkOutSource) {
         RoomVisit roomVisit = new RoomVisit(
                 room,
                 null,

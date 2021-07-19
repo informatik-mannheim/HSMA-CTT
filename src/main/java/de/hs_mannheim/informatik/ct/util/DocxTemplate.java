@@ -114,7 +114,7 @@ public class DocxTemplate<T> {
         for (int i = 0; i < dataSource.size(); i++) {
             indexDataSource.add(new Indexed<>(i, dataSource.get(i)));
         }
-        val indexedList =  indexDataSource
+        val indexedList = indexDataSource
                 .parallelStream()
                 .unordered()
                 .map(indexData -> new Indexed<>(indexData.index, imageGenerator.apply(indexData.value)))

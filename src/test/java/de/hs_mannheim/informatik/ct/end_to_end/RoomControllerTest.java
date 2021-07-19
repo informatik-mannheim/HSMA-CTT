@@ -75,7 +75,7 @@ public class RoomControllerTest {
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Room room = new Room(TEST_ROOM_NAME, "A", 10);
         TEST_ROOM_PIN = room.getRoomPin();
         roomService.saveRoom(room);
@@ -155,7 +155,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInFullRoomWithOverride() throws Exception{
+    public void checkInFullRoomWithOverride() throws Exception {
         // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 10);
@@ -176,7 +176,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInInvalidCredentials() throws Exception{
+    public void checkInInvalidCredentials() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
@@ -190,7 +190,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInInvalidRoomPin() throws Exception{
+    public void checkInInvalidRoomPin() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")

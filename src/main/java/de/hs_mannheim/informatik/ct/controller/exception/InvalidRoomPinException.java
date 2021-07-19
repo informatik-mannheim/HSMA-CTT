@@ -1,4 +1,5 @@
 package de.hs_mannheim.informatik.ct.controller.exception;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -21,5 +22,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Invalid Pin")
-public class InvalidRoomPinException extends Exception{
+public class InvalidRoomPinException extends Exception {
 }
