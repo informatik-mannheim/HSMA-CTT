@@ -1,19 +1,24 @@
 <html lang="de" xmlns="http://www.w3.org/1999/xhtml"
-xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{layout}">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <link rel="stylesheet" href="main.css">
 <head>
     <title>QRCode Anleitung</title>
 </head>
 <body>
-    <div layout:fragment="content">
-        <nav id="deviceChoice">
-          <ul class="nav nav-tabs" id="nav-tab" role="tablist">
-              <li class="active"><a class="nav-item nav-link" id="nav-android-tab" data-toggle="tab" href="#nav-android-firefox" role="tab" aria-controls="nav-android-firefox" aria-selected="true">Android Firefox</a></li>
-            <li><a class="nav-item nav-link" id="nav-iOS-safari-tab" data-toggle="tab" href="#nav-iOS-safari" role="tab" aria-controls="nav-iOS-safari" aria-selected="false">iOS Safari</a></li>
-            <li><a class="nav-item nav-link" id="nav-iOS-chrome-tab" data-toggle="tab" href="#nav-iOS-chrome" role="tab" aria-controls="nav-iOS-chrome" aria-selected="false">iOS Chrome</a></li>
-            <li><a class="nav-item nav-link" id="nav-iOS-firefox-tab" data-toggle="tab" href="#nav-iOS-firefox" role="tab" aria-controls="nav-iOS-firefox" aria-selected="false">iOS Firefox</a></li>
+<div layout:fragment="content">
+    <nav id="deviceChoice">
+        <ul class="nav nav-tabs" id="nav-tab" role="tablist">
+            <li class="active"><a class="nav-item nav-link" id="nav-android-tab" data-toggle="tab"
+                                  href="#nav-android-firefox" role="tab" aria-controls="nav-android-firefox"
+                                  aria-selected="true">Android Firefox</a></li>
+            <li><a class="nav-item nav-link" id="nav-iOS-safari-tab" data-toggle="tab" href="#nav-iOS-safari" role="tab"
+                   aria-controls="nav-iOS-safari" aria-selected="false">iOS Safari</a></li>
+            <li><a class="nav-item nav-link" id="nav-iOS-chrome-tab" data-toggle="tab" href="#nav-iOS-chrome" role="tab"
+                   aria-controls="nav-iOS-chrome" aria-selected="false">iOS Chrome</a></li>
+            <li><a class="nav-item nav-link" id="nav-iOS-firefox-tab" data-toggle="tab" href="#nav-iOS-firefox"
+                   role="tab" aria-controls="nav-iOS-firefox" aria-selected="false">iOS Firefox</a></li>
         </ul>
     </nav>
     <!-- Android Firefox -->
@@ -21,8 +26,9 @@ layout:decorate="~{layout}">
         <div class="active tab-pane active" id="nav-android-firefox" role="tabpanel" aria-labelledby="nav-android-tab">
             <h5>Scannen im Firefox Browser</h5>
             <img class="centerImg" src="/images/android-firefox-qr.png" alt="Firefox QR-Scanner unter Android">
-            <p><a href="https://play.google.com/store/apps/details?id=com.secuso.privacyFriendlyCodeScanner" target="_blank">Datenschutzkonformer QR-Code Scanner</a>
-            empfohlen von Heise.de</p>
+            <p><a href="https://play.google.com/store/apps/details?id=com.secuso.privacyFriendlyCodeScanner"
+                  target="_blank">Datenschutzkonformer QR-Code Scanner</a>
+                empfohlen von Heise.de</p>
             <p>Alternativ können Sie ab <strong>Android 9</strong> auch die Kamera benutzen.</p>
         </div>
         <!-- ios chrome-->
@@ -37,7 +43,9 @@ layout:decorate="~{layout}">
         </div>
         <!-- ios Safari-->
         <div class="tab-pane fade" id="nav-iOS-safari" role="tabpanel" aria-labelledby="nav-iOS-safari-tab">
-            <p> Sie können die <strong>Iphone Kamera</strong> oder den <strong> <a href="https://support.apple.com/de-de/guide/iphone/iphe8bda8762/ios"> Codescanner </a> </strong> nutzen, um den QR-Code in Safari zu öffnen</p>
+            <p> Sie können die <strong>Iphone Kamera</strong> oder den <strong> <a
+                    href="https://support.apple.com/de-de/guide/iphone/iphe8bda8762/ios"> Codescanner </a> </strong>
+                nutzen, um den QR-Code in Safari zu öffnen</p>
         </div>
     </div>
 
@@ -45,39 +53,41 @@ layout:decorate="~{layout}">
     <div class="howTo">
         <!-- Check In -->
         <div class="btn-container">
-            <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseBtnCheckIn" type="button" data-toggle="collapse"
-            data-target="#collapsibleCheckIn" aria-expanded="false" aria-controls="collapsibleCheckIn">
-            Anleitung zum Check In <i class="fa fa-plus-square"></i>
+            <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseBtnCheckIn" type="button"
+                    data-toggle="collapse"
+                    data-target="#collapsibleCheckIn" aria-expanded="false" aria-controls="collapsibleCheckIn">
+                Anleitung zum Check In <i class="fa fa-plus-square"></i>
+            </button>
+        </div>
+        <div id="collapsibleCheckIn" class="collapse collapseMarginBottom">
+            <div class="card card-body">
+                <h4 class="top-heading">1. Nach erfolgreichem Scannen in der Maske die benötigten Daten eingeben: </h4>
+                <img class="centerImg" src="/images/step1.png" alt="Check-In Maske nach erfolgreichem Scannen">
+                <h4>2. Wenn der Raum genug Kapazität hat, bestätigt dieses Bild, dass Sie den Raum nutzen können </h4>
+                <img class="centerImg" src="/images/step2.png" alt="Maske nach erfolgreichem Check-In">
+                <h4>3. Ist die Kapazität des Raumes erreicht, ist ein Check-In nicht möglich.</h4>
+                <img class="centerImg" src="/images/step3.png" alt="Raumkapazität erreicht">
+            </div>
+        </div>
+
+        <!-- Check Out -->
+        <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseBtnCheckOut" type="button"
+                data-toggle="collapse"
+                data-target="#collapsibleCheckOut" aria-expanded="false" aria-controls="collapsibleCheckOut">
+            Anleitung zum Check Out <i class="fa fa-plus-square"></i>
         </button>
-    </div>
-    <div id="collapsibleCheckIn" class="collapse collapseMarginBottom">
-        <div class="card card-body">
-            <h4 class="top-heading">1. Nach erfolgreichem Scannen in der Maske die benötigten Daten eingeben: </h4>
-            <img class="centerImg" src="/images/step1.png" alt="Check-In Maske nach erfolgreichem Scannen">
-            <h4>2. Wenn der Raum genug Kapazität hat, bestätigt dieses Bild, dass Sie den Raum nutzen können </h4>
-            <img class="centerImg" src="/images/step2.png" alt="Maske nach erfolgreichem Check-In">
-            <h4>3. Ist die Kapazität des Raumes erreicht, ist ein Check-In nicht möglich.</h4>
-            <img class="centerImg" src="/images/step3.png" alt="Raumkapazität erreicht">
+
+        <div id="collapsibleCheckOut" class="collapse collapseMarginBottom">
+            <div class="card card-body second">
+                <h4>4. Mit erneutem Scannen des QR-Codes wird man automatisch abgemeldet </h4>
+                <img class="centerImg" src="/images/step5.png" alt="Erfolgreich Abgemeldet">
+                <h4>Möchte man Sich manuell aus einem vollen Raum abmelden, so lässt sich das über den "Abmelden" Button
+                    erledigen:</h4>
+                <img class="centerImg" src="/images/step4.1.png" alt="Abmelden aus dem Raum"> <br/>
+                <img class="centerImg" src="/images/step4.2.png" alt="Abmelden aus dem Raum"> <br/>
+            </div>
         </div>
     </div>
-
-    <!-- Check Out -->
-    <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseBtnCheckOut" type="button" data-toggle="collapse"
-    data-target="#collapsibleCheckOut" aria-expanded="false" aria-controls="collapsibleCheckOut">
-    Anleitung zum Check Out <i class="fa fa-plus-square"></i>
-</button>
-
-<div id="collapsibleCheckOut" class="collapse collapseMarginBottom">
-    <div class="card card-body second">
-        <h4>4. Mit erneutem Scannen des QR-Codes wird man automatisch abgemeldet </h4>
-        <img class="centerImg" src="/images/step5.png" alt="Erfolgreich Abgemeldet">
-        <h4>Möchte man Sich manuell aus einem vollen Raum abmelden, so lässt sich das über den "Abmelden" Button
-        erledigen:</h4>
-        <img class="centerImg" src="/images/step4.1.png" alt="Abmelden aus dem Raum"> <br/>
-        <img class="centerImg" src="/images/step4.2.png" alt="Abmelden aus dem Raum"> <br/>
-    </div>
-</div>
-</div>
 </div>
 
 

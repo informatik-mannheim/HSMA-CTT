@@ -22,8 +22,10 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +46,10 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     List<Room> findByBuildingName(String building);
 
+
+    @Query("SELECT COALESCE(SUM(room.maxCapacity), 0) " +
+            "FROM Room room " +
+            "WHERE room.name in :studyRooms")
+    int getTotalStudyRoomsCapacity(@Param("studyRooms") String[] studyRooms);
 
 }

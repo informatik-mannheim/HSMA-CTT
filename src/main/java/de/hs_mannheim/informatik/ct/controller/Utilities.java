@@ -32,54 +32,54 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 
 
-
 @Component
 public class Utilities {
-	@Value("${server.port}")
-	private String port;
+    @Value("${server.port}")
+    private String port;
 
-	@Value("${hostname}")
-	private String host;
+    @Value("${hostname}")
+    private String host;
 
-	/**
-	 * Optional override for the URL the service is reachable at. This URL is used to construct absolute links.
-	 * Useful for reverse proxy setups/CDNs.
-	 */
-	@Value("${url_override:#{null}}")
-	private String urlOverride;
+    /**
+     * Optional override for the URL the service is reachable at. This URL is used to construct absolute links.
+     * Useful for reverse proxy setups/CDNs.
+     */
+    @Value("${url_override:#{null}}")
+    private String urlOverride;
 
-	public Date uhrzeitAufDatumSetzen(Date datum, String zeit) {
-		if (zeit !=  null && zeit.length() == 5) {
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(datum);
-			cal.set(Calendar.HOUR, Integer.parseInt(zeit.substring(0, 2)));
-			cal.set(Calendar.MINUTE, Integer.parseInt(zeit.substring(3, 5)));
+    public Date uhrzeitAufDatumSetzen(Date datum, String zeit) {
+        if (zeit != null && zeit.length() == 5) {
+            Calendar cal = new GregorianCalendar();
+            cal.setTime(datum);
+            cal.set(Calendar.HOUR, Integer.parseInt(zeit.substring(0, 2)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(zeit.substring(3, 5)));
 
-			datum = cal.getTime();
-		}
+            datum = cal.getTime();
+        }
 
-		return datum;
-	}
+        return datum;
+    }
 
-	/**
-	 * Converts a relative local path to an absolute URI
-	 * @param localPath Local path of the resource
-	 * @param request The request is used to differentiate between http/https. Should be moved to setting!
-	 * @return An absolute URI to the given resource
-	 */
-	public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
-		if(urlOverride == null) {
-			return UriComponentsBuilder.newInstance()
-					.scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
-					.host(host)
-					.port(port)
-					.path(localPath)
-					.build();
-		} else {
-			return UriComponentsBuilder.newInstance()
-					.uri(URI.create(urlOverride))
-					.path(localPath)
-					.build();
-		}
-	}
+    /**
+     * Converts a relative local path to an absolute URI
+     *
+     * @param localPath Local path of the resource
+     * @param request   The request is used to differentiate between http/https. Should be moved to setting!
+     * @return An absolute URI to the given resource
+     */
+    public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
+        if (urlOverride == null) {
+            return UriComponentsBuilder.newInstance()
+                    .scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+                    .host(host)
+                    .port(port)
+                    .path(localPath)
+                    .build();
+        } else {
+            return UriComponentsBuilder.newInstance()
+                    .uri(URI.create(urlOverride))
+                    .path(localPath)
+                    .build();
+        }
+    }
 }

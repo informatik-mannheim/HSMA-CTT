@@ -88,7 +88,7 @@ public class ImportRoomsFromFile {
 
         String initialTestRoomPin[] = extractRoomPins(roomNames);
 
-        BufferedReader csvReader = helper.createCsvBuffer(helper.createRoomData(new String[] {roomNames[0]}));
+        BufferedReader csvReader = helper.createCsvBuffer(helper.createRoomData(new String[]{roomNames[0]}));
         roomService.importFromCsv(csvReader);
 
         String[] newTestRoomPin = extractRoomPins(roomNames);
@@ -228,9 +228,9 @@ public class ImportRoomsFromFile {
         String[] roomPins = new String[roomNames.length];
         for (int i = 0; i < roomNames.length; i++) {
             Optional<Room> room = roomService.findByName(roomNames[i]);
-            if(room.isPresent()){
+            if (room.isPresent()) {
                 roomPins[i] = room.get().getRoomPin();
-            }else{
+            } else {
                 String errorMessage = "Keine Raum-Pin vorhanden. Raum " + roomNames[i] + " konnte nicht gefunden werden.";
                 throw new NoSuchElementException(errorMessage);
             }

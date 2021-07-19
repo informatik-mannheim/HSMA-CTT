@@ -24,6 +24,7 @@ import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.util.TimeUtil;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.val;
 
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ import java.util.List;
 public class RoomVisitHelper {
     private final Room room;
 
-    public RoomVisit generateVisit(Visitor visitor, LocalDateTime start, LocalDateTime end) {
+    public RoomVisit generateVisit(Visitor visitor, @NonNull LocalDateTime start, LocalDateTime end) {
         Date endDate = null;
         CheckOutSource checkOutSource = CheckOutSource.NotCheckedOut;
         if (end != null) {
