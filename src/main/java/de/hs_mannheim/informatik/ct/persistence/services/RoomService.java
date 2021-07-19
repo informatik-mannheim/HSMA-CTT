@@ -108,10 +108,10 @@ public class RoomService {
                 roomCapacity = (int) row.getCell(35).getNumericCellValue();
 
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
-                if(building.equals("") || roomName.equals("")) {
+                if (building.equals("") || roomName.equals("")) {
                     continue;
                 }
-            } catch(NullPointerException e) {
+            } catch (NullPointerException e) {
 
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
                 continue;

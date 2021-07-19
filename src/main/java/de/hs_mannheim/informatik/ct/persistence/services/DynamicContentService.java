@@ -62,8 +62,8 @@ public class DynamicContentService {
     }
 
     public void writeRoomsPrintOutDocx(List<Room> rooms, OutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-        try(val document = getRoomsPrintOutDox(rooms, uriConverter)) {
-           document.write(outputStream);
+        try (val document = getRoomsPrintOutDox(rooms, uriConverter)) {
+            document.write(outputStream);
         }
     }
 
