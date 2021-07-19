@@ -24,6 +24,7 @@ import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
+import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.NonNull;
@@ -61,6 +62,9 @@ class RoomVisitServiceTest {
 
     @MockBean
     private RoomVisitRepository roomVisitRepository;
+
+    @MockBean
+    private RoomRepository roomRepository;
 
     @MockBean
     private VisitorRepository visitorRepository;
