@@ -22,31 +22,27 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import de.hs_mannheim.informatik.ct.controller.RoomController;
 import de.hs_mannheim.informatik.ct.model.*;
-import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
-
-import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
-import lombok.NonNull;
-import lombok.val;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
+import lombok.NonNull;
+import lombok.val;
 
 @Service
 public class RoomVisitService implements VisitService<RoomVisit> {
@@ -56,6 +52,9 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     private RoomVisitRepository roomVisitRepository;
 
     @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private VisitorRepository visitorRepository;
 
     @Autowired
@@ -63,6 +62,9 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 
     @Value("${allow_full_room_checkIn:false}")
     private boolean allowFullRoomCheckIn;
+
+    @Value("${ctt.studyRooms}")
+    private String studyRooms;
 
     public RoomVisit visitRoom(Visitor visitor, Room room) {
         return roomVisitRepository.save(new RoomVisit(visitor, room, dateTimeService.getDateNow()));
@@ -178,6 +180,18 @@ public class RoomVisitService implements VisitService<RoomVisit> {
 
     public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor) {
         return roomVisitRepository.findVisitsWithContact(visitor);
+    }
+
+    public int getRemainingStudyPlaces() {
+        String[] roomNames = studyRooms.split(";");
+        int totalCapacity = roomRepository.getTotalStudyRoomsCapacity(roomNames);
+        int currentVisitorCount = roomVisitRepository.getTotalStudyRoomsVisitorCount(roomNames);
+        return totalCapacity - currentVisitorCount;
+    }
+
+    public List<StudyRoom> getAllStudyRooms() {
+        String[] roomNames = studyRooms.split(";");
+        return roomVisitRepository.getAllStudyRooms(roomNames);
     }
 
 }

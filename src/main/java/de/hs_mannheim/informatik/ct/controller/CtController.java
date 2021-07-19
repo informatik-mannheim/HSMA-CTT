@@ -18,12 +18,14 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.model.EventVisit;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -40,13 +42,12 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -87,6 +88,7 @@ public class CtController implements ErrorController {
 
     @RequestMapping("/")
     public String home(Model model) {
+        model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         return "index";
     }
 
@@ -321,6 +323,12 @@ public class CtController implements ErrorController {
         return "howToInkognito";
     }
 
+    @RequestMapping("/learningRooms")
+    public String showLearningRooms(Model model) {
+        model.addAttribute("learningRoomsCapacity", roomVisitService.getAllStudyRooms());
+        return "learningRooms";
+    }
+
     @RequestMapping("/faq")
     public String showFaq() {
         return "faq";
@@ -347,7 +355,7 @@ public class CtController implements ErrorController {
                 log.error("Checkout nicht möglich da Email nicht vorhanden");
                 model.addAttribute("error", "Checkout nicht möglich, Emailadresse nicht im System. Waren Sie eingecheckt?");
             } else
-                model.addAttribute("error", "Fehler-Code: " + status.toString());
+                model.addAttribute("error", "Fehler-Code: " + status);
         } else {
             model.addAttribute("error", "Unbekannter Fehler!");
         }
