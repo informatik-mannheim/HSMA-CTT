@@ -63,11 +63,16 @@ public class DynamicContentService {
         return out.toByteArray();
     }
 
-    public synchronized void writeRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
-            XWPFDocument document = getRoomPrintOutDocx(room, uriConverter, privileged);
-            outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
-            document.write(outputStream);
+    public void addRoomPrintOutDocx(Room room, boolean privileged, ZipOutputStream outputStream, Function<Room, UriComponents> uriConverter) throws IOException, XmlException {
+        XWPFDocument document = getRoomPrintOutDocx(room, uriConverter, privileged);
+        writeRoomPrintOutDocx(room, outputStream, document);
     }
+
+    public synchronized void writeRoomPrintOutDocx(Room room, ZipOutputStream outputStream, XWPFDocument document) throws IOException {
+        outputStream.putNextEntry(new ZipEntry(room.getBuildingName() + "/" + room.getName() + ".docx"));
+        document.write(outputStream);
+    }
+
 
     public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
         try (val workbook = generator.generateWorkbook(contacts, target.getEmail())) {
@@ -77,38 +82,38 @@ public class DynamicContentService {
 
     public XWPFDocument getRoomPrintOutDocx(Room room, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
 
-            DocxTemplate templateGenerator;
+        DocxTemplate templateGenerator;
 
-            DocxTemplate.TextTemplate<Room> textReplacer = (roomContent, templatePlaceholder) -> {
-                switch (templatePlaceholder) {
-                    case "g":
-                        return roomContent.getBuildingName();
-                    case "r":
-                        return roomContent.getName();
-                    case "l":
-                        return uriConverter.apply(roomContent).toUriString();
-                    case "p":
-                        return Integer.toString(roomContent.getMaxCapacity());
-                    case "c":
-                        return roomContent.getRoomPin();
-                    default:
-                        throw new UnsupportedOperationException("Template contains invalid placeholder: " + templatePlaceholder);
-                }
-            };
-
-            Function<Room, byte[]> qrGenerator = roomQr -> {
-                // TODO: This is a hack to integrate the PIN code into the QR Code but not in the hyperlink.
-                val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
-                        .queryParam("pin", room.getRoomPin())
-                        .build();
-                return getQRCodePNGImage(qrUri, 500, 500);
-            };
-
-            if (privileged) {
-                templateGenerator = new DocxTemplate<>(privilegedDocxTemplatePath.toFile(), textReplacer, qrGenerator);
-            } else {
-                templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
+        DocxTemplate.TextTemplate<Room> textReplacer = (roomContent, templatePlaceholder) -> {
+            switch (templatePlaceholder) {
+                case "g":
+                    return roomContent.getBuildingName();
+                case "r":
+                    return roomContent.getName();
+                case "l":
+                    return uriConverter.apply(roomContent).toUriString();
+                case "p":
+                    return Integer.toString(roomContent.getMaxCapacity());
+                case "c":
+                    return roomContent.getRoomPin();
+                default:
+                    throw new UnsupportedOperationException("Template contains invalid placeholder: " + templatePlaceholder);
             }
+        };
+
+        Function<Room, byte[]> qrGenerator = roomQr -> {
+            // TODO: This is a hack to integrate the PIN code into the QR Code but not in the hyperlink.
+            val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
+                    .queryParam("pin", room.getRoomPin())
+                    .build();
+            return getQRCodePNGImage(qrUri, 500, 500);
+        };
+
+        if (privileged) {
+            templateGenerator = new DocxTemplate<>(privilegedDocxTemplatePath.toFile(), textReplacer, qrGenerator);
+        } else {
+            templateGenerator = new DocxTemplate<>(defaultDocxTemplatePath.toFile(), textReplacer, qrGenerator);
+        }
 
         return templateGenerator.generate(room);
     }

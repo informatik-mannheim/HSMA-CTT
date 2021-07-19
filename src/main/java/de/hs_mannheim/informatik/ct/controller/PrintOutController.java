@@ -23,7 +23,6 @@ import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.val;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.zip.ZipOutputStream;
 
 
@@ -63,6 +62,7 @@ public class PrintOutController {
 
     @Value("${hostname}")
     private String host;
+    private int threadCount = 4;
 
     @GetMapping(value = "/rooms")
     public String getRoomPrintoutList(Model model) {
@@ -79,73 +79,37 @@ public class PrintOutController {
         StreamingResponseBody responseBody = outputStream -> {
             try (val zos = new ZipOutputStream(outputStream)) {
 
-//                Thread t1 = new Thread(() -> {
-//                    for (Room room : allRooms.subList(0, allRooms.size() / 2)) {
-//                        try {
-//                            contentService.writeRoomPrintOutDocx(
-//                                    room,
-//                                    privileged,
-//                                    zos,
-//                                    uriToPath -> utilities.getUriToLocalPath(
-//                                            RoomController.getRoomCheckinPath(room),
-//                                            request
-//                                    )
-//                            );
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        } catch (XmlException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//                );
-//                Thread t2 = new Thread(() -> {
-//                    for (Room room : allRooms.subList(allRooms.size() / 2, allRooms.size())) {
-//                        try {
-//                            contentService.writeRoomPrintOutDocx(
-//                                    room,
-//                                    privileged,
-//                                    zos,
-//                                    uriToPath -> utilities.getUriToLocalPath(
-//                                            RoomController.getRoomCheckinPath(room),
-//                                            request
-//                                    )
-//                            );
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        } catch (XmlException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//                );
-//
-//                long startTime = System.nanoTime();
-//                t1.start();
-//                t2.start();
-//                t1.join();
-//                t2.join();
-//                long stopTime = System.nanoTime();
-//                System.out.println("Time needed for 2 threads: " + (stopTime - startTime));
+                val listOfTheads = new ArrayList<Thread>();
 
-//                Average time for 2 Threads: 3947024200
-
-
-               long startTime = System.nanoTime();
-                for (Room room : allRooms) {
-                    contentService.writeRoomPrintOutDocx(
-                            room,
-                            privileged,
-                            zos,
-                            uriToPath -> utilities.getUriToLocalPath(
-                                    RoomController.getRoomCheckinPath(room),
-                                    request
-                            )
+                for (int i = 0; i < threadCount; i++) {
+                    int counter = i;
+                    Thread t = new Thread(() -> {
+                        for (Room room : allRooms.subList(allRooms.size() * counter / threadCount, allRooms.size() * (counter + 1) / threadCount)) {
+                            try {
+                                contentService.addRoomPrintOutDocx(
+                                        room,
+                                        privileged,
+                                        zos,
+                                        uriToPath -> utilities.getUriToLocalPath(
+                                                RoomController.getRoomCheckinPath(room),
+                                                request
+                                        )
+                                );
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (XmlException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                     );
+                    listOfTheads.add(t);
+                    t.start();
                 }
-               long stopTime = System.nanoTime();
-                System.out.println("Time needed for 1 thread: " + (stopTime - startTime));
-//                Average time for 1 Thread: 3944394100
+
+                for (Thread thread : listOfTheads) {
+                    thread.join();
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
