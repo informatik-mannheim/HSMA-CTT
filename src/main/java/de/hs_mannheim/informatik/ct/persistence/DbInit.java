@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class DbInit implements CommandLineRunner {
     @Value("${server_env:production}")
@@ -78,5 +77,4 @@ public class DbInit implements CommandLineRunner {
             roomService.saveAllRooms(roomList);
         }
     }
-
 }

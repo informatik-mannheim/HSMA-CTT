@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.util;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
@@ -42,15 +43,18 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
     private final Cipher cipher;
 
     public AttributeEncryptor(@Value("${db.encryption.secret:corona-ctt-20201}") String secret) throws Exception {
-        key = new SecretKeySpec(secret.getBytes(), AES);
+        byte[] hashedSecret = MessageDigest.getInstance("SHA-256").digest(secret.getBytes());
+        key = new SecretKeySpec(hashedSecret, AES);
         cipher = Cipher.getInstance(AES);
     }
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(attribute.getBytes()));
+            synchronized (cipher) {
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+                return Base64.getEncoder().encodeToString(cipher.doFinal(attribute.getBytes()));
+            }
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
             throw new IllegalStateException(e);
         }
@@ -59,8 +63,10 @@ public class AttributeEncryptor implements AttributeConverter<String, String> {
     @Override
     public String convertToEntityAttribute(String dbData) {
         try {
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            return new String(cipher.doFinal(Base64.getDecoder().decode(dbData)));
+            synchronized (cipher) {
+                cipher.init(Cipher.DECRYPT_MODE, key);
+                return new String(cipher.doFinal(Base64.getDecoder().decode(dbData)));
+            }
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             throw new IllegalStateException(e);
         }

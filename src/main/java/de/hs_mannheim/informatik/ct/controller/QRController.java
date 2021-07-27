@@ -33,7 +33,6 @@ import org.springframework.web.util.UriComponents;
 import javax.servlet.http.HttpServletRequest;
 
 
-
 @RestController
 @RequestMapping("/QRCodes")
 public class QRController {

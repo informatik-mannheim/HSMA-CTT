@@ -38,12 +38,60 @@ h1, h2, h3, h4, h5, h6 {
     color: #22376f;
 }
 
-a:visited, a:link {
-    color: #3f65c4;
+label[for=roomId] {
+    font-size: large;
 }
 
-a:hover {
+input[id=roomId] {
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+thead {
+    text-align: center;
     color: #22376f;
+}
+
+tbody {
+    text-align: center;
+}
+
+.btn-for-collapsible i {
+    float: right;
+}
+
+.btn-for-faq.btn:hover {
+    background-color: #28346c;
+    color: white;
+}
+
+.btn-for-faq.btn:focus {
+    box-shadow: none;
+}
+
+.btn-for-faq.btn {
+     margin: 15px 0 15px 0;
+     background-color: #d6d6d6;
+     text-align: left;
+}
+
+.btn-for-index-page {
+    color: white;
+    background-color: #22376f;
+    border-radius: 10px;
+    border: none;
+    padding: 3px 10px;
+}
+
+.btn-for-index-page:hover {
+    background-color: #3f6fd7;
+    color: white;
+    text-decoration: none;
 }
 
 .centerImg {
@@ -58,45 +106,18 @@ a:hover {
     padding-top: 25px;
 }
 
+.collapseMarginBottom{
+    margin-bottom: 60px;
+}
+
 #checkinContainer {
     margin: 5px;
     padding: 15px;
     border: solid black thin;
-
 }
 
 #checkIn {
     font-size: x-large;
-}
-
-label[for=roomId] {
-    font-size: large;
-}
-
-input[id=roomId] {
-    border-radius: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-
-}
-
-#sendRoom {
-    color: white;
-    background-color: #22376f;
-    border-radius: 10px;
-
-}
-
-#sendRoom:hover {
-    background-color: #3f6fd7;
-}
-
-.btn-for-collapsible i {
-    float: right;
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 #collapseButtonInfo {
@@ -147,6 +168,23 @@ html {
     color: #fff;
 }
 
-.collapseMarginBottom{
-    margin-bottom: 60px;
+#faq-page-container {
+    margin-bottom: 100px;
 }
+
+#learningRoomsTable{
+  width: 60%;
+}
+
+#sendRoom {
+    color: white;
+    background-color: #22376f;
+    border-radius: 10px;
+    border: none;
+    padding: 3px 10px;
+}
+
+#sendRoom:hover {
+    background-color: #3f6fd7;
+}
+
