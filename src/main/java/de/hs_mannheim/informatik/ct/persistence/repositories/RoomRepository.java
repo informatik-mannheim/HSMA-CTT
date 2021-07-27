@@ -46,10 +46,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     List<Room> findByBuildingName(String building);
 
-
     @Query("SELECT COALESCE(SUM(room.maxCapacity), 0) " +
             "FROM Room room " +
             "WHERE room.name in :studyRooms")
     int getTotalStudyRoomsCapacity(@Param("studyRooms") String[] studyRooms);
-
 }

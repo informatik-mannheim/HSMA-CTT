@@ -45,11 +45,34 @@ public class DbInit implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (serverEnvironment.equals("dev")) {
-            val roomList = Arrays.asList(
-                    new Room("A007a", "A", 3),
-                    new Room("test", "test", 12),
-                    new Room("A210", "A", 19)
-            );
+            val roomList = new ArrayList<Room>();
+//            val roomList = Arrays.asList(
+//                    new Room("test", "test", 12),
+//                    new Room("A007a", "A", 3),
+//                    new Room("A210", "A", 19),
+//                    new Room("A211", "A", 19),
+//                    new Room("A212", "A", 19),
+//                    new Room("A213", "A", 19),
+//                    new Room("A214", "A", 19),
+//                    new Room("A215", "A", 19),
+//                    new Room("A216", "A", 19),
+//                    new Room("A217", "A", 19),
+//                    new Room("A218", "A", 19),
+//                    new Room("B210", "B", 19),
+//                    new Room("B211", "B", 19),
+//                    new Room("B212", "B", 19),
+//                    new Room("B213", "B", 19),
+//                    new Room("B214", "B", 19),
+//                    new Room("B215", "B", 19),
+//                    new Room("B216", "B", 19),
+//                    new Room("B217", "B", 19),
+//                    new Room("C1", "C", 19),
+//                    new Room("C4", "C", 19)
+//            );
+
+            for (int i = 0; i < 1200; i++) {
+                roomList.add(new Room("Room " + i, "A", 22));
+            }
 
             roomService.saveAllRooms(roomList);
         }
