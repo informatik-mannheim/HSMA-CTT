@@ -29,7 +29,7 @@
 
 				<div class="card flex-1">
 					<h5 class="text-center">eingecheckte Personen</h5>
-					<p class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
+					<p id="checked-in-amount" class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
 				</div>
 
 			</div>
@@ -43,7 +43,7 @@
 				</div>
 				<div class="card-footer">
 					<form method="POST" th:action="@{*{roomResetEndpoint}}">
-						<button type="submit" class="hs-button">Raum zurücksetzen</button>
+						<button id="reset-room" type="button" class="hs-button">Raum zurücksetzen</button>
 					</form>
 				</div>
 			</div>
@@ -89,9 +89,26 @@
 
 			</form>
 
+			<script>
+				document.getElementById("reset-room").onclick = () => {
+					if(confirm("Wollen Sie wirklich den Raum zurücksetzen?")){
+						fetch("room-reset-test")
+						.then(res => res.json())
+						.then(res => {
+							const {success=false} = res || {}
+							if(success){
+								location.reload();
+							}
+						})
+						.catch(err => console.log(err))
+					}
+				}
+			</script>
+
 		</div>
 
 	</div>
+
 </body>
 
 </html>
