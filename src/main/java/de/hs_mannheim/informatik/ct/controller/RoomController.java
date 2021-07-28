@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -257,6 +258,34 @@ public class RoomController {
         roomVisitService.resetRoom(room);
 
         return "redirect:"+redirectURI;
+    }
+
+    @GetMapping(value = "/{roomId}/rest-room-reset", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody RestResponse roomResetTest(
+            @PathVariable String roomId,
+            Model model
+    ){
+        try{
+            val room = getRoomOrThrow(roomId);
+            roomVisitService.resetRoom(room);
+            return new RestResponse(true);
+        }catch(Exception e){
+            return new RestResponse(false,e.getMessage());
+        }
+    }
+
+    public static class RestResponse{
+        public String message;
+        public boolean success;
+
+        public RestResponse(boolean success){
+            this.success = success;
+        }
+
+        public RestResponse(boolean success, String message){
+            this(success);
+            this.message = message;
+        }
     }
 
     @RequestMapping("/roomFull/{roomId}")
