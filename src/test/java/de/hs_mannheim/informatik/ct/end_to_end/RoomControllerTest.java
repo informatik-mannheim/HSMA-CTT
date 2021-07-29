@@ -75,7 +75,7 @@ public class RoomControllerTest {
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Room room = new Room(TEST_ROOM_NAME, "A", 10);
         TEST_ROOM_PIN = room.getRoomPin();
         roomService.saveRoom(room);
@@ -89,7 +89,7 @@ public class RoomControllerTest {
 
         // /{roomId}
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME).with(csrf()))
+                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(
                         containsString(rTestRoom)));
@@ -149,19 +149,19 @@ public class RoomControllerTest {
 
         // request form to check into full room should redirect to roomFull/{roomId}
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME).with(csrf()))
+                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("roomFull/" + TEST_ROOM_NAME));
     }
 
     @Test
-    public void checkInFullRoomWithOverride() throws Exception{
+    public void checkInFullRoomWithOverride() throws Exception {
         // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 10);
 
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME + "?override=true").with(csrf()))
+                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN + "&override=true").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl(null));
 
@@ -176,7 +176,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInInvalidCredentials() throws Exception{
+    public void checkInInvalidCredentials() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
@@ -190,13 +190,10 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInInvalidRoomPin() throws Exception{
-        // check in with empty username should
+    public void checkInInvalidRoomPin() throws Exception {
         this.mockMvc.perform(
-                post("/r/checkIn")
+                get("/r/" + TEST_ROOM_NAME)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", TEST_USER_EMAIL)
-                        .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))

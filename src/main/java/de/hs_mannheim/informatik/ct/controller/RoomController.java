@@ -77,25 +77,20 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId, //does roompin has to be required?
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged,
-                          @RequestParam(required = false, value = "roomPin") Optional<String> roomPinFromRequest,
+                          @RequestParam(required = false, value = "roomPin") String roomPinFromRequest,
                           @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
-                          Model model) {
+                          Model model) throws InvalidRoomPinException {
         if (!allowFullRoomCheckIn) {
             overrideFullRoom = false;
         }
 
-        // get roomId from form on landing page (index.html)
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
         val room = getRoomOrThrow(roomId);
-        String roomPin = roomPinFromRequest.get();
-        // check if roomPin is correct
-        if( !(roomPin.equals(room.getRoomPin()))){
-            // throw wrong room pin exception
-            System.out.println("Falsche Raumpin");
+        String roomPin = roomPinFromRequest;
+        if (!(roomPin.equals(room.getRoomPin()))) {
+            throw new InvalidRoomPinException();
         }
-
-
         if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
             return "forward:roomFull/" + room.getId();
         }
@@ -114,19 +109,9 @@ public class RoomController {
     @PostMapping("/checkIn")
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
-        System.out.println("Enter Method!!!!!! " + visitData.getRoomId() + " | " + visitData.getRoomPin() + " | " + visitData.getVisitorEmail());
         val room = getRoomOrThrow(visitData.getRoomId());
-        System.out.println("Room0: " + room.toString());
-        /* if(!visitData.getRoomPin().equals(room.getRoomPin())){
-            System.out.println("Room01: "+room.toString());
-            throw new InvalidRoomPinException();
-        }*/
-
-        System.out.println("Room0: " + room.toString());
         val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail(), visitData.getName(), visitData.getNumber(), visitData.getAddress());
-        System.out.println("visitor: " + visitor.toString());
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
-        System.out.println("Room: " + room.toString());
         String autoCheckoutValue = null;
         if (notCheckedOutVisits.size() != 0) {
             val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
@@ -145,10 +130,8 @@ public class RoomController {
 
         val visit = roomVisitService.visitRoom(visitor, room);
         val currentVisitCount = roomVisitService.getVisitorCount(room);
-        System.out.println("VisitorCount: " + currentVisitCount);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
         model.addAttribute("visitData", visitData);
-
         return "rooms/checkedIn";
     }
 
@@ -316,7 +299,6 @@ public class RoomController {
     private Room getRoomOrThrow(String roomId) {
         Optional<Room> room = roomService.findByName(roomId);
         if (room.isPresent()) {
-            System.out.println(room.toString());
             return room.get();
         } else {
             throw new RoomNotFoundException();
