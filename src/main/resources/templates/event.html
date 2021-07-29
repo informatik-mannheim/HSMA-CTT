@@ -1,34 +1,37 @@
 <html lang="de" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout}">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 
 <head>
-<meta http-equiv="refresh" content="30" >
-<title>Veranstaltungsinfo</title>
+    <meta http-equiv="refresh" content="30">
+    <title>Veranstaltungsinfo</title>
 </head>
 
 <body>
-	<div layout:fragment="content">
+<div layout:fragment="content">
 
-		<h5 class="mb-4">Herzlich willkommen zu <span th:text="|${event.name} (${#dates.format(event.datum, 'dd.MM.yyyy, HH:mm')})|">name</span></h5>
-		
-		<p style="color:red; font-size:180%" class="mt-4" th:if="${teilnehmerzahl == event.roomCapacity}">Maximale Teilnehmeranzahl erreicht!</p>
-		
-		<div class="row" th:if="${teilnehmerzahl &lt; event.roomCapacity}">
-			<div class="col-sm-6">
-				<p>Bisher <span th:text="${teilnehmerzahl} ?: '0'"></span> Person<td th:text="${teilnehmerzahl == 1} ? '' : 'en'" /> 
-					von maximal <span th:text="${event.roomCapacity} ?: '?'" /> anwesend.</p>
-		
-				<p>Bitte Ihre Anwesenheit <a th:href="@{/besuch?vid={vid}(vid=${event.id})}">hier eintragen</a> oder mit
-				   dem Handy den folgenden QR-Code nutzen.</p>
-			</div> 
-			
-			<img class="img-fluid mt-n5" style="z-index: -1" th:src="@{/QRCodes/event/{vid}(vid=${event.id})}" />
-			
-		</div>
+    <h5 class="mb-4">Herzlich willkommen zu <span
+            th:text="|${event.name} (${#dates.format(event.datum, 'dd.MM.yyyy, HH:mm')})|">name</span></h5>
 
-	</div>
+    <p style="color:red; font-size:180%" class="mt-4" th:if="${teilnehmerzahl == event.roomCapacity}">Maximale
+        Teilnehmeranzahl erreicht!</p>
+
+    <div class="row" th:if="${teilnehmerzahl &lt; event.roomCapacity}">
+        <div class="col-sm-6">
+            <p>Bisher <span th:text="${teilnehmerzahl} ?: '0'"></span> Person
+            <td th:text="${teilnehmerzahl == 1} ? '' : 'en'"/>
+            von maximal <span th:text="${event.roomCapacity} ?: '?'"/> anwesend.</p>
+
+            <p>Bitte Ihre Anwesenheit <a th:href="@{/besuch?vid={vid}(vid=${event.id})}">hier eintragen</a> oder mit
+                dem Handy den folgenden QR-Code nutzen.</p>
+        </div>
+
+        <img class="img-fluid mt-n5" style="z-index: -1" th:src="@{/QRCodes/event/{vid}(vid=${event.id})}"/>
+
+    </div>
+
+</div>
 </body>
 
 </html>

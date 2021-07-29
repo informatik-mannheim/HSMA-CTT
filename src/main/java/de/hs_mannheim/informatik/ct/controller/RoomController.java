@@ -118,7 +118,7 @@ public class RoomController {
     ) throws InvalidRoomPinException, UnsupportedEncodingException {
         val room = getRoomOrThrow(visitData.getRoomId());
 
-        if(!visitData.getRoomPin().equals(room.getRoomPin()))
+        if (!visitData.getRoomPin().equals(room.getRoomPin()))
             throw new InvalidRoomPinException();
 
         val visitorEmail = visitData.getVisitorEmail();
@@ -371,13 +371,12 @@ public class RoomController {
      * @param email The visitors email.
      * @return The visitor.
      */
-    private Visitor getOrCreateVisitorOrThrow(String email, String name,String number,String address) {
+    private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) {
         try {
-            return visitorService.findOrCreateVisitor(email, name,number, address);
+            return visitorService.findOrCreateVisitor(email, name, number, address);
         } catch (InvalidEmailException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-        }
-        catch (InvalidExternalUserdataException e){
+        } catch (InvalidExternalUserdataException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
         }
     }

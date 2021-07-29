@@ -37,7 +37,7 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
             "   SELECT roomVisit.visitor " +
             "   FROM RoomVisit roomVisit) " +
             "AND visitor NOT IN (" +
-            "   SELECT visit.visitor " +
-            "   FROM EventVisit visit)")
+            "SELECT visit.visitor " +
+            "FROM EventVisit visit)")
     void removeVisitorsWithNoVisits();
 }
