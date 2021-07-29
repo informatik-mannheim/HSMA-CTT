@@ -92,7 +92,7 @@
 			<script>
 				document.getElementById("reset-room").onclick = () => {
 					if(confirm("Wollen Sie wirklich den Raum zurücksetzen?")){
-						fetch("room-reset-test")
+						fetch("rest-room-reset")
 						.then(res => res.json())
 						.then(res => {
 							const {success=false} = res || {}
