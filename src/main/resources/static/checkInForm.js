@@ -6,9 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const postFixRadioButtons = document.querySelectorAll("input[type=radio][name='email-postfix']");
     let emailPostfix = null;
 
-    // Show content that requires JavaScript to function
-    showJSEnabled();
-
     // Check if auto sign-in is enabled and if so, sign in
     autoSignIn();
 
@@ -126,11 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             return emailText.value;
         }
-    }
-
-    function showJSEnabled() {
-        document.querySelectorAll(".no-js").forEach((elem) => elem.classList.add("hidden"));
-        document.querySelectorAll(".js-enabled").forEach((elem) => elem.classList.remove("js-enabled"));
     }
 
     function doSignOut() {
