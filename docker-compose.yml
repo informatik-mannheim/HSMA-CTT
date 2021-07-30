@@ -24,6 +24,7 @@ services:
       - DB_ENCRYPTION_SECRET=${DB_ENCRYPTION_SECRET:-corona-ctt-20201}
       # Override current names of the study rooms
       - CTT_STUDYROOMS=L11;L12;L13;L14;L15;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
+      - TZ=Europe/Berlin
     restart: always
   db:
     image: postgres:13-alpine
@@ -31,9 +32,12 @@ services:
       - POSTGRES_USER=${DB_USER:-XXbPWmwdRW}
       - POSTGRES_PASSWORD=${DB_PW:-grEtwOBI4E}
       - POSTGRES_DB=ctt
+      - TZ=Europe/Berlin
     restart: always
   proxy:
     image: nginx:1-alpine
+    environment:
+      - TZ=Europe/Berlin
     depends_on:
       - app
     volumes:
