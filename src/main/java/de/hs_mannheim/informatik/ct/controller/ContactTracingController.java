@@ -130,7 +130,7 @@ public class ContactTracingController {
         };
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=kontaktliste.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=kontaktliste.xls")
                 .contentType(MediaType.valueOf("application/vnd.ms-excel"))
                 .body(responseBody);
     }
