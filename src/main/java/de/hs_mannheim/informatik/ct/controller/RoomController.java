@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.controller;
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.model.RoomVisit.Data;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
@@ -112,6 +113,9 @@ public class RoomController {
     @PostMapping("/checkIn")
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+
+        roomPinValidation(visitData);
+
         val room = getRoomOrThrow(visitData.getRoomId());
 
         if (!visitData.getRoomPin().equals(room.getRoomPin()))
@@ -146,15 +150,24 @@ public class RoomController {
         return "rooms/checkedIn";
     }
 
+    private void roomPinValidation(Data visitData) throws InvalidRoomPinException {
+        try{
+            Long.parseLong(visitData.getRoomPin());
+        } catch(NumberFormatException err) {
+            throw new InvalidRoomPinException();
+        }
+    }
+
     /**
      * Check into a room even though it is full
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) {
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
+        roomPinValidation(visitData);
 
         val room = getRoomOrThrow(visitData.getRoomId());
         val visitor = getOrCreateVisitorOrThrow(visitData.getVisitorEmail(), visitData.getName(), visitData.getNumber(), visitData.getAddress());
