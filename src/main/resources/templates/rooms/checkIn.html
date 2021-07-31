@@ -119,7 +119,7 @@
                 <h3 class="content-header form-header">Raum-PIN eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
                     <input id="pin" name="roomPin" style="font-size: 1em;" placeholder="PIN" minlength="4" maxlength="4"
-                           type = "number" th:value="${roomPin}">
+                           type = "number", class = "pin" th:value="${roomPin}">
                 </div>
                 <h3 class="content-header form-header">Absenden</h3>
                 <div id="invalid-email-error" class="form-row hidden error">
@@ -132,6 +132,7 @@
                     <input id="submit-form-name" type="hidden" name="name"/>
                     <input id="submit-form-address" type="hidden" name="address"/>
                     <input id="submit-form-number" type="hidden" name="number"/>
+                </div>
             </form>
         </div>
         <div class="form-row checkout-only">
