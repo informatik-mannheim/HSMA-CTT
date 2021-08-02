@@ -35,14 +35,13 @@
             </div>
         </form>
 
-
-        <script>
-            var c = document.cookie.match('(^|;)\\s*' + 'email' + '\\s*=\\s*([^;]+)');
-            document.getElementById("email").value = c ? c.pop() : '';
-        </script>
     </div>
-</div>
 
+    <script>
+			var c = document.cookie.match('(^|;)\\s*' + 'email' + '\\s*=\\s*([^;]+)');
+		    document.getElementById("email").value = c ? c.pop() : '';
+
+    </script>
 
 </body>
 

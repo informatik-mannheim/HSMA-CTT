@@ -1,4 +1,7 @@
-package de.hs_mannheim.informatik.ct.persistence.repositories;
+package de.hs_mannheim.informatik.ct.controller.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /*
  * Corona Tracking Tool der Hochschule Mannheim
@@ -18,18 +21,6 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Event;
-import de.hs_mannheim.informatik.ct.model.Room;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Date;
-import java.util.List;
-
-
-public interface EventRepository extends JpaRepository<Event, Long> {
-    List<Event> findAllByOrderByDatumAsc();
-
-    List<Event> findByDatumGreaterThan(Date startDate);
-
-    List<Event> findByRoom(Room room);
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Invalid Pin")
+public class InvalidRoomPinException extends Exception {
 }

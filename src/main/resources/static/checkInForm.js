@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.localStorage;
     const emailText = document.getElementById("email-text");
+    const guestFreeSection = document.getElementsByClassName("guest-free-section")
     const emailLabel = document.getElementById("email-text-label");
     const postFixRadioButtons = document.querySelectorAll("input[type=radio][name='email-postfix']");
     let emailPostfix = null;
@@ -37,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         document.getElementById("submit-form-email").value = combinedEmail;
+        document.getElementById("submit-form-name").value = document.getElementById("guest-name").value;
+        document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
+        document.getElementById("submit-form-address").value = document.getElementById("guest-address").value;
     })
 
     document.getElementById("submit-form-checkout").addEventListener("submit", () => {
@@ -76,20 +80,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (postfix) {
             case "student":
+                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
+                }
                 break;
             case "internal":
+                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
+                }
                 break;
             default:
             case "external":
+                emailText.style.minWidth = "410px"
                 emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
+                for (let i = 0; i < guestFreeSection.length; i++){
+                    guestFreeSection[i].style.visibility = "visible";
+                    guestFreeSection[i].style.maxHeight = "100%";
+                }
                 break;
         }
 

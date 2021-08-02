@@ -34,37 +34,37 @@ import de.hs_mannheim.informatik.ct.model.EventVisit;
 
 @Service
 public class EventService {
-	@Autowired
-	private EventRepository eventRepository;
-	@Autowired
-	private VisitorRepository visitorRepository;
-	@Autowired
-	private EventVisitRepository eventVisitRepository;
-	@Autowired
-	private DateTimeService dateTimeService;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private VisitorRepository visitorRepository;
+    @Autowired
+    private EventVisitRepository eventVisitRepository;
+    @Autowired
+    private DateTimeService dateTimeService;
 
-	public Event saveEvent(Event entity) {
-		return eventRepository.save(entity);
-	}
+    public Event saveEvent(Event entity) {
+        return eventRepository.save(entity);
+    }
 
-	public Optional<Event> getEventById(long id) {
-		return eventRepository.findById(id);
-	}
+    public Optional<Event> getEventById(long id) {
+        return eventRepository.findById(id);
+    }
 
-	public EventVisit saveVisit(EventVisit eventVisit) {
-		return eventVisitRepository.save(eventVisit);
-	}
+    public EventVisit saveVisit(EventVisit eventVisit) {
+        return eventVisitRepository.save(eventVisit);
+    }
 
-	public Collection<Event> getAll() {
-		return eventRepository.findAllByOrderByDatumAsc();
-	}
+    public Collection<Event> getAll() {
+        return eventRepository.findAllByOrderByDatumAsc();
+    }
 
-	public Collection<Event> getEventsToday() {
-		long time = dateTimeService.getDateNow().getTime();
-		return eventRepository.findByDatumGreaterThan(new Date(time - time % (24 * 60 * 60 * 1000)));
-	}
+    public Collection<Event> getEventsToday() {
+        long time = dateTimeService.getDateNow().getTime();
+        return eventRepository.findByDatumGreaterThan(new Date(time - time % (24 * 60 * 60 * 1000)));
+    }
 
-	public int getVisitorCount(long id) {
-		return eventVisitRepository.getEventVisitorCount(id);
-	}
+    public int getVisitorCount(long id) {
+        return eventVisitRepository.getEventVisitorCount(id);
+    }
 }

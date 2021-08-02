@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.controller;
 import de.hs_mannheim.informatik.ct.model.*;
 import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,7 @@ public class CtController {
 
     @RequestMapping("/")
     public String home(Model model) {
+        model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         return "index";
     }
 
@@ -124,7 +126,7 @@ public class CtController {
     }
 
     @RequestMapping("/besuchMitCode")
-    public String besuchMitCode(@RequestParam Long vid, @CookieValue(value = "email", required = false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException {
+    public String besuchMitCode(@RequestParam Long vid, @CookieValue(value = "email", required = false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException, InvalidExternalUserdataException {
         if (email == null) {
             model.addAttribute("vid", vid);
             return "eintragen";
@@ -135,14 +137,13 @@ public class CtController {
 
     @PostMapping("/senden")
     public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue = "false") boolean saveMail, Model model,
-                                   @RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException {
+                                   @RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException, InvalidExternalUserdataException {
 
         model.addAttribute("vid", vid);
 
         if (referer != null && (referer.contains("/besuch") || referer.contains("/senden") || referer.contains("/besuchMitCode"))) {
             if (email.isEmpty()) {
                 throw new InvalidEmailException();
-//				model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
             } else {
                 Optional<Event> event = eventService.getEventById(vid);
 
@@ -156,8 +157,7 @@ public class CtController {
                         throw new RoomFullException();
                     } else {
                         Visitor b = null;
-                        b = visitorService.findOrCreateVisitor(email);
-
+                        b = visitorService.findOrCreateVisitor(email, null, null, null);
 
                         Optional<String> autoAbmeldung = Optional.empty();
                         List<EventVisit> nichtAbgemeldeteBesuche = eventVisitService.signOutVisitor(b, dateTimeService.getDateNow());
@@ -217,7 +217,6 @@ public class CtController {
             return "event";
         }
         throw new EventNotFoundException();
-
     }
 
 
@@ -304,4 +303,14 @@ public class CtController {
         return "howToInkognito";
     }
 
+    @RequestMapping("/learningRooms")
+    public String showLearningRooms(Model model) {
+        model.addAttribute("learningRoomsCapacity", roomVisitService.getAllStudyRooms());
+        return "learningRooms";
+    }
+
+    @RequestMapping("/faq")
+    public String showFaq() {
+        return "faq";
+    }
 }

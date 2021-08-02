@@ -1,51 +1,53 @@
 <html lang="de" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout}">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 
 <head>
-<title>Login</title>
+    <title>Login</title>
 </head>
 
 <body>
-	<div layout:fragment="content">
+<div layout:fragment="content">
 
-		<div th:if="${param.logout}">
-			<div class="alert alert-info">Sie wurden ausgeloggt. <a href="/">Zur Startseite</a></div>
-		</div>
-		<div th:if="${param.error}">
-			<div class="alert alert-danger">Login war nicht korrekt.</div>
-		</div>
-				
-		<div class="border border-secondary p-2">	
-		  <h5 class="mb-4">Einloggen</h5>
-		  
-		  <form th:action="@{/login}" method="post">
-			<div class="form group row mb-3">
-				<label class="col-sm-2 col-form-label" for="username">EMail: *</label>
-				<div class="col-sm-4">
-					<input type="text" class="form-control" id="username" name="username" placeholder="EMail" size="32" autofocus required />
-				</div>
-			</div>
-			<div class="form group row mb-3">
-				<label class="col-sm-2 col-form-label" for="password">Passwort: *</label>
-				<div class="col-sm-4">
-					<input class="form-control" type="password" id="password" name="password" size="32" placeholder="Passwort" autocomplete="off" required />
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col-sm-2">
-					<button type="submit" class="btn btn-info">Einloggen</button>
-				</div>
-				<p class="ml-4"><small><i>* = notwendige Eingabe</i></small></p>
-			</div>
-		
-			
-		  </form>	
-		</div>
-		
-	</div>
+    <div th:if="${param.logout}">
+        <div class="alert alert-info">Sie wurden ausgeloggt. <a href="/">Zur Startseite</a></div>
+    </div>
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">Login war nicht korrekt.</div>
+    </div>
+
+    <div class="border border-secondary p-2">
+        <h5 class="mb-4">Einloggen</h5>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form group row mb-3">
+                <label class="col-sm-2 col-form-label" for="username">EMail: *</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="EMail" size="32"
+                           autofocus required/>
+                </div>
+            </div>
+            <div class="form group row mb-3">
+                <label class="col-sm-2 col-form-label" for="password">Passwort: *</label>
+                <div class="col-sm-4">
+                    <input class="form-control" type="password" id="password" name="password" size="32"
+                           placeholder="Passwort" autocomplete="off" required/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-info">Einloggen</button>
+                </div>
+                <p class="ml-4"><small><i>* = notwendige Eingabe</i></small></p>
+            </div>
+
+
+        </form>
+    </div>
+
+</div>
 
 </body>
 
