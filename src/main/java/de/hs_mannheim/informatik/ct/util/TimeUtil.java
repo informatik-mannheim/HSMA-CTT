@@ -25,7 +25,6 @@ import java.time.ZoneId;
 import java.util.Date;
 
 
-
 public class TimeUtil {
     public static LocalDate convertToLocalDate(Date date) {
         return date.toInstant()

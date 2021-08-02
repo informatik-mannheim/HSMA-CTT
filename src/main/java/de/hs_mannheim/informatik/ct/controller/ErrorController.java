@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ErrorController {
-
-//    TODO InvalidExternalVisitorException has to be add after merge
-
-
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleRoomNotFoundException(RoomController.RoomNotFoundException roomNotFound, WebRequest request) {

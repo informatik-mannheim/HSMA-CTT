@@ -30,58 +30,58 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 public class EventVisit implements Visit {
-	@EmbeddedId
-	@Getter(value = AccessLevel.NONE)
-	private PrimaryKey id;
+    @EmbeddedId
+    @Getter(value = AccessLevel.NONE)
+    private PrimaryKey id;
 
-	@Column(updatable = false)
-	private Date startDate;
+    @Column(updatable = false)
+    private Date startDate;
 
-	@Column
-	private Date endDate;
+    @Column
+    private Date endDate;
 
-	@ManyToOne
-	@MapsId("eventId")
-	@NonNull
-	private Event event;
+    @ManyToOne
+    @MapsId("eventId")
+    @NonNull
+    private Event event;
 
-	@ManyToOne
-	@MapsId("visitorId")
-	@NonNull
-	private Visitor visitor;
+    @ManyToOne
+    @MapsId("visitorId")
+    @NonNull
+    private Visitor visitor;
 
-	public EventVisit(Event event, Visitor visitor, Date startDate) {
-		this.event = event;
-		this.visitor = visitor;
-		this.startDate = startDate;
+    public EventVisit(Event event, Visitor visitor, Date startDate) {
+        this.event = event;
+        this.visitor = visitor;
+        this.startDate = startDate;
 
-		this.id = new PrimaryKey(event, visitor);
-	}
+        this.id = new PrimaryKey(event, visitor);
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	@Override
-	public String getLocationName() {
-		return event.getName();
-	}
+    @Override
+    public String getLocationName() {
+        return event.getName();
+    }
 
-	@Embeddable
-	@Data
-	@NoArgsConstructor
-	public static class PrimaryKey implements Serializable {
-		PrimaryKey(Event event, Visitor visitor) {
-			this.eventId = event.getId();
-			this.visitorId = visitor.getId();
-		}
+    @Embeddable
+    @Data
+    @NoArgsConstructor
+    public static class PrimaryKey implements Serializable {
+        PrimaryKey(Event event, Visitor visitor) {
+            this.eventId = event.getId();
+            this.visitorId = visitor.getId();
+        }
 
-		@NonNull
-		@Column(nullable = false)
-		private Long eventId;
+        @NonNull
+        @Column(nullable = false)
+        private Long eventId;
 
-		@NonNull
-		@Column(nullable = false)
-		private Long visitorId;
-	}
+        @NonNull
+        @Column(nullable = false)
+        private Long visitorId;
+    }
 }
