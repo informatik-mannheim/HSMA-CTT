@@ -231,14 +231,11 @@ public class RoomController {
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity()<=currentRoomVisitorCount;
         val redirectURI = URLEncoder.encode("/r/"+roomId+"/event-manager-portal?visitorEmail="+encodedVisitorEmail, "UTF-8");
-        val roomResetEndpoint = "/r/"+roomId+"/executeRoomReset?redirectURI="+redirectURI;
 
         val roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
         model.addAttribute("currentRoomVisitorCount", currentRoomVisitorCount);
         model.addAttribute("isRoomOvercrowded", isRoomOvercrowded);
-        model.addAttribute("roomResetEndpoint", roomResetEndpoint);
-        model.addAttribute("redirectURI", redirectURI);
         model.addAttribute("visitorEmail", visitorEmail);
 
         return "rooms/veranstaltungsleitenden-portal";
@@ -260,13 +257,17 @@ public class RoomController {
         return "redirect:"+redirectURI;
     }
 
-    @GetMapping(value = "/{roomId}/rest-room-reset", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody RestResponse roomResetTest(
+    @PostMapping(value = "/{roomId}/reset", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody RestResponse roomReset(
             @PathVariable String roomId,
+            @RequestParam(required = true, value = "roomPin") Optional<String> roomPinRequested,
             Model model
     ){
         try{
+            if(!roomPinRequested.isPresent()) throw new Exception("roomPin not found");
+            val roomPin = roomPinRequested.get();
             val room = getRoomOrThrow(roomId);
+            if(!room.getRoomPin().equals(roomPin)) throw new Exception("roomPin invalid");
             roomVisitService.resetRoom(room);
             return new RestResponse(true);
         }catch(Exception e){
