@@ -44,10 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Controller
@@ -330,7 +327,26 @@ public class CtController implements ErrorController {
     }
 
     @RequestMapping("/faq")
-    public String showFaq() {
+    public String showFaq(Model model) {
+        String[] questions = {"Wie kann ich mich einchecken?",
+                "Wie kann ich mich auschecken?",
+                "Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?",
+                "Kann ich auch andere einchecken?",
+                "Kann ich mich auch später ein- bzw. auschecken?",
+                "Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen?",
+                "Was ist, wenn ich vergessen habe mich auszuchecken?",
+        " Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?"};
+        String[] answers = {"<p>Du musst lediglich mit deinem Smartphone den QR-Code abscannen, dann wirst du automatisch zum Check in für den passenden Raum weitergeleitet. Alternativ, wenn du keinen QR-Scanner zur Verfügung hast, kannst du auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort findest du <a href='https://ctt.hs-mannheim.de/howToQr'>hier</a>.</p>",
+                "<p>Das Auschecken funktioniert genau so, wie das Einchecken. Du musst lediglich den QR-Code abscannen und dann ganz unten auf den Button Abmelden klicken. Dann wirst du automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort findest du <a href='https://ctt.hs-mannheim.de/howToQr'>hier</a>.</p>",
+                "<p>Auf jedem Zettel befindet sich oberhalb des QR Codes eine URL. Du kannst auch einfach in deinem Browser die URL eintippen und dich so beispielsweise mit deinem Laptop oder Tablet einchecken. Falls du gar kein Gerät zur Verfügung hast bitte jemand anderen dich einzuchecken. Eine ausführliche Anleitung dazu findest du <a href='https://ctt.hs-mannheim.de/howToInkognito'>hier</a>.</p>",
+                "<p>Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffne dazu einfach ein weiteres Fenster in deinem Browser und rufe die URL auf dem Zettel auf. Anschließend, einfach die Daten der Person eintragen. Der Einfachheitshalber kannst du das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen. Eine etwas ausführlichere Beschreibung findest du <a href='https://ctt.hs-mannheim.de/howToInkognito'>hier</a>.</p>",
+                "<p>Nein, es ist sehr wichtig dass das ein uns auschecken auch immer genau dann passiert, wenn du den Raum betrittst oder verlässt, sonst werden im System falsche Uhrzeiten gespeichert.</p>",
+                "<p>Nein,  leider geht das aktuell nur bei Online Veranstaltungen.</p>",
+                "<p>Du wirst automatisch ausgecheckt, wenn du einen anderen Raum betrittst. Notfalls checkt dich das System abends aus. Für die Kontaktverfolgung warst du dann leider noch im Raum.</p>",
+        " <p>Wenn du positiv getestet wurdest ist es sehr wichtig, dass du eine E-Mail an <a href='javascript:linkTo_UnCryptMailto('nbjmup;dpspob/{wAit.nbooifjn/ef')'>corona.zv@hs-mannheim.de</a> schreibst und darin deine Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des positiven Tests mitteilst.</p>"};
+
+        model.addAttribute("questions", questions);
+        model.addAttribute("answers", answers);
         return "faq";
     }
 
