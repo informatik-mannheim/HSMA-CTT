@@ -285,6 +285,26 @@ public class RoomControllerTest {
     }
 
     @Test
+    public void asyncRoomReset() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("roomPin", TEST_ROOM_PIN)
+        )
+                .andExpect(status().is(200));
+    }
+
+    @Test
+    public void asyncRoomResetWithInvalidPin() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+        )
+                .andExpect(status().is(400));
+    }
+
+    @Test
     public void roomNotFoundException() throws Exception {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
