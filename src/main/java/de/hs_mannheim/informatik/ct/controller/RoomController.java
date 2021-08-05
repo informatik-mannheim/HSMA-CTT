@@ -113,7 +113,7 @@ public class RoomController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException {
 
         roomPinValidation(visitData);
 
