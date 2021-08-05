@@ -1,0 +1,39 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Lernräume</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h4>Lernräume</h4>
+
+    <table style="margin: 50px 0 100px 0;" class="table table-hover">
+        <thead style="font-weight: bold">
+        <tr>
+            <th scope="col">Gebäude</th>
+            <th scope="col">Raumnummer</th>
+            <th scope="col">Kapazität</th>
+            <th scope="col">Freie Plätze</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 13px">
+        <tr th:each="roomData: ${learningRoomsCapacity}">
+            <th th:text="${roomData.getBuildingName()}"></th>
+            <th th:text="${roomData.getRoomName()}"></th>
+            <th th:text="${roomData.getMaxCapacity().toString()}"></th>
+            <th th:with="freePlaces= ${roomData.getMaxCapacity()}-${roomData.getVisitorCount()}"
+                th:text="${freePlaces}"></th>
+        </tr>
+
+        </tbody>
+    </table>
+
+
+</div>
+</body>
+</html>
+

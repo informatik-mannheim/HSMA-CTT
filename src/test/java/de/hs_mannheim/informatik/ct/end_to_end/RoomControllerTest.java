@@ -78,7 +78,7 @@ public class RoomControllerTest {
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Room room = new Room(TEST_ROOM_NAME, "A", 10);
         TEST_ROOM_PIN = room.getRoomPin();
         roomService.saveRoom(room);
@@ -191,7 +191,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInFullRoomWithOverride() throws Exception{
+    public void checkInFullRoomWithOverride() throws Exception {
         // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 10);
@@ -206,13 +206,14 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(forwardedUrl(null))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void checkInInvalidCredentials() throws Exception{
+    public void checkInInvalidCredentials() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
@@ -226,10 +227,23 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInInvalidRoomPin() throws Exception{
+    public void checkInInvalidRoomPin() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+                        .with(csrf()))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Invalid Pin"));
+    }
+
+    @Test
+    public void checkInOverrideInvalidRoomPin() throws Exception {
+        this.mockMvc.perform(
+                post("/r/checkInOverride")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)

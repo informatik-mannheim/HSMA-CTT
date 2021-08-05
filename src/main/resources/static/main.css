@@ -139,6 +139,16 @@ input[type=number].email {
     font-size: 1em;
 }
 
+/* Hide the increment/decrement buttons on number inputs used for roomPin*/
+input.pin::-webkit-outer-spin-button,
+input.pin::-webkit-inner-spin-button {
+    display: none;
+}
+
+input[type=number].pin {
+    -moz-appearance: textfield;
+
+
 .tmp-element {
     visibility: hidden;
     white-space: pre;
