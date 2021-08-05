@@ -4,8 +4,11 @@
 	layout:decorate="~{rooms/layout}">
 
 <head>
-<meta http-equiv="refresh" content="30" >
-<title>Veranstaltungsleitenden-Portal</title>
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<meta name="room-pin" th:content="${roomData.roomPin}"/>
+	<meta http-equiv="refresh" content="30" >
+	<title>Veranstaltungsleitenden-Portal</title>
 </head>
 
 <body>
@@ -42,9 +45,7 @@
 					</p>
 				</div>
 				<div class="card-footer">
-					<form method="POST" th:action="@{*{roomResetEndpoint}}">
-						<button id="reset-room" type="button" class="hs-button">Raum zurücksetzen</button>
-					</form>
+					<button id="reset-room" type="button" class="hs-button">Raum zurücksetzen</button>
 				</div>
 			</div>
 
@@ -89,20 +90,7 @@
 
 			</form>
 
-			<script>
-				document.getElementById("reset-room").onclick = () => {
-					if(confirm("Wollen Sie wirklich den Raum zurücksetzen?")){
-						fetch("rest-room-reset")
-						.then(res => res.json())
-						.then(res => {
-							if(res?.success){
-								location.reload();
-							}
-						})
-						.catch(err => console.log(err))
-					}
-				}
-			</script>
+			<script src='/veranstaltungsleitenden-portal.js'></script>
 
 		</div>
 
