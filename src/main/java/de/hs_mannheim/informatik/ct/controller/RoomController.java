@@ -271,7 +271,7 @@ public class RoomController {
             roomVisitService.resetRoom(room);
             return new RestResponse(true);
         }catch(Exception e){
-            return new RestResponse(false,e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
