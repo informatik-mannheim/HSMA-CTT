@@ -38,34 +38,7 @@
     <div style="max-width: 100%;" class="content">
         <h3 class="content-header form-header">Anmeldung als ...</h3>
 
-        <div class="no-js">
-            <form class="checkin-only" action="#"
-                  th:action="${checkInOverwrite} ? @{/r/checkInOverride} : @{/r/checkIn}" method="POST"
-                  name="submit-form">
-                <div class="form-row">
-                    <input style="flex-grow: 1; margin-left: 24px;min-width: 270px" name="visitorEmail" type="email"
-                           class="email"
-                           placeholder="Vollständige E-Mail" value="" required>
-                    <input type="hidden" name="rid" th:field="*{roomId}"/>
-                </div>
-                <div class="form-row">
-                    <input style="margin-left: 24px" type="submit" value="Check-in">
-                </div>
-            </form>
-
-            <form class="checkout-only" action="#" th:action="@{/r/checkOut}" method="POST" name="submit-form">
-                <div class="form-row">
-                    <input style="flex-grow: 1;min-width: 270px" name="visitorEmail;" type="email" class="email"
-                           placeholder="Vollständige E-Mail" value="" required>
-                    <input type="hidden" name="rid" th:field="*{roomId}"/>
-                </div>
-                <div class="form-row">
-                    <input style="margin-left: 24px;" type="submit" value="Abmelden">
-                </div>
-            </form>
-        </div>
-
-        <div class="js-enabled">
+        <div>
             <form name="input-form">
                 <div class="form-row">
                     <input type="radio" id="email-postfix-student" value="student" name="email-postfix" checked>
@@ -159,9 +132,7 @@
 
     <div class="checkin-only" style="margin-top: 32px;">
         <h3 class="content-header">Oder nur vorherigen Check-in beenden?</h3>
-        <a class="button no-js" style="margin-left: 24px;"
-           th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden...</a>
-        <button class="js-enabled" style="margin-left: 24px;" id="checkout-button">Abmelden...</button>
+        <button style="margin-left: 24px;" id="checkout-button">Abmelden...</button>
     </div>
 
 </div>

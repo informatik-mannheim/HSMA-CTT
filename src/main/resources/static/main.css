@@ -7,10 +7,6 @@ body {
     counter-reset: header;
 }
 
-.js-enabled {
-    display: none;
-}
-
 .hidden {
     display: none !important;
 }
