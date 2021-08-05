@@ -95,8 +95,7 @@
 						fetch("rest-room-reset")
 						.then(res => res.json())
 						.then(res => {
-							const {success=false} = res || {}
-							if(success){
+							if(res?.success){
 								location.reload();
 							}
 						})
