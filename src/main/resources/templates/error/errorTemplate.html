@@ -9,8 +9,9 @@
 <body>
 <div layout:fragment="content">
     <h1>Es ist ein Fehler aufgetreten</h1>
-    <h3>Der Raum konnte nicht gefunden werden</h3>
-    <div class="errorMessage">Error: Room not found</div>
+    <div style="font-size: x-large">Error message: <span th:text="${errorMessage}"></span></div>
+
+    <br/>
     <span><a style="color: white" class="backButton" href="javascript:history.back()">Go Back</a></span>
     <span><a style="color: white" class="backButton" href="/">Home</a></span>
 
