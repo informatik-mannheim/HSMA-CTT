@@ -12,7 +12,7 @@ const requestRoomReset = async () => {
             },
             body: formData,
         })
-        const { success } = await res.json()
+        const { success=false } = await res.json()
         return success
 }
 
