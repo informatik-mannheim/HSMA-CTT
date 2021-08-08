@@ -171,6 +171,7 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(forwardedUrl(null))
                 .andExpect(status().isOk());
@@ -202,6 +203,19 @@ public class RoomControllerTest {
                         .with(csrf()))
                 .andExpect(status().is(400))
                 .andExpect(content().string(containsString("Room pin is invalid")));
+    }
+
+    @Test
+    public void checkInOverrideInvalidRoomPin() throws Exception {
+        this.mockMvc.perform(
+                post("/r/checkInOverride")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+                        .with(csrf()))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Invalid Pin"));
     }
 
     @Test
