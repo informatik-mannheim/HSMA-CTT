@@ -162,7 +162,7 @@ public class RoomController {
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidEmailException, InvalidExternalUserdataException {
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
