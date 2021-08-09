@@ -112,10 +112,9 @@ public class RoomController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
-
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
         roomPinValidation(visitData);
-
+  
         val room = getRoomOrThrow(visitData.getRoomId());
 
         if (!visitData.getRoomPin().equals(room.getRoomPin()))
@@ -163,7 +162,7 @@ public class RoomController {
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidRoomPinException {
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
@@ -304,14 +303,14 @@ public class RoomController {
      * @param email The visitors email.
      * @return The visitor.
      */
-    private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) {
-        try {
-            return visitorService.findOrCreateVisitor(email, name, number, address);
-        } catch (InvalidEmailException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-        } catch (InvalidExternalUserdataException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
-        }
+    private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) throws InvalidEmailException, InvalidExternalUserdataException {
+//        try {
+        return visitorService.findOrCreateVisitor(email, name, number, address);
+//        } catch (InvalidEmailException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+//        } catch (InvalidExternalUserdataException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
+//        }
     }
 
     /**
