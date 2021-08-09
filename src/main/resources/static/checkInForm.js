@@ -40,9 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("submit-form-address").value = document.getElementById("guest-address").value;
     })
 
-    document.getElementById("submit-form-checkout").addEventListener("submit", () => {
+    document.getElementById("submit-form-checkout").addEventListener("submit", (ev) => {
         const autoSignIn = document.getElementById("email-auto-sign-in");
         const combinedEmail = getFullEmail();
+
+        if (!validateEmail(combinedEmail)) {
+            // Invalid email error
+            ev.preventDefault();
+            document.getElementById("invalid-email-error")
+                .classList.remove("hidden");
+            return;
+        }
 
         if (autoSignIn.checked) {
             storage.setItem("email", combinedEmail);
@@ -81,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
-                for (let i = 0; i < guestFreeSection.length; i++){
+                for (let i = 0; i < guestFreeSection.length; i++) {
                     guestFreeSection[i].style.visibility = "hidden";
                     guestFreeSection[i].style.maxHeight = "0";
                 }
@@ -91,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
-                for (let i = 0; i < guestFreeSection.length; i++){
+                for (let i = 0; i < guestFreeSection.length; i++) {
                     guestFreeSection[i].style.visibility = "hidden";
                     guestFreeSection[i].style.maxHeight = "0";
                 }
@@ -102,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
-                for (let i = 0; i < guestFreeSection.length; i++){
+                for (let i = 0; i < guestFreeSection.length; i++) {
                     guestFreeSection[i].style.visibility = "visible";
                     guestFreeSection[i].style.maxHeight = "100%";
                 }
@@ -118,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getFullEmail() {
         // Check if the postfix is null
-        if(!!emailPostfix) {
+        if (!!emailPostfix) {
             return emailText.value + emailPostfix;
         } else {
             return emailText.value;
