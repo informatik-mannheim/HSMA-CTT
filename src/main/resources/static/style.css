@@ -106,6 +106,21 @@ tbody {
     padding-top: 25px;
 }
 
+.backButton{
+    padding: 6px;
+    background-color: #22376f;
+    border-radius: 10px;
+}
+
+.backButton:hover{
+    text-decoration: none;
+    background-color: #3f6fd7;
+}
+
+.btn-for-collapsible i {
+    float: right;
+}
+
 .collapseMarginBottom{
     margin-bottom: 60px;
 }
@@ -188,3 +203,7 @@ tbody {
     background-color: #3f6fd7;
 }
 
+.errorMessage{
+    font-size: xx-large;
+    padding-bottom: 15px;
+}
