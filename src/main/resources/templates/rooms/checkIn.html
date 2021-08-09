@@ -78,14 +78,6 @@
                     <label for="email-auto-sign-in">Für künftigen automatischen Check-in speichern</label>
                 </div>
             </form>
-            <div th:if="${privileged}">
-                <h3 class="content-header form-header">Immunitätsnachweise</h3>
-                <div style="margin-left: 22px;">
-                    <input type="checkbox" id="immunitätsnachweise">
-                    <label for="immunitätsnachweise">Ich habe die Immunitätsnachweise aller Anwesenden
-                        kontrolliert.</label>
-                </div>
-            </div>
 
             <form action="#" th:action="${checkInOverwrite} ? @{/r/checkInOverride} : @{/r/checkIn}" method="POST"
                   id="submit-form" name="submit-form">
@@ -101,6 +93,7 @@
                 <div class="form-row checkin-only" style="margin-left: 24px;">
                     <input style="margin-left: 0" type="submit" value="Check-in">
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value="">
+                    <input type="hidden" name="privileged" th:value="${privileged}" />
                     <input type="hidden" name="rid" th:field="*{roomId}"/>
                     <input id="submit-form-name" type="hidden" name="name"/>
                     <input id="submit-form-address" type="hidden" name="address"/>
@@ -114,7 +107,6 @@
                 <input id="submit-form-email-checkout" name="visitorEmail" type="hidden" value="">
             </form>
         </div>
-
         <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in
             wird automatisch beendet.)</i></p>
     </div>
