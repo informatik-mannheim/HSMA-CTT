@@ -38,15 +38,16 @@ h1, h2, h3, h4, h5, h6 {
     color: #22376f;
 }
 
-label[for=roomId] {
+label[for=roomId], label[for=roomPin] {
     font-size: large;
 }
 
-input[id=roomId] {
+input[id=roomId], input[id=roomPin] {
     border-radius: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-bottom: 5px;
+    outline: none;
 }
+
 
 html {
     scroll-behavior: smooth;
@@ -70,22 +71,6 @@ tbody {
     color: white;
 }
 
-
-label[for=roomPin] {
-    font-size: large;
-}
-
-input[id=roomId] {
-    border-radius: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-input[id=roomPin] {
-    border-radius: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-
 .btn-for-faq.btn:focus {
     box-shadow: none;
 }
@@ -94,18 +79,18 @@ input[id=roomPin] {
      margin: 15px 0 15px 0;
      background-color: #d6d6d6;
      text-align: left;
-
 }
 
-.btn-for-index-page {
+.btn-for-index-page, #sendRoom {
     color: white;
     background-color: #22376f;
     border-radius: 10px;
     border: none;
     padding: 3px 10px;
+    width: 120px;
 }
 
-.btn-for-index-page:hover {
+.btn-for-index-page:hover, #sendRoom:hover {
     background-color: #3f6fd7;
     color: white;
     text-decoration: none;
@@ -132,9 +117,6 @@ input[id=roomPin] {
 .backButton:hover{
     text-decoration: none;
     background-color: #3f6fd7;
-}
-table[id=manualCheckIn] td {
-    padding-right: 10px;
 }
 
 .btn-for-collapsible i {
@@ -211,19 +193,11 @@ table[id=manualCheckIn] td {
   width: 60%;
 }
 
-#sendRoom {
-    color: white;
-    background-color: #22376f;
-    border-radius: 10px;
-    border: none;
-    padding: 3px 10px;
-}
-
-#sendRoom:hover {
-    background-color: #3f6fd7;
-}
-
 .errorMessage{
     font-size: xx-large;
     padding-bottom: 15px;
+}
+.index-page-grid{
+    display: grid;
+    grid-template-columns: repeat(2,150px);
 }

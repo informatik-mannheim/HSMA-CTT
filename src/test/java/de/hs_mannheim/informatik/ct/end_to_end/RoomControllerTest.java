@@ -230,7 +230,7 @@ public class RoomControllerTest {
     @Test
     public void checkInInvalidRoomPin() throws Exception {
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME)
+                post("/r/" + TEST_ROOM_NAME)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))

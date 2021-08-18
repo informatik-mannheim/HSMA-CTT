@@ -75,7 +75,7 @@ public class RoomController {
      */
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
-    public String checkIn(@PathVariable String roomId, //does roompin has to be required?
+    public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged,
                           @RequestParam(required = false, value = "roomPin") String roomPinFromRequest,
@@ -89,6 +89,9 @@ public class RoomController {
             roomId = roomIdFromRequest.get();
         val room = getRoomOrThrow(roomId);
         String roomPin = roomPinFromRequest;
+        if(roomPin == null){
+            System.out.println("Keine pin in request");
+        }
         if (!(roomPin.equals(room.getRoomPin()))) {
             throw new InvalidRoomPinException();
         }
