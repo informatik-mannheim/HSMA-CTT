@@ -38,40 +38,38 @@ h1, h2, h3, h4, h5, h6 {
     color: #22376f;
 }
 
-a:visited, a:link {
-    color: #3f65c4;
-}
-
-a:hover {
-    color: #22376f;
-}
-
-.centerImg {
-    display: block;
-    max-width: 330px;
-    max-height: 800px;
-    width: auto;
-    height: auto;
-    margin-right: auto;
-    margin-left: auto;
-    padding-bottom: 30px;
-    padding-top: 25px;
-}
-
-#checkinContainer {
-    margin: 5px;
-    padding: 15px;
-    border: solid black thin;
-
-}
-
-#checkIn {
-    font-size: x-large;
-}
-
 label[for=roomId] {
     font-size: large;
 }
+
+input[id=roomId] {
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+thead {
+    text-align: center;
+    color: #22376f;
+}
+
+tbody {
+    text-align: center;
+}
+
+.btn-for-collapsible i {
+    float: right;
+}
+
+.btn-for-faq.btn:hover {
+    background-color: #28346c;
+    color: white;
+}
+
 
 label[for=roomPin] {
     font-size: large;
@@ -87,16 +85,52 @@ input[id=roomPin] {
     border-radius: 10px;
     padding-left: 10px;
     padding-right: 10px;
+
+.btn-for-faq.btn:focus {
+    box-shadow: none;
 }
 
-#sendRoom {
+.btn-for-faq.btn {
+     margin: 15px 0 15px 0;
+     background-color: #d6d6d6;
+     text-align: left;
+
+}
+
+.btn-for-index-page {
     color: white;
     background-color: #22376f;
     border-radius: 10px;
-
+    border: none;
+    padding: 3px 10px;
 }
 
-#sendRoom:hover {
+.btn-for-index-page:hover {
+    background-color: #3f6fd7;
+    color: white;
+    text-decoration: none;
+}
+
+.centerImg {
+    display: block;
+    max-width: 330px;
+    max-height: 800px;
+    width: auto;
+    height: auto;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 30px;
+    padding-top: 25px;
+}
+
+.backButton{
+    padding: 6px;
+    background-color: #22376f;
+    border-radius: 10px;
+}
+
+.backButton:hover{
+    text-decoration: none;
     background-color: #3f6fd7;
 }
 table[id=manualCheckIn] td {
@@ -107,8 +141,18 @@ table[id=manualCheckIn] td {
     float: right;
 }
 
-html {
-    scroll-behavior: smooth;
+.collapseMarginBottom{
+    margin-bottom: 60px;
+}
+
+#checkinContainer {
+    margin: 5px;
+    padding: 15px;
+    border: solid black thin;
+}
+
+#checkIn {
+    font-size: x-large;
 }
 
 #collapseButtonInfo {
@@ -159,22 +203,27 @@ html {
     color: #fff;
 }
 
-.collapseMarginBottom{
-    margin-bottom: 60px;
-}
-
-.btn-for-faq.btn:hover {
-    background-color: #28346c;
-    color: white;
-}
-.btn-for-faq.btn:focus {
-    box-shadow: none;
-}
-.btn-for-faq.btn {
-     margin: 15px 0 15px 0;
-     background-color: #d6d6d6;
-     text-align: left;
-}
 #faq-page-container {
     margin-bottom: 100px;
+}
+
+#learningRoomsTable{
+  width: 60%;
+}
+
+#sendRoom {
+    color: white;
+    background-color: #22376f;
+    border-radius: 10px;
+    border: none;
+    padding: 3px 10px;
+}
+
+#sendRoom:hover {
+    background-color: #3f6fd7;
+}
+
+.errorMessage{
+    font-size: xx-large;
+    padding-bottom: 15px;
 }

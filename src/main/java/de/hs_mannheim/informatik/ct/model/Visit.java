@@ -22,7 +22,10 @@ import java.util.Date;
 
 public interface Visit {
     Visitor getVisitor();
+
     Date getStartDate();
+
     Date getEndDate();
+
     String getLocationName();
 }

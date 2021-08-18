@@ -15,6 +15,13 @@
         und nach 4 Wochen
         automatisch gelöscht.<br/>
     <hr/>
+    <div id="freeLearningPlaces" class="mt-3 mb-3">
+        <p th:text="${freeLearnerPlaces} == 1 ? 'Aktuell ist ein Lernplatz frei.' : 'Aktuell sind '+${freeLearnerPlaces}+' Lernplätze frei.'">asdf</p>
+        <a href="/learningRooms" class="btn-for-index-page" >Details</a>
+        <a href="/" class="btn-for-index-page" >Aktualisieren</a>
+    </div>
+    <hr/>
+
     <div id="checkinContainer" class="mt-3 mb-3">
         <form id="checkInForm" action="/r/noId" class="mb-3">
             <h6 id="checkIn">Manueller Check-In</h6><br/>

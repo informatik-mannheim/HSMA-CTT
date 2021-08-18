@@ -4,14 +4,9 @@ import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import lombok.val;
 import lombok.var;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,8 +44,8 @@ public class ContactListGenerator {
         this.tableCellValues = tableCellValues;
     }
 
-    public HSSFWorkbook generateWorkbook(Iterable<Contact<?>> contacts, String targetEmail) {
-        val workbook = new HSSFWorkbook();
+    public Workbook generateWorkbook(Iterable<Contact<?>> contacts, String targetEmail) {
+        val workbook = new XSSFWorkbook();
         val sheet = workbook.createSheet(sheetName);
 
         writeText(appendRow(sheet), headerText.apply(targetEmail), styleWithFont(workbook, headerFontStyler));
@@ -68,7 +63,7 @@ public class ContactListGenerator {
         return workbook;
     }
 
-    private void writeContacts(Iterable<Contact<?>> contacts, String targetEmail, HSSFWorkbook workbook, HSSFSheet sheet) {
+    private void writeContacts(Iterable<Contact<?>> contacts, String targetEmail, Workbook workbook, Sheet sheet) {
         val defaultStyle = workbook.createCellStyle();
         val contactStyle = styleWithFont(workbook, contactStyler);
         for (val contact : contacts) {
@@ -85,13 +80,13 @@ public class ContactListGenerator {
         }
     }
 
-    private static void writeText(HSSFRow row, String headerText, CellStyle style) {
+    private static void writeText(Row row, String headerText, CellStyle style) {
         val cell = row.createCell(0);
         cell.setCellValue(headerText);
         cell.setCellStyle(style);
     }
 
-    private static void writeCells(HSSFRow row, Iterable<String> cellTexts, CellStyle style) {
+    private static void writeCells(Row row, Iterable<String> cellTexts, CellStyle style) {
         var cellIndex = 0;
         for (val cellText : cellTexts) {
             val cell = row.createCell(cellIndex++);
@@ -109,11 +104,11 @@ public class ContactListGenerator {
         return texts;
     }
 
-    private static HSSFRow appendRow(HSSFSheet sheet) {
+    private static Row appendRow(Sheet sheet) {
         return sheet.createRow(sheet.getLastRowNum() + 1);
     }
 
-    private static HSSFCellStyle styleWithFont(HSSFWorkbook workbook, FontStyler fontStyler) {
+    private static CellStyle styleWithFont(Workbook workbook, FontStyler fontStyler) {
         val font = workbook.createFont();
         val style = workbook.createCellStyle();
 

@@ -25,7 +25,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 
-
 @Entity
 @Getter
 @AllArgsConstructor
@@ -67,10 +66,12 @@ public class RoomVisit implements Visit {
     }
 
     public void checkOut(@NonNull Date checkOutDate, @NonNull CheckOutSource reason) {
-        if(endDate == null) {
+        // normal check out
+        // or enddate was set but user did not got checked out
+        if (endDate == null && reason != CheckOutSource.NotCheckedOut) {
             endDate = checkOutDate;
             checkOutSource = reason;
-        }else if(checkOutSource != CheckOutSource.NotCheckedOut){
+        } else if (checkOutSource == CheckOutSource.NotCheckedOut) {
             checkOutSource = CheckOutSource.AutomaticCheckout;
         }
     }
@@ -97,10 +98,13 @@ public class RoomVisit implements Visit {
         private String address;
         private String number;
 
+        private String roomPin;
+        private boolean privileged;
+
         public Data(RoomVisit visit, int currentVisitorCount) {
 
-            if (visit.visitor instanceof ExternalVisitor){
-                var externalVisitor = (ExternalVisitor)visit.visitor;
+            if (visit.visitor instanceof ExternalVisitor) {
+                var externalVisitor = (ExternalVisitor) visit.visitor;
                 this.address = externalVisitor.getAddress();
                 this.name = externalVisitor.getName();
                 this.number = externalVisitor.getNumber();
@@ -120,14 +124,6 @@ public class RoomVisit implements Visit {
             this.roomId = roomData.getRoomId();
             this.roomName = roomData.getRoomName();
             this.roomCapacity = roomData.getMaxCapacity();
-        }
-    }
-
-    public enum CheckOutSource {
-        NotCheckedOut, UserCheckout, AutomaticCheckout, RoomReset;
-
-        public static CheckOutSource getDefault() {
-            return CheckOutSource.UserCheckout;
         }
     }
 }

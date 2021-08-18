@@ -16,7 +16,9 @@ public class Contact<T extends Visit> {
         return targetVisit.getVisitor();
     }
 
-    public Visitor getContact() { return contactVisit.getVisitor(); }
+    public Visitor getContact() {
+        return contactVisit.getVisitor();
+    }
 
     public String getContactLocation() {
         assert targetVisit.getLocationName().equals(contactVisit.getLocationName());
