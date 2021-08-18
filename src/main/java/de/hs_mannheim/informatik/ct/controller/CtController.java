@@ -346,79 +346,56 @@ public class CtController implements ErrorController {
 
     @RequestMapping("/faq")
     public String showFaq(Model model) {
-        String[] questions1 = {"Wie kann ich mich einchecken?",
-                "Wie kann ich mich auschecken?",
-                "Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?",
-                "Kann ich auch andere einchecken?",
-                "Kann ich mich auch später ein- bzw. auschecken?",
-                "Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen?",
-                "Was ist, wenn ich vergessen habe mich auszuchecken?",
-                " Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?"};
-        String[] answers1 = {"<p>Du musst lediglich mit deinem Smartphone den QR-Code abscannen, dann wirst du automatisch zum Check in für den passenden Raum weitergeleitet. Alternativ, wenn du keinen QR-Scanner zur Verfügung hast, kannst du auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort findest du <a href='https://ctt.hs-mannheim.de/howToQr'>hier</a>.</p>",
-                "<p>Das Auschecken funktioniert genau so, wie das Einchecken. Du musst lediglich den QR-Code abscannen und dann ganz unten auf den Button Abmelden klicken. Dann wirst du automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort findest du <a href='https://ctt.hs-mannheim.de/howToQr'>hier</a>.</p>",
-                "<p>Auf jedem Zettel befindet sich oberhalb des QR Codes eine URL. Du kannst auch einfach in deinem Browser die URL eintippen und dich so beispielsweise mit deinem Laptop oder Tablet einchecken. Falls du gar kein Gerät zur Verfügung hast bitte jemand anderen dich einzuchecken. Eine ausführliche Anleitung dazu findest du <a href='https://ctt.hs-mannheim.de/howToInkognito'>hier</a>.</p>",
-                "<p>Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffne dazu einfach ein weiteres Fenster in deinem Browser und rufe die URL auf dem Zettel auf. Anschließend, einfach die Daten der Person eintragen. Der Einfachheitshalber kannst du das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen. Eine etwas ausführlichere Beschreibung findest du <a href='https://ctt.hs-mannheim.de/howToInkognito'>hier</a>.</p>",
-                "<p>Nein, es ist sehr wichtig dass das ein uns auschecken auch immer genau dann passiert, wenn du den Raum betrittst oder verlässt, sonst werden im System falsche Uhrzeiten gespeichert.</p>",
-                "<p>Nein,  leider geht das aktuell nur bei Online Veranstaltungen.</p>",
-                "<p>Du wirst automatisch ausgecheckt, wenn du einen anderen Raum betrittst. Notfalls checkt dich das System abends aus. Für die Kontaktverfolgung warst du dann leider noch im Raum.</p>",
-                " <p>Wenn du positiv getestet wurdest ist es sehr wichtig, dass du eine E-Mail an <a href='javascript:linkTo_UnCryptMailto('nbjmup;dpspob/{wAit.nbooifjn/ef')'>corona.zv@hs-mannheim.de</a> schreibst und darin deine Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des positiven Tests mitteilst.</p>"};
-        ArrayList<String> answers = getFAQText().get("answers");
-        ArrayList<String> questions = getFAQText().get("questions");
+        Map<String, ArrayList<String>> faqs = getFAQText();
+        ArrayList<String> answers = faqs.get("answers");
+        ArrayList<String> questions = faqs.get("questions");
         model.addAttribute("questions", questions);
         model.addAttribute("answers", answers);
         return "faq";
     }
 
+    /**
+     * Helper method to get all the text needed for the FAQ page, stored in a xml file
+     *
+     * @return Map with 2 Array lists, one for all the answers and one for all the questions
+     */
+
     public Map<String, ArrayList<String>> getFAQText() {
-        // refactor naming, email link bug, anleitung
         Map<String, ArrayList<String>> faqs = new HashMap<>();
         String FILENAME = "src/main/resources/static/faq.xml";
         ArrayList<String> answers = new ArrayList<>();
         ArrayList<String> questions = new ArrayList<>();
-        // Instantiate the Factory
+        //instanciate factory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
         try {
-
-            // optional, but recommended
-            // process XML securely, avoid attacks like XML External Entities (XXE)
+            // optional, but recommended process XML securely, avoid attacks like XML External Entities (XXE)
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             // parse XML file
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(new File(FILENAME));
-            // optional, but recommended
-            // http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
-            // get <staff>
-            NodeList list = doc.getElementsByTagName("faq-element");
-
-            for (int temp = 0; temp < list.getLength(); temp++) {
-
-                Node node = list.item(temp);
-
+            // get all faqs
+            NodeList faqNodes = doc.getElementsByTagName("faq-element");
+            for (int i = 0; i < faqNodes.getLength(); i++) {
+                Node node = faqNodes.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
-
                     Element element = (Element) node;
-
-                    // get staff's attribute
-                    String id = element.getAttribute("id");
-
                     // get text
                     String question = element.getElementsByTagName("question").item(0).getTextContent();
                     String answer = element.getElementsByTagName("answer").item(0).getTextContent();
-// get complete content and add to arraylist, then return list
+                    if(i==7){
+                        System.out.print(answer);
+                    }
+                    // save answers and questions in ArrayList to return
                     answers.add(answer);
                     questions.add(question);
-
-
                 }
             }
-
+            faqs.put("answers", answers);
+            faqs.put("questions", questions);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
-        faqs.put("answers", answers);
-        faqs.put("questions", questions);
         return faqs;
     }
 
