@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import de.hs_mannheim.informatik.ct.util.RoomTypeConverter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -83,8 +84,8 @@ public class RoomService {
             String building = values[0];
             String roomName = values[1];
             int roomCapacity = Integer.parseInt(values[2]);
-            String type = values[3];
-            return new Room(roomName, building, roomCapacity, type);
+            int rna = Integer.parseInt(values[3]);
+            return new Room(roomName, building, roomCapacity, RoomTypeConverter.getInstance().convertRNAToRoomType(rna));
         }).forEach(this::saveRoom);
     }
 
@@ -102,8 +103,11 @@ public class RoomService {
             Row row = iter.next();
 
             String building, roomName;
+            int rna;
             int roomCapacity;
+
             try {
+                rna = (int) row.getCell(8).getNumericCellValue();
                 building = row.getCell(32).getStringCellValue();
                 roomName = row.getCell(34).getStringCellValue();
                 roomCapacity = (int) row.getCell(35).getNumericCellValue();
@@ -117,8 +121,8 @@ public class RoomService {
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
                 continue;
             }
-
-            rooms.add(new Room(roomName, building, roomCapacity));
+            RoomTypeConverter.RoomType type = RoomTypeConverter.getInstance().convertRNAToRoomType(Integer.valueOf(rna));
+            rooms.add(new Room(roomName, building, roomCapacity, type));
         }
 
         this.saveAllRooms(rooms);
