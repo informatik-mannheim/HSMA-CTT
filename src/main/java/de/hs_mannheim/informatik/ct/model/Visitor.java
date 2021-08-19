@@ -25,13 +25,13 @@ import lombok.*;
 import javax.persistence.*;
 
 
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(indexes = @Index(columnList = "email"))
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Visitor {
     @Id
     @GeneratedValue

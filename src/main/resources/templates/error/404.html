@@ -1,0 +1,19 @@
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Error</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>Es ist ein Fehler aufgetreten</h1>
+    <h3>Die von ihnen gewählte URL ist nicht erreichbar</h3>
+    <div class="errorMessage">Error: 404</div>
+    <span><a style="color: white" class="backButton" href="javascript:history.back()">Go Back</a></span>
+    <span><a style="color: white" class="backButton" href="/">Home</a></span>
+
+</div>
+</body>
+</html>

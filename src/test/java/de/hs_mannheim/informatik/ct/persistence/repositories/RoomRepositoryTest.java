@@ -11,6 +11,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class RoomRepositoryTest {
@@ -38,5 +41,18 @@ public class RoomRepositoryTest {
         String roomPinBeforePersistance = room.getRoomPin();
         val pinTestRoom = entityManager.persist(room);
         Assertions.assertEquals(roomPinBeforePersistance, roomRepository.findById("pintest").get().getRoomPin());
+    }
+
+    @Test
+    public void getStudyRoomTotalCapacity_noRooms() {
+        roomRepository.getTotalStudyRoomsCapacity(new String[]{"test"});
+    }
+
+    @Test
+    public void getStudyRoomTotalCapacity_oneMatchingRoom() {
+        entityManager.persist(new Room("test", "t", 30));
+        entityManager.persist(new Room("test_noStudy", "t", 20));
+        val capacity = roomRepository.getTotalStudyRoomsCapacity(new String[]{"test"});
+        assertThat(capacity, equalTo(30));
     }
 }

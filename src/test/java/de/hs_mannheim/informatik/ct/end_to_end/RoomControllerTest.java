@@ -20,6 +20,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -36,6 +37,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -74,7 +79,7 @@ public class RoomControllerTest {
     private final String TEST_USER_EMAIL = "1233920@stud.hs-mannheim.de";
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Room room = new Room(TEST_ROOM_NAME, "A", 10);
         TEST_ROOM_PIN = room.getRoomPin();
         roomService.saveRoom(room);
@@ -103,7 +108,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void accessingImportWithoutAdminLogin() throws Exception{
+    public void accessingImportWithoutAdminLogin() throws Exception {
         // /import (should not be accessible without admin login)
         // todo find a way to check for redirect without 'http://localhost'
         this.mockMvc.perform(
@@ -122,6 +127,39 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void openEventManagerPortal() throws Exception {
+        this.mockMvc.perform(
+                get("/r/"+TEST_ROOM_NAME+"/event-manager-portal")
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void resetRoomWithDefaultRedirectURI() throws Exception {
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/r/" + TEST_ROOM_NAME + "?&privileged=true"));
+    }
+
+    @Test
+    public void resetRoomWithCustomRedirectURI() throws Exception {
+        String redirectURI = URLEncoder.encode("/r/"+TEST_ROOM_NAME+"/event-manager-portal", "UTF-8");
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("redirectURI", redirectURI)
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(URLDecoder.decode(redirectURI, "UTF-8")));
     }
 
     @Test
@@ -154,7 +192,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInFullRoomWithOverride() throws Exception{
+    public void checkInFullRoomWithOverride() throws Exception {
         // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 10);
@@ -169,13 +207,14 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("visitorEmail", TEST_USER_EMAIL)
                         .param("roomId", TEST_ROOM_NAME)
+                        .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(forwardedUrl(null))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void checkInInvalidCredentials() throws Exception{
+    public void checkInInvalidCredentials() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
@@ -185,11 +224,11 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(status().reason("Invalid Email"));
+                .andExpect(content().string(containsString("Email is invalid")));
     }
 
     @Test
-    public void checkInInvalidRoomPin() throws Exception{
+    public void checkInInvalidRoomPin() throws Exception {
         // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
@@ -199,7 +238,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(status().reason("Invalid Pin"));
+                .andExpect(content().string(containsString("Room pin is invalid")));
     }
 
     @Test
@@ -248,29 +287,51 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void roomNotFoundException() throws Exception{
+    public void asyncRoomReset() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("roomPin", TEST_ROOM_PIN)
+        )
+                .andExpect(status().is(200));
+    }
+
+    @Test
+    public void asyncRoomResetWithInvalidPin() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+        )
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    public void roomNotFoundException() throws Exception {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
-                .andExpect(status().reason(containsString("Room not found"))); // checking if error message is displayed for user
+                .andExpect(content().string(containsString("Room not found")));// checking if error message is displayed for user
     }
 
+
     /**
-     *  Helper method that creates users to fill room.
-     *  An address is created by combining iterator value with '@stud.hs-mannheim.de'.
-     *  To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
-     * @param room the room that should get filled.
+     * Helper method that creates users to fill room.
+     * An address is created by combining iterator value with '@stud.hs-mannheim.de'.
+     * To prevent the Test-User getting checked in, 0@stud.hs-mannheim.de is prevented as a fallback Address.
+     *
+     * @param room   the room that should get filled.
      * @param amount the amount the room will be filled.
      */
-    public void fillRoom(Room room, int amount) throws InvalidEmailException {
+    public void fillRoom(Room room, int amount) throws InvalidEmailException, InvalidExternalUserdataException {
 
         for (int i = 0; i < amount; i++) {
             String randomUserEmail = String.format("%d@stud.hs-mannheim.de", i);
 
-            if(randomUserEmail != TEST_USER_EMAIL){
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de"), room);
+            if (randomUserEmail != TEST_USER_EMAIL) {
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("" + i + "@stud.hs-mannheim.de", null, null, null), room);
             } else {
-                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de"), room);
+                roomVisitService.visitRoom(visitorService.findOrCreateVisitor("0@stud.hs-mannheim.de", null, null, null), room);
             }
         }
     }

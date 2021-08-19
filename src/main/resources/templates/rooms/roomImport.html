@@ -9,31 +9,32 @@
 
 <body>
 
-	<div layout:fragment="content">
-	    <div class="border border-secondary p-2">
-	        <h5 class="mb-4">Raumliste aus CSV-Datei importieren</h5>
-	
-	        <p>Laden Sie hier eine Raumliste als .CSV-Datei hoch </p>
-	        <p>Spalten der CSV: Gebäudekürzel;Raumname;Raumkapazität;Raumart</p>
-	
-	        <form action="import" method="post" enctype=multipart/form-data>
-	
-	            <div class="row form-group">
-	                <label class="col-sm-2" for="csvFile"> </label>
-	                <input class="col-sm-4" type="file" accept=".csv,.xlsm"  id="csvFile" name="file" size="32" required autofocus/>
-	                <input type="hidden"
-	                       th:name="${_csrf.parameterName}"
-	                       th:value="${_csrf.token}"/>
-	            </div>
-	
-	            <div class="row">
-	                <div class="col-sm-2">
-	                    <button type="submit" class="btn btn-info">Hochladen</button>
-	                </div>
-	            </div>
-	        </form>
-	    </div>
-	</div>
+<div layout:fragment="content">
+    <div class="border border-secondary p-2">
+        <h5 class="mb-4">Raumliste aus CSV-Datei importieren</h5>
+
+        <p>Laden Sie hier eine Raumliste als .CSV-Datei hoch </p>
+        <p>Spalten der CSV: Gebäudekürzel;Raumname;Raumkapazität</p>
+
+        <form action="import" method="post" enctype=multipart/form-data>
+
+            <div class="row form-group">
+                <label class="col-sm-2" for="csvFile"> </label>
+                <input class="col-sm-4" type="file" accept=".csv,.xlsm" id="csvFile" name="file" size="32" required
+                       autofocus/>
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-info">Hochladen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

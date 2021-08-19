@@ -12,12 +12,13 @@
 <div layout:fragment="content">
 
     <div th:unless="${autoAbmeldung == ''}">
-        <p class="alert alert-info">Sie wurden automatisch aus der Veranstaltung <span th:text="${autoAbmeldung}"></span> abgemeldet.
+        <p class="alert alert-info">Sie wurden automatisch aus der Veranstaltung <span
+                th:text="${autoAbmeldung}"></span> abgemeldet.
             Bitte melden Sie sich in Zukunft manuell von Veranstaltungen ab.</p>
     </div>
 
-	<p>Bitte denken Sie daran, sich beim Verlassen des Raums wieder abzumelden.</p>
-	
+    <p>Bitte denken Sie daran, sich beim Verlassen des Raums wieder abzumelden.</p>
+
     <form action="/abmelden">
         <input type="hidden" id="visitorEmail" name="visitorEmail" th:value="${visitorEmail}"/>
         <div class="row">
