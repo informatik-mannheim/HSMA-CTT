@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.end_to_end;
 import de.hs_mannheim.informatik.ct.RoomServiceHelper;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.util.RoomTypeConverter;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -190,6 +192,28 @@ public class ImportRoomsFromFile {
         }
     }
 
+    // check room type after import
+    @Test
+    public void importCsv_checkRoomTypeAfterImport() throws IOException {
+        String[] newRoomNames = new String[]{"TestR00m", "otherTestRoom", "test2", "room"};
+        List<String[]> testRoomData = helper.createRoomData(newRoomNames);
+
+        ArrayList<String> roomRNAs = new ArrayList<>();
+        for (String[] roomData : testRoomData) {
+            roomRNAs.add(roomData[3]);
+        }
+
+        roomService.importFromCsv(helper.createCsvBuffer(testRoomData));
+
+        for(String[] roomData : testRoomData){
+            Optional<Room> room = roomService.findByName(roomData[1]);
+            assertThat(room.isPresent(), equalTo(true));
+            if(room.isPresent()){
+                assertThat(room.get().getType(), equalTo(RoomTypeConverter.RoomType.HOERSAAL));
+            }
+        }
+    }
+
     @Test
     public void importExcel_overriteMultipleRooms() throws Exception {
         String testExcelPath = "excelForTest.xlsm";
@@ -207,6 +231,7 @@ public class ImportRoomsFromFile {
         roomService.saveRoom(
                 new Room("A-102", "A", 8)
         );
+
         InputStream is = helper.inputStreamFromTestExcel(testExcelPath);
         roomService.importFromExcel(is);
 
