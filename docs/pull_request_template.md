@@ -13,12 +13,12 @@
 
 ## Checklist
 
-- [ ] code formatted?
-- [ ] unnecessary comments removed?
-- [ ] printout statements removed?
-- [ ] If you made backend changes: Did all tests have passed? Do you need to adjust some tests or write knew ones?
-- [ ] If you made frontend changes: Did you test the UI on different devices/ browsers (firefox, chrom, iphone, android phone)? Screenshots may also be helpful
+- [ ] Is the code formatted correctly?
+- [ ] Unnecessary comments removed?
+- [ ] Printout statements removed?
+- [ ] If you made backend changes: Did all tests pass? Do you need to adjust some tests or write new ones?
+- [ ] If you made frontend changes: Did you test the UI on different devices/ browsers (Firefox, Chrome, Safari, different smartphone sizes)
 - [ ] Is your code easy to understand or do you need to insert some comments?
-- [ ] explain the issue for the reviewer and your steps to solve the issue => makes it a lot more easy for the reviewer
-- [ ] label your pull request (frontend/ backend/ testing/ styling/ sql/...)
+- [ ] Explain the issue for the reviewer and your steps to solve the issue => makes it a lot more easy for the reviewer
+- [ ] Label your pull request (frontend/ backend/ testing/ styling/ sql/...)
 
