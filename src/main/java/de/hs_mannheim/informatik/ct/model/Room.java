@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.model;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.util.RoomTypeConverter.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,7 +36,7 @@ public class Room {
     private String buildingName;
     private int maxCapacity;
     private String roomPin;
-    private String type;
+    private RoomType type;
 
     public Room(String name, String buildingName, int maxCapacity) {
         this.name = name;
@@ -44,7 +45,7 @@ public class Room {
         this.roomPin = String.format("%04d", new Random().nextInt(10000));
     }
 
-    public Room(String name, String buildingName, int maxCapacity, String type) {
+    public Room(String name, String buildingName, int maxCapacity, RoomType type) {
         this(name, buildingName, maxCapacity);
         this.type = type;
     }
@@ -66,6 +67,7 @@ public class Room {
         private String building;
         @NonNull
         private String roomPin;
+        private RoomType type;
 
         public Data(Room room) {
             roomName = room.getName();
@@ -73,6 +75,7 @@ public class Room {
             maxCapacity = room.getMaxCapacity();
             building = room.getBuildingName();
             roomPin = room.getRoomPin();
+            type = room.getType();
         }
     }
 }
