@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct;
 import com.sun.istack.NotNull;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.util.RoomTypeConverter;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
@@ -77,7 +78,9 @@ public class RoomServiceHelper {
             roomService.saveRoom(new Room(
                     room[1],                    // room name
                     room[0],                    // building name
-                    Integer.parseInt(room[2])   // parse room size from string to int
+                    Integer.parseInt(room[2]),   // parse room size from string to int
+                    RoomTypeConverter.getInstance().convertRNAToRoomType(Integer.parseInt(room[3]))
+                    // parse rna number from string and convert it into room type
             ));
         }
     }
@@ -92,12 +95,14 @@ public class RoomServiceHelper {
         List<String[]> roomData = new ArrayList<>();
         String buildingName = "A";
         String size = "3";
+        String rna = "513";  // HOERSAAL
 
         for (String name : roomNames) {
             roomData.add(new String[]{
                     buildingName,
                     name,
-                    size
+                    size,
+                    rna
             });
         }
 
