@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import de.hs_mannheim.informatik.ct.controller.RoomController;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -50,6 +51,21 @@ public class RoomService {
             return roomsRepo.findByNameIgnoreCase(roomName);
         } catch (IncorrectResultSizeDataAccessException e) {
             return roomsRepo.findById(roomName);
+        }
+    }
+
+    /**
+     * Gets a room by id or throws a RoomNotFoundException.
+     *
+     * @param roomId The rooms id.
+     * @return The room.
+     */
+    public Room getRoomOrThrow(String roomId) {
+        Optional<Room> room = this.findByName(roomId);
+        if (room.isPresent()) {
+            return room.get();
+        } else {
+            throw new RoomController.RoomNotFoundException();
         }
     }
 
