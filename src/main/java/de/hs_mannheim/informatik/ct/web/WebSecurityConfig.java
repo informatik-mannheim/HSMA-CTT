@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/", "/besuch", "/templates/datenschutz.html").permitAll()
 		.antMatchers("/neu", "/neuVer", "/veranstaltungen", "/templates/veranstaltungsliste.html").access("hasAnyRole('USER', 'PROF', 'ADMIN')")
 		.mvcMatchers("/tracing/**").hasAnyRole("TRACER", "ADMIN")
-		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**", "/r/import", "/printout/rooms").access("hasRole('ADMIN')")
+		.antMatchers("/suche", "/suchen", "/liste", "/loeschen", "/download", "/h2-console/**", "/r/import", "/printout/rooms", "/printout/rooms/download").access("hasRole('ADMIN')")
 		.and().formLogin().loginPage("/login").permitAll()
 	    .and().csrf().ignoringAntMatchers("/h2-console/**")
 	    .and().headers().frameOptions().sameOrigin();
