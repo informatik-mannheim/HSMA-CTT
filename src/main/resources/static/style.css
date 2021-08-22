@@ -87,7 +87,11 @@ tbody {
     border-radius: 10px;
     border: none;
     padding: 3px 10px;
-    width: 120px;
+}
+#sendRoom{
+    padding: 0px;
+    width: 60px;
+    margin-bottom: 4px;
 }
 
 .btn-for-index-page:hover, #sendRoom:hover {
@@ -199,5 +203,27 @@ tbody {
 }
 .index-page-grid{
     display: grid;
-    grid-template-columns: repeat(2,150px);
+    width: 150px;
+    column-gap: 20px;
+    row-gap: 5px;
+    grid-template:
+    [row1-start] "area1 area2 ." [row1-end]
+    [row2-start] "area3 area4 area5" [row2-end]
 }
+.grid-item-1 {
+    grid-area: area1;
+}
+.grid-item-2 {
+    grid-area: area2;
+}
+.grid-item-3 {
+    grid-area: area3;
+}
+.grid-item-4 {
+    grid-area: area4;
+}
+.grid-item-5 {
+    grid-area: area5;
+}
+
+
