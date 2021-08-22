@@ -361,10 +361,6 @@ public class RoomController {
     public static class RoomNotFoundException extends RuntimeException {
     }
 
-    @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Wrong RoomPin")
-    public static class WrongRoomPinException extends RuntimeException {
-    }
-
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Visitor not found")
     public static class VisitorNotFoundException extends RuntimeException {
     }

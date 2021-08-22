@@ -235,7 +235,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(content().string(containsString("Room pin is invalid")));
+                .andExpect(content().string(containsString("Invalid Pin")));
     }
 
     @Test

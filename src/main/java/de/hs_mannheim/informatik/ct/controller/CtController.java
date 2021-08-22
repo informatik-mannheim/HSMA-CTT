@@ -85,7 +85,7 @@ public class CtController {
     @Value("${hostname}")
     private String host;
 
-   @RequestMapping("/")
+    @RequestMapping("/")
     public String home(Model model) {
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         return "index";
@@ -138,7 +138,7 @@ public class CtController {
         return besucheEintragen(vid, email, true, model, "/besuchMitCode", response);
     }
 
- @PostMapping("/senden")
+    @PostMapping("/senden")
     public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue = "false") boolean saveMail, Model model,
                                    @RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException, InvalidExternalUserdataException {
 
@@ -223,7 +223,7 @@ public class CtController {
     }
 
 
-      @RequestMapping("/angemeldet")
+    @RequestMapping("/angemeldet")
     public String angemeldet(
             @RequestParam String email, @RequestParam(value = "veranstaltungId") long eventId,
             @RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) throws EventNotFoundException {
