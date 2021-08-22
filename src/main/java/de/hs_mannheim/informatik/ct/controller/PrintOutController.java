@@ -18,31 +18,27 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.val;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.zip.ZipOutputStream;
 
 
 @Controller
@@ -53,6 +49,7 @@ public class PrintOutController {
 
     @Autowired
     private BuildingService buildingService;
+
 
     @Autowired
     private DynamicContentService contentService;
@@ -65,48 +62,71 @@ public class PrintOutController {
 
     @Value("${hostname}")
     private String host;
+    private int threadCount = 4;
 
     @GetMapping(value = "/rooms")
     public String getRoomPrintoutList(Model model) {
-        model.addAttribute("buildings", buildingService.getAllBuildings());
         return "rooms/roomPrintout";
     }
 
-    @GetMapping(value = "/rooms/{building}")
-    public DeferredResult<ResponseEntity<byte[]>> getRoomPrintout(
-            @PathVariable(value = "building") String building,
-            HttpServletRequest request) {
-        val roomsInBuilding = buildingService.getAllRoomsInBuilding(building);
-        if (roomsInBuilding.size() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building not found or empty");
-        }
 
-        val outFileName = String.format("Gebäude %s.docx", building);
+    @RequestMapping(value = "/rooms/download")
+    public ResponseEntity<StreamingResponseBody> getRoomPrintout(
+            HttpServletRequest request,
+            @RequestParam(value = "privileged") boolean privileged) {
+        val allRooms = buildingService.getAllRooms();
 
-        val result = new DeferredResult<ResponseEntity<byte[]>>(120 * 1000L);
-        CompletableFuture.runAsync(() -> {
-            try (val buffer = new ByteArrayOutputStream()) {
-                contentService.writeRoomsPrintOutDocx(
-                        roomsInBuilding,
-                        buffer,
-                        room -> utilities.getUriToLocalPath(
-                                RoomController.getRoomCheckinPath(room),
-                                request
-                        ));
+        StreamingResponseBody responseBody = outputStream -> {
+            try (val zos = new ZipOutputStream(outputStream)) {
 
+                val listOfTheads = new ArrayList<Thread>();
 
-                val response = ResponseEntity
-                        .ok()
-                        .contentType(
-                                MediaType.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + outFileName)
-                        .body(buffer.toByteArray());
-                result.setResult(response);
-            } catch (IOException | XmlException e) {
+                for (int i = 0; i < threadCount; i++) {
+                    int counter = i;
+                    Thread t = new Thread(() -> {
+                        for (Room room : allRooms.subList(allRooms.size() * counter / threadCount, allRooms.size() * (counter + 1) / threadCount)) {
+                            try {
+                                contentService.addRoomPrintOutDocx(
+                                        room,
+                                        privileged,
+                                        zos,
+                                        uriToPath -> utilities.getUriToLocalPath(
+                                                RoomController.getRoomCheckinPath(room),
+                                                request
+                                        )
+                                );
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (XmlException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    );
+                    listOfTheads.add(t);
+                    t.start();
+                }
+
+                for (Thread thread : listOfTheads) {
+                    thread.join();
+                }
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
-        return result;
+        };
 
+
+        if (privileged) {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"PrivilegedRoomNotes.zip\"")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/zip")
+                    .body(responseBody);
+        } else {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"RoomNotes.zip\"")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/zip")
+                    .body(responseBody);
+        }
     }
+
 }

@@ -14,10 +14,12 @@
     <div class="icon-container">
         <div class="icon-background checkmark"></div>
     </div>
-    <p>Bitte beim Verlassen des Raums auch an das Abmelden denken.</p>
-    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post">
+
+    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post" >
+        Bitte beim Verlassen des Raums auch an das
         <input type="hidden" th:field="*{visitorEmail}">
-        <input style="margin-left: 0" type="submit" value="Abmelden">
+        <a  href="javascript:document.forms[0].submit()">Abmelden</a>
+    denken.
     </form>
 </div>
 </body>

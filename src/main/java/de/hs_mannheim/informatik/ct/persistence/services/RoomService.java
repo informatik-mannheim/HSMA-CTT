@@ -3,12 +3,9 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -41,6 +38,8 @@ import lombok.NonNull;
 
 @Service
 public class RoomService {
+
+
     private final String COMMA_DELIMITER = ";";
 
     @Autowired
@@ -55,7 +54,7 @@ public class RoomService {
     }
 
     public Room saveRoom(@NonNull Room room) {
-        return saveAllRooms(Collections.singletonList(room)).get(0);
+            return saveAllRooms(Collections.singletonList(room)).get(0);
     }
 
     public List<Room> saveAllRooms(@NonNull List<Room> roomList) {
@@ -65,6 +64,7 @@ public class RoomService {
     private List<Room> checkRoomPin(List<Room> roomList) {
         List<Room> oldRoomList = roomsRepo.findAll();
         for (Room r : roomList) {
+            checkRoomPinFormatForRoom(r);
             for (Room rOld : oldRoomList) {
                 if (r.getName().equals(rOld.getName())) {
                     r.setRoomPin(rOld.getRoomPin());
@@ -73,6 +73,17 @@ public class RoomService {
             }
         }
         return roomList;
+    }
+
+    private void checkRoomPinFormatForRoom(Room room) {
+        try{
+            Long.parseLong(room.getRoomPin());
+        } catch (NumberFormatException err) {
+            throw new IllegalArgumentException("Wrong roomPin format 'not a number' so can't proceed.");
+        } catch (NullPointerException err) {
+            throw new IllegalArgumentException("Can't save a Room with a null roomPin.");
+        }
+
     }
 
     // TODO: Maybe check if csv is correctly formatted (or accept that the user
@@ -124,5 +135,4 @@ public class RoomService {
 
         workbook.close();
     }
-
 }
