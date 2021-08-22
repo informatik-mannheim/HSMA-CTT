@@ -93,7 +93,7 @@ public class RoomControllerTest {
 
         // /{roomId}
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN).with(csrf()))
+                get("/r/" + TEST_ROOM_NAME).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(
                         containsString(rTestRoom)));
@@ -186,7 +186,7 @@ public class RoomControllerTest {
 
         // request form to check into full room should redirect to roomFull/{roomId}
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN).with(csrf()))
+                get("/r/" + TEST_ROOM_NAME).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("roomFull/" + TEST_ROOM_NAME));
     }
@@ -198,7 +198,7 @@ public class RoomControllerTest {
         fillRoom(testRoom, 10);
 
         this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME + "?roomPin=" + TEST_ROOM_PIN + "&override=true").with(csrf()))
+                get("/r/" + TEST_ROOM_NAME + "?override=true").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl(null));
 
@@ -229,13 +229,16 @@ public class RoomControllerTest {
 
     @Test
     public void checkInInvalidRoomPin() throws Exception {
+        // check in with empty username should
         this.mockMvc.perform(
-                post("/r/" + TEST_ROOM_NAME)
+                post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                        .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(content().string(containsString("Invalid Pin")));
+                .andExpect(content().string(containsString("Room pin is invalid")));
     }
 
     @Test
