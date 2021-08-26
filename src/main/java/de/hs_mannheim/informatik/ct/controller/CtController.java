@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
+import lombok.val;
 
 @Controller
 @Slf4j
@@ -83,11 +83,20 @@ public class CtController {
     private String host;
 
     @RequestMapping("/")
-    public String home(@CookieValue(value = "roomVisitor", required = false) Optional<String> requestRoomVisitor, Model model) {
+    public String home(@CookieValue(value = "roomVisitor", required = false) Optional<String> requestRoomVisitor, Model model, HttpServletResponse response) {
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         model.addAttribute("isCheckedIn", requestRoomVisitor.isPresent());
         if(requestRoomVisitor.isPresent()){
-            model.addAttribute("roomVisitor", requestRoomVisitor.get());
+            val roomVisitorEmail = requestRoomVisitor.get();
+            val visitor = visitorService.findVisitorByEmail(roomVisitorEmail);
+            if(visitor.isPresent()){
+                model.addAttribute("roomVisitor", roomVisitorEmail);
+            }else{
+                Cookie c = new Cookie("roomVisitor", "");
+                c.setMaxAge(0);
+                c.setPath("/");
+                response.addCookie(c);
+            }
         }
         return "index";
     }
