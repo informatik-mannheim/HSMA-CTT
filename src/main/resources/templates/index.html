@@ -20,7 +20,18 @@
         <a href="/learningRooms" class="btn-for-index-page" >Details</a>
         <a href="/" class="btn-for-index-page" >Aktualisieren</a>
     </div>
+
     <hr/>
+
+    <div th:if="${isCheckedIn}">
+        <form class="check-out-form" action="#" th:action="@{/r/checkOut}" method="post">
+            <p>Sie sind noch eingecheckt</p>
+            <input name="visitorEmail" type="hidden" th:value="${roomVisitor}"/>
+            <button class="btn-for-index-page" type="submit">auschecken</button>
+        </form>
+        <hr/>
+    </div>
+
 
     <div id="checkinContainer" class="mt-3 mb-3">
         <form id="checkInForm" action="/r/noId" class="mb-3">
