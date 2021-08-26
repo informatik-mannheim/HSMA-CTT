@@ -42,6 +42,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -113,7 +115,8 @@ public class RoomController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
+    public String checkIn(
+            @ModelAttribute RoomVisit.Data visitData, Model model, HttpServletResponse response) throws UnsupportedEncodingException,InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
         roomPinValidation(visitData);
   
         val room = getRoomOrThrow(visitData.getRoomId());
@@ -143,6 +146,11 @@ public class RoomController {
         }
 
         val visit = roomVisitService.visitRoom(visitor, room);
+
+        Cookie c = new Cookie("roomVisitor", visitor.getEmail());
+        c.setMaxAge(60 * 60 * 24 * 365 * 5);
+        c.setPath("/");
+        response.addCookie(c);
 
         if(visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
@@ -197,10 +205,15 @@ public class RoomController {
     }
 
     @PostMapping("/checkOut")
-    public String checkOut(@ModelAttribute RoomVisit.Data visitData) {
+    public String checkOut(@ModelAttribute RoomVisit.Data visitData, HttpServletResponse response) {
         val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
-
         roomVisitService.checkOutVisitor(visitor);
+
+        Cookie c = new Cookie("roomVisitor", "");
+        c.setMaxAge(0);
+        c.setPath("/");
+        response.addCookie(c);
+
         return "redirect:/r/checkedOut";
     }
 
