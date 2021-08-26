@@ -83,8 +83,12 @@ public class CtController {
     private String host;
 
     @RequestMapping("/")
-    public String home(Model model) {
+    public String home(@CookieValue(value = "roomVisitor", required = false) Optional<String> requestRoomVisitor, Model model) {
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
+        model.addAttribute("isCheckedIn", requestRoomVisitor.isPresent());
+        if(requestRoomVisitor.isPresent()){
+            model.addAttribute("roomVisitor", requestRoomVisitor.get());
+        }
         return "index";
     }
 
