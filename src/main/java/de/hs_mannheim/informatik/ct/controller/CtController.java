@@ -27,9 +27,7 @@ import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,13 +35,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.val;
 
 @Controller
@@ -84,20 +83,22 @@ public class CtController {
 
     @RequestMapping("/")
     public String home(@CookieValue(value = "roomVisitor", required = false) Optional<String> requestRoomVisitor, Model model, HttpServletResponse response) {
-        model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
-        model.addAttribute("isCheckedIn", requestRoomVisitor.isPresent());
+        boolean isCheckedIn = requestRoomVisitor.isPresent();
         if(requestRoomVisitor.isPresent()){
-            val roomVisitorEmail = requestRoomVisitor.get();
-            val visitor = visitorService.findVisitorByEmail(roomVisitorEmail);
-            if(visitor.isPresent()){
-                model.addAttribute("roomVisitor", roomVisitorEmail);
+            val email = requestRoomVisitor.get();
+            List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
+            if(roomVisits.size()>0){
+                model.addAttribute("roomVisitor", email);
             }else{
+                isCheckedIn = false;
                 Cookie c = new Cookie("roomVisitor", "");
                 c.setMaxAge(0);
                 c.setPath("/");
                 response.addCookie(c);
             }
         }
+        model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
+        model.addAttribute("isCheckedIn", isCheckedIn);
         return "index";
     }
 
@@ -325,5 +326,16 @@ public class CtController {
     @RequestMapping("/faq")
     public String showFaq() {
         return "faq";
+    }
+
+    private List<RoomVisit> findCurrentRoomVisitsByEmail(String email){
+        List<RoomVisit> roomVisits = new ArrayList<>();
+        val visitor = visitorService.findVisitorByEmail(email);
+        if(visitor.isPresent()) {
+            for(val roomVisit : roomVisitService.getCheckedInRoomVisits(visitor.get())){
+                roomVisits.add(roomVisit);
+            }
+        }
+        return roomVisits;
     }
 }
