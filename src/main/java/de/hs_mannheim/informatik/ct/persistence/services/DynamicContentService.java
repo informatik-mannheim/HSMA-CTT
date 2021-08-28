@@ -103,10 +103,22 @@ public class DynamicContentService {
 
         Function<Room, byte[]> qrGenerator = roomQr -> {
             // TODO: This is a hack to integrate the PIN code into the QR Code but not in the hyperlink.
-            val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
-                    .queryParam("pin", room.getRoomPin())
-                    .build();
-            return getQRCodePNGImage(qrUri, 500, 500);
+// depending on privileged the ur should look different which is currently not the case
+// A007a qr code funktioniert nicht, A210 qr code dagegen schon .....?????
+            if (privileged) {
+                val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
+                        .queryParam("pin", room.getRoomPin())
+                        .queryParam("privileged", true)
+                        .build();
+                System.out.println("URL: "+qrUri);
+                return getQRCodePNGImage(qrUri, 500, 500);
+            } else {
+                val qrUri = UriComponentsBuilder.fromUri(uriConverter.apply(room).toUri())
+                        .queryParam("pin", room.getRoomPin())
+                        .build();
+                return getQRCodePNGImage(qrUri, 500, 500);
+            }
+
         };
 
         if (privileged) {
