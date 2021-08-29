@@ -54,6 +54,21 @@ public class RoomService {
         }
     }
 
+    /**
+     * Gets a room by id or throws a RoomNotFoundException.
+     *
+     * @param roomId The rooms id.
+     * @return The room.
+     */
+    public Room getRoomOrThrow(String roomId) {
+        Optional<Room> room = this.findByName(roomId);
+        if (room.isPresent()) {
+            return room.get();
+        } else {
+            throw new RoomController.RoomNotFoundException();
+        }
+    }
+
     public Room saveRoom(@NonNull Room room) {
             return saveAllRooms(Collections.singletonList(room)).get(0);
     }
