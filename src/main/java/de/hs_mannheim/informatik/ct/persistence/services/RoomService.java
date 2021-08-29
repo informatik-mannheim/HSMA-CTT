@@ -118,7 +118,7 @@ public class RoomService {
             int roomCapacity;
 
             try {
-                rna = (int) row.getCell(8).getNumericCellValue();
+                rna = (int) row.getCell(8).getNumericCellValue();  // rna = name of the column in the import file, number of the room type
                 building = row.getCell(32).getStringCellValue();
                 roomName = row.getCell(34).getStringCellValue();
                 roomCapacity = (int) row.getCell(35).getNumericCellValue();
