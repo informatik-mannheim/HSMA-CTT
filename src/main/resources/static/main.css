@@ -143,7 +143,7 @@ input.pin::-webkit-inner-spin-button {
 
 input[type=number].pin {
     -moz-appearance: textfield;
-
+}
 
 .tmp-element {
     visibility: hidden;

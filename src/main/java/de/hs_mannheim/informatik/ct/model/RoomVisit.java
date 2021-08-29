@@ -97,6 +97,7 @@ public class RoomVisit implements Visit {
         private String name;
         private String address;
         private String number;
+
         private String roomPin;
         private boolean privileged;
 

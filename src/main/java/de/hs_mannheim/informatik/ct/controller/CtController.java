@@ -48,7 +48,9 @@ import java.util.*;
 
 @Controller
 @Slf4j
+
 public class CtController {
+
     @Autowired
     private EventService eventService;
 
@@ -75,6 +77,7 @@ public class CtController {
 
     @Autowired
     private ContactTracingService contactTracingService;
+
 
     @Value("${server.port}")
     private String port;
@@ -303,6 +306,7 @@ public class CtController {
         return "howToInkognito";
     }
 
+
     @RequestMapping("/learningRooms")
     public String showLearningRooms(Model model) {
         model.addAttribute("learningRoomsCapacity", roomVisitService.getAllStudyRooms());
@@ -313,4 +317,5 @@ public class CtController {
     public String showFaq() {
         return "faq";
     }
+
 }

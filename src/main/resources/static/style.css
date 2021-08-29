@@ -38,15 +38,16 @@ h1, h2, h3, h4, h5, h6 {
     color: #22376f;
 }
 
-label[for=roomId] {
+label[for=roomId], label[for=roomPin] {
     font-size: large;
 }
 
-input[id=roomId] {
+input[id=roomId], input[id=roomPin] {
     border-radius: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-bottom: 5px;
+    outline: none;
 }
+
 
 html {
     scroll-behavior: smooth;
@@ -80,15 +81,20 @@ tbody {
      text-align: left;
 }
 
-.btn-for-index-page {
+.btn-for-index-page, #sendRoom {
     color: white;
     background-color: #22376f;
     border-radius: 10px;
     border: none;
     padding: 3px 10px;
 }
+#sendRoom{
+    padding: 0px;
+    width: 60px;
+    margin-bottom: 4px;
+}
 
-.btn-for-index-page:hover {
+.btn-for-index-page:hover, #sendRoom:hover {
     background-color: #3f6fd7;
     color: white;
     text-decoration: none;
@@ -191,19 +197,33 @@ tbody {
   width: 60%;
 }
 
-#sendRoom {
-    color: white;
-    background-color: #22376f;
-    border-radius: 10px;
-    border: none;
-    padding: 3px 10px;
-}
-
-#sendRoom:hover {
-    background-color: #3f6fd7;
-}
-
 .errorMessage{
     font-size: xx-large;
     padding-bottom: 15px;
 }
+.index-page-grid{
+    display: grid;
+    width: 150px;
+    column-gap: 20px;
+    row-gap: 5px;
+    grid-template:
+    [row1-start] "area1 area2 ." [row1-end]
+    [row2-start] "area3 area4 area5" [row2-end]
+}
+.grid-item-1 {
+    grid-area: area1;
+}
+.grid-item-2 {
+    grid-area: area2;
+}
+.grid-item-3 {
+    grid-area: area3;
+}
+.grid-item-4 {
+    grid-area: area4;
+}
+.grid-item-5 {
+    grid-area: area5;
+}
+
+
