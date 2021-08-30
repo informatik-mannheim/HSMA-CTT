@@ -90,10 +90,15 @@ public class PrintOutController {
                                         room,
                                         privileged,
                                         zos,
-                                        uriToPath -> utilities.getUriToLocalPath(
-                                                RoomController.getRoomCheckinPath(room),
-                                                request
-                                        )
+                                        uriToPath -> {
+                                            val scheme = request.getScheme();
+                                            val localPath = RoomController.getRoomCheckinPath(room);
+                                            if(privileged){
+                                                return utilities.getUriToLocalPath(scheme, localPath, "privileged=true");
+                                            }else{
+                                                return utilities.getUriToLocalPath(scheme, localPath);
+                                            }
+                                        }
                                 );
                             } catch (IOException e) {
                                 e.printStackTrace();

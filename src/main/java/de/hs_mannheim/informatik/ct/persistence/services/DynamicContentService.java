@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.google.zxing.EncodeHintType;
 import de.hs_mannheim.informatik.ct.controller.Utilities;
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Room;
@@ -57,6 +58,7 @@ public class DynamicContentService {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         QRCode.from(uri.toUriString())
                 .withSize(width, height)
+                .withHint(EncodeHintType.MARGIN, "5")
                 .to(ImageType.PNG)
                 .writeTo(out);
 
