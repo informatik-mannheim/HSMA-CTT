@@ -67,19 +67,27 @@ public class Utilities {
      * @param request   The request is used to differentiate between http/https. Should be moved to setting!
      * @return An absolute URI to the given resource
      */
-    public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
+    public UriComponents getUriToLocalPath(String scheme, String localPath) {
+        return createUriBuilder(scheme, localPath).build();
+    }
+
+    public UriComponents getUriToLocalPath(String scheme, String localPath, String query) {
+        return createUriBuilder(scheme, localPath)
+                .query(query)
+                .build();
+    }
+
+    private UriComponentsBuilder createUriBuilder(String scheme, String path){
         if (urlOverride == null) {
             return UriComponentsBuilder.newInstance()
-                    .scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+                    .scheme(scheme) // TODO: Optimally http/https should be configured somewhere
                     .host(host)
                     .port(port)
-                    .path(localPath)
-                    .build();
+                    .path(path);
         } else {
             return UriComponentsBuilder.newInstance()
                     .uri(URI.create(urlOverride))
-                    .path(localPath)
-                    .build();
+                    .path(path);
         }
     }
 }
