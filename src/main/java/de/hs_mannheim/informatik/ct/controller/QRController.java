@@ -71,8 +71,8 @@ public class QRController {
         }
 
         val qrUri = utilities.getUriToLocalPath(
-                RoomController.getRoomCheckinPath(room.get()),
-                request
+                request.getScheme(),
+                RoomController.getRoomCheckinPath(room.get())
         );
 
         return getQRImage(qrUri, width, height);
@@ -89,7 +89,7 @@ public class QRController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        val qrUri = utilities.getUriToLocalPath(String.format(veranstaltungPath, event.get().getId()), request);
+        val qrUri = utilities.getUriToLocalPath(request.getScheme(), String.format(veranstaltungPath, event.get().getId()));
 
         return getQRImage(qrUri, width, height);
     }
