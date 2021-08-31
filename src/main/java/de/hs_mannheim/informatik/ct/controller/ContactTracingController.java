@@ -19,6 +19,9 @@ package de.hs_mannheim.informatik.ct.controller;
  */
 
 import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
@@ -81,15 +84,24 @@ public class ContactTracingController {
     }
 
     @PostMapping("/results")
-    public String doSearch(@RequestParam String email, Model model) {
+    public String doSearch(@RequestParam String email, Model model) throws InvalidEmailException, InvalidExternalUserdataException {
         val target = visitorService.findVisitorByEmail(email);
+      /*  if(!target.isPresent()){
+            visitorService.findOrCreateVisitor(email, "test", "101", "test");
+        }
+        val target2 = visitorService.findVisitorByEmail(email);*/
         if (!target.isPresent()) {
+            System.out.println("Email adresse nicht registriert: "+email);
+
             model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
             return "tracing/search";
         }
 
         val contacts = contactTracingService.getVisitorContacts(target.get());
-
+        System.out.println("Kontaktverfolgungsliste1: "+contacts.toString());
+        // Liste nach hs mail adressen filtern
+        // weiter unterteilen in mailadressen mit buchstaben und zahlen
+        // Für alle 3 Listen helfer methode für verschachtelte Liste
         List<String[]> contactTable = contacts
                 .stream()
                 .map(contact -> {
@@ -100,14 +112,14 @@ public class ContactTracingController {
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
-
+        System.out.println("Kontaktverfolgungsliste2: "+contactTable.toString());
         model.addAttribute("tableHeaders", tracingColumns.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableValues", contactTable);
         model.addAttribute("target", target.get().getEmail());
 
         return "tracing/contactList.html";
     }
-
+    // download in 3 exceltabellen unterteilen
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email) {
         val target = visitorService.findVisitorByEmail(email)

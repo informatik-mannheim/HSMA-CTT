@@ -18,10 +18,17 @@
         <div th:unless="${#lists.isEmpty(tableValues)}">
 
             <p>Hier sind die Kontakte f&uuml;r <span th:text="${target}"></span>.
-                Zur Weitergabe an das Gesundheitsamt können die Daten <a
-                        th:href="@{download(email=${target})}">hier
-                    als Excel-Datei</a>
-                heruntergeladen werden.</p>
+                Zur Weitergabe an das Gesundheitsamt können die Daten in Form von Excel Dateien heruntergeladen werden.
+                Dabei kann jeweils eine seperate Excel-Datei für Studenten, Lehrende/ Hochschulangestellte und Gäste
+                heruntergeladen
+                werden oder alle Kontaktpersonen gesammelt in einer Exceldatei.
+            </p>
+            <ul>
+                <li><a>Studenten</a></li>
+                <li><a>Lehrende und Hochschulangestellte</a></li>
+                <li><a>Gäste</a></li>
+                <li><a th:href="@{download(email=${target})}">Alle Kontaktpersonen</a></li>
+            </ul>
 
             <table class="table table-hover mt-3">
                 <thead class="table-info">

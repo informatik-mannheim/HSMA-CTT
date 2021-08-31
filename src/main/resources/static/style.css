@@ -225,5 +225,8 @@ tbody {
 .grid-item-5 {
     grid-area: area5;
 }
+.error-contact-tracing {
+    color: red;
+}
 
 
