@@ -193,10 +193,6 @@ tbody {
     margin-bottom: 100px;
 }
 
-#learningRoomsTable{
-  width: 60%;
-}
-
 .errorMessage{
     font-size: xx-large;
     padding-bottom: 15px;
