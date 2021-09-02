@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
@@ -45,8 +46,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -98,7 +98,9 @@ public class ContactTracingController {
         }
 
         val contacts = contactTracingService.getVisitorContacts(target.get());
-        System.out.println("Kontaktverfolgungsliste1: "+contacts.toString());
+        ArrayList<String> mails = new ArrayList<>();
+
+
         // Liste nach hs mail adressen filtern
         // weiter unterteilen in mailadressen mit buchstaben und zahlen
         // Für alle 3 Listen helfer methode für verschachtelte Liste
@@ -112,21 +114,54 @@ public class ContactTracingController {
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
-        System.out.println("Kontaktverfolgungsliste2: "+contactTable.toString());
+
+        HashMap<String, ArrayList<String[]>> contactLists = separeteContactList(contactTable);
+        ArrayList<String[]> contactListStudents = contactLists.get("students");
+        ArrayList<String[]> contactListsStaff = contactLists.get("universityStaff");
+        ArrayList<String[]> contactListGuests = contactLists.get("guests");
+        // pass lists to frontend and display for user
+        // margin footer
+        // adapt downloadable excel sheets to frontend => all data in one file with 3 different sheets vs. 3 files?
         model.addAttribute("tableHeaders", tracingColumns.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableValues", contactTable);
+        model.addAttribute("tableValuesStudents", contactListStudents);
+        model.addAttribute("tableValuesStaff", contactListsStaff);
+        model.addAttribute("tableValuesGuests", contactListGuests);
         model.addAttribute("target", target.get().getEmail());
 
         return "tracing/contactList.html";
     }
+    // which map best use?
+    // Helper method to seperate contact list in 3 different separate Lists
+    private HashMap<String, ArrayList<String[]>> separeteContactList (List<String[]> contactList){
+        HashMap<String, ArrayList<String[]>> contactListSeparated = new HashMap<String, ArrayList<String[]>>();
+        ArrayList<String[]> students = new ArrayList<String[]>();
+        ArrayList<String[]> universityStaff = new ArrayList<String[]>();
+        ArrayList<String[]> guests = new ArrayList<String[]>();
+        for(String[] contact: contactList){
+            if(contact[0].contains("@stud.hs-mannheim.de")){
+                students.add(contact);
+            }else if(contact[0].contains("@hs-mannheim.de")){
+                universityStaff.add(contact);
+            }else{
+                guests.add(contact);
+            }
+        }
+        contactListSeparated.put("students", students);
+        contactListSeparated.put("universityStaff", universityStaff);
+        contactListSeparated.put("guests", guests);
+        return contactListSeparated;
+    }
     // download in 3 exceltabellen unterteilen
     @GetMapping("/download")
-    public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email) {
+    public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
+        System.out.println("Type: "+type);
         val target = visitorService.findVisitorByEmail(email)
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
-        val contacts = contactTracingService.getVisitorContacts(target);
-
+        val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
+       // contacts.get(1).getTargetVisit().getVisitor().getEmail();
+        // generating header
         val generator = new ContactListGenerator(
                 dateTimeService,
                 tracingColumns.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
@@ -152,5 +187,23 @@ public class ContactTracingController {
     public static class TracingColumn {
         private String header;
         private Function<Contact<?>, String> cellValue;
+    }
+    // helper method to filter contactList
+    private Collection<Contact<?>> filterContactList(Collection<Contact<?>> contacts, String type){
+        List<Contact<?>> deleteList = new ArrayList<>();
+        System.out.println("all contacts "+contacts.toString());
+        for(Contact contact: contacts){
+            if(type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")){
+                deleteList.add(contact);
+            }else if(type.equals("staff") && contact.getContact().getEmail().contains("@hs-mannheim.de")){
+                deleteList.add(contact);
+            }else if(type.equals("students") && !(contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) && !(contact.getContact().getEmail().contains("@hs-mannheim.de"))){
+                deleteList.add(contact);
+            }
+        }
+        System.out.println("Delete list: "+deleteList.toString());
+        contacts.removeAll(deleteList);
+        System.out.println("removed contactlist "+contacts.toString());
+        return contacts;
     }
 }
