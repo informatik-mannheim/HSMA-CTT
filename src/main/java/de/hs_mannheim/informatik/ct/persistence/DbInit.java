@@ -1,5 +1,12 @@
 package de.hs_mannheim.informatik.ct.persistence;
 
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Service;
+
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -19,20 +26,8 @@ package de.hs_mannheim.informatik.ct.persistence;
  */
 
 import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import lombok.NonNull;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DbInit implements CommandLineRunner {
