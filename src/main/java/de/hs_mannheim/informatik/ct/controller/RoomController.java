@@ -89,7 +89,7 @@ public class RoomController {
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
         val room = roomService.getRoomOrThrow(roomId);
-        if (roomPinFromRequest.isPresent()){
+        if (roomPinFromRequest.isPresent() && !roomPin.isEmpty()){
             roomPin = roomPinFromRequest.get();
             if (!(roomPin.equals(room.getRoomPin()))) {
                 throw new InvalidRoomPinException();
