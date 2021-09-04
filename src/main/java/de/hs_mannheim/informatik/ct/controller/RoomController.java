@@ -84,12 +84,16 @@ public class RoomController {
         if (!allowFullRoomCheckIn) {
             overrideFullRoom = false;
         }
-        String roomPin = "";
-        Boolean roomPinSet = true;
+
+        // get room by room id
         if ("noId".equals(roomId) && roomIdFromRequest.isPresent())
             roomId = roomIdFromRequest.get();
         val room = roomService.getRoomOrThrow(roomId);
-        if (roomPinFromRequest.isPresent() && !roomPin.isEmpty()){
+
+        // check room pin
+        String roomPin = "";
+        Boolean roomPinSet = true;
+        if (roomPinFromRequest.isPresent() && !roomPinFromRequest.get().isEmpty()){
             roomPin = roomPinFromRequest.get();
             if (!(roomPin.equals(room.getRoomPin()))) {
                 throw new InvalidRoomPinException();
