@@ -16,15 +16,20 @@
 <div style="width: 100%;" class="flex-container content-container">
     <div class="flex-container header-bar" id="header-container">
         <div class="flex-container header-bar center-container">
-            <img src="https://www.hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Icons/logo_bildmarke.svg"
-                 alt="Logo der Hochschule Mannheim"/>
-            <h1 style="margin-left: 0.5em; margin-top: 0.2em">CTT</h1>
+             <a class="navbar-brand" href="/">
+        		<img src="https://www.hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Icons/logo_bildmarke.svg" alt="HSMA" style="width:40px;" class="mr-2">
+    		</a>
+    		<a href="/">
+    			<h1 style="margin-left: 0.5em; margin-top: 0.18em; color:white">CTT</h1>
+    		</a>
         </div>
     </div>
+    
     <div class="center-container hidden" id="checkout-bar">
         <p>Momentan eingecheckt in Raum A008</p>
         <button>Abmelden</button>
     </div>
+    
     <div class="page-content center-container">
         <div class="flex-container content-container center-container" id="main-content" layout:fragment="content">
         </div>
