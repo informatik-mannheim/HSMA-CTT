@@ -19,7 +19,7 @@
 
     <!-- Email Encryption: https://jumk.de/nospam/stopspam.html -->
     <script type="text/javascript">
-		function UnCryptMailto( s ){
+		function UnCryptMailto(s){
 			var n = 0;
 			var r = "";
 			for( var i = 0; i < s.length; i++) {
@@ -148,8 +148,6 @@
     </p>
 </footer>
 
-</main>
-
 <script>
 			$( '#deviceChoice .nav-tabs a' ).on( 'click', function () {
 				$( '#deviceChoice .nav-tabs' ).find( 'li.active' ).removeClass( 'active' );
@@ -178,15 +176,11 @@
 				}
 			}
 
-
 			$(document).ready(function() {
 				$('.btn-for-collapsible').click(function() {
 					$(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
 				});	
-
-
 			});
-
 
 			$('.collapse').on('shown.bs.collapse', function () {
 				$("html").animate({ scrollTop: $('.card').offset().top - 50 }, 'slow');
@@ -195,8 +189,6 @@
 			$('#collapsibleCheckOut').on('shown.bs.collapse', function () {
 				$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
 			});
-			
-
 </script>
 </body>
 </html>
