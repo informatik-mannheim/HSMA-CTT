@@ -7,10 +7,6 @@ body {
     counter-reset: header;
 }
 
-.js-enabled {
-    display: none;
-}
-
 .hidden {
     display: none !important;
 }
@@ -147,7 +143,7 @@ input.pin::-webkit-inner-spin-button {
 
 input[type=number].pin {
     -moz-appearance: textfield;
-
+}
 
 .tmp-element {
     visibility: hidden;
@@ -311,4 +307,64 @@ footer {
     background-color: #f5ff00;
     padding: 30px;
     border-radius: 12px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+.justify-around {
+   justify-content: space-around;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.card .card-footer {
+    display: flex;
+    align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.hs-button {
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    background: #22376F;
+    color: #FFF;
+    padding: 5px;
+    margin: 0;
+}
+
+.hs-button:hover {
+    background: #FFF;
+    color: #22376F;
+    cursor: pointer;
 }

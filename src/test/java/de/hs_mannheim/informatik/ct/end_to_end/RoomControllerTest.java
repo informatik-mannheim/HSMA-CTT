@@ -37,6 +37,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -126,6 +130,39 @@ public class RoomControllerTest {
     }
 
     @Test
+    public void openEventManagerPortal() throws Exception {
+        this.mockMvc.perform(
+                get("/r/"+TEST_ROOM_NAME+"/event-manager-portal")
+                        .param("visitorEmail", TEST_USER_EMAIL)
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void resetRoomWithDefaultRedirectURI() throws Exception {
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/r/" + TEST_ROOM_NAME + "?&privileged=true"));
+    }
+
+    @Test
+    public void resetRoomWithCustomRedirectURI() throws Exception {
+        String redirectURI = URLEncoder.encode("/r/"+TEST_ROOM_NAME+"/event-manager-portal", "UTF-8");
+        this.mockMvc.perform(
+                post("/r/"+TEST_ROOM_NAME+"/executeRoomReset")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("redirectURI", redirectURI)
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(URLDecoder.decode(redirectURI, "UTF-8")));
+    }
+
+    @Test
     public void checkInFilledRoom() throws Exception {
         // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
@@ -187,7 +224,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(status().reason("Invalid Email"));
+                .andExpect(content().string(containsString("Email is invalid")));
     }
 
     @Test
@@ -201,20 +238,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(status().reason("Invalid Pin"));
-    }
-
-    @Test
-    public void checkInOverrideInvalidRoomPin() throws Exception {
-        this.mockMvc.perform(
-                post("/r/checkInOverride")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", TEST_USER_EMAIL)
-                        .param("roomId", TEST_ROOM_NAME)
-                        .param("roomPin", TEST_ROOM_PIN_INVALID)
-                        .with(csrf()))
-                .andExpect(status().is(400))
-                .andExpect(status().reason("Invalid Pin"));
+                .andExpect(content().string(containsString("Room pin is invalid")));
     }
 
     @Test
@@ -263,12 +287,33 @@ public class RoomControllerTest {
     }
 
     @Test
+    public void asyncRoomReset() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("roomPin", TEST_ROOM_PIN)
+        )
+                .andExpect(status().is(200));
+    }
+
+    @Test
+    public void asyncRoomResetWithInvalidPin() throws Exception {
+        this.mockMvc.perform(
+                post("/r/" + TEST_ROOM_NAME + "/reset").with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("roomPin", TEST_ROOM_PIN_INVALID)
+        )
+                .andExpect(status().is(400));
+    }
+
+    @Test
     public void roomNotFoundException() throws Exception {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
-                .andExpect(status().reason(containsString("Room not found"))); // checking if error message is displayed for user
+                .andExpect(content().string(containsString("Room not found")));// checking if error message is displayed for user
     }
+
 
     /**
      * Helper method that creates users to fill room.

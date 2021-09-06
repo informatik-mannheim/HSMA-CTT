@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.7.2/css/all.css">
 
     <!-- Email Encryption: https://jumk.de/nospam/stopspam.html -->
-    <script type="text/javascript"> <!--
+    <script type="text/javascript">
 		function UnCryptMailto( s ){
 			var n = 0;
 			var r = "";
@@ -37,6 +37,19 @@
 		}
 		// -->
     </script>
+    <style>
+        @media screen and (max-width: 768px){
+            p.footer-copyright{
+                font-size: 2vw;
+            }
+        }
+
+        @media screen and (min-width: 769px){
+            p.footer-copyright{
+                font-size: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -109,9 +122,6 @@
 <div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
 
 <main class="container float-left">
-    <p th:if="${message}" class="alert alert-info" style="color: blue" th:text="${message}"></p>
-    <p th:if="${error}" class="alert alert-danger" style="color: red" th:text="${error}"></p>
-
     <div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
         <i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur zur
         Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so
@@ -128,9 +138,10 @@
 </main>
 
 <footer style="z-index: 1;">
-    <p style="font-size: 85%">&copy; 2020-2021
+    <p class= "footer-copyright">&copy; 2020-2021
+        <a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakultät für Informatik</a>,
         <a href="https://www.space.hs-mannheim.de" target="_blank">StartupLab@HSMA</a> und
-        <a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakultät für Informatik</a>
+        <a href="https://www.kis.hs-mannheim.de/home.html" target="_blank">KIS</a>
         <a class="float-right" href="https://www.hs-mannheim.de/impressum.html" target="_blank">Impressum</a>
         <a class="float-right mr-2" th:href="@{/datenschutz}">Datenschutz</a>
         <a class="float-right mr-2" href="https://www.gnu.org/licenses/agpl-3.0.html">Copyright</a>

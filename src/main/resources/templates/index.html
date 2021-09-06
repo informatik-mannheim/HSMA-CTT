@@ -16,18 +16,24 @@
         automatisch gelöscht.<br/>
     <hr/>
     <div id="freeLearningPlaces" class="mt-3 mb-3">
-        <p th:text="${freeLearnerPlaces} == 1 ? 'Aktuell ist ein Lernplatz frei.' : 'Aktuell sind '+${freeLearnerPlaces}+' Lernplätze frei.'">asdf</p>
-        <a href="/learningRooms" class="btn-for-index-page" >Details</a>
-        <a href="/" class="btn-for-index-page" >Aktualisieren</a>
+        <p th:text="${freeLearnerPlaces} == 1 ? 'Aktuell ist ein Lernplatz frei.' : 'Aktuell sind '+${freeLearnerPlaces}+' Lernplätze frei.'">
+            asdf</p>
+        <a href="/learningRooms" class="btn-for-index-page">Details</a>
+        <a href="/" class="btn-for-index-page">Aktualisieren</a>
     </div>
     <hr/>
 
     <div id="checkinContainer" class="mt-3 mb-3">
         <form id="checkInForm" action="/r/noId" class="mb-3">
             <h6 id="checkIn">Manueller Check-In</h6><br/>
-            <label for="roomId">Raumnummer:</label>
-            <input type="text" id="roomId" name="roomId" size="6">
-            <button type="submit" id="sendRoom">Los...</button>
+            <div class="index-page-grid">
+                <label class="grid-item-1" for="roomId">Raumnummer:</label>
+                <input class="grid-item-2" type="text" id="roomId" name="roomId" size="6" required>
+                <label class="grid-item-3" for="roomPin">Raum-PIN:</label>
+                <input class="grid-item-4" type="text" id="roomPin" name="roomPin" size="6" required>
+                <button class="grid-item-5" type="submit" id="sendRoom">Los...</button>
+            </div>
+
         </form>
     </div>
     <hr/>

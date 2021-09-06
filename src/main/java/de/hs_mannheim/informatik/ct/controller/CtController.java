@@ -18,12 +18,11 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Event;
-import de.hs_mannheim.informatik.ct.model.EventVisit;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.model.*;
+import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
+import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
 import de.hs_mannheim.informatik.ct.persistence.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,24 +49,19 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-
 
 @Controller
 @Slf4j
-public class CtController implements ErrorController {
+
+public class CtController {
+
     @Autowired
     private EventService eventService;
 
@@ -94,6 +88,7 @@ public class CtController implements ErrorController {
 
     @Autowired
     private ContactTracingService contactTracingService;
+
 
     @Value("${server.port}")
     private String port;
@@ -132,7 +127,7 @@ public class CtController implements ErrorController {
     }
 
     @RequestMapping("/besuch")
-    public String neuerBesuch(@RequestParam Long vid, Model model) {
+    public String neuerBesuch(@RequestParam Long vid, Model model) throws EventNotFoundException {
         Optional<Event> event = eventService.getEventById(vid);
 
         if (event.isPresent()) {
@@ -141,14 +136,11 @@ public class CtController implements ErrorController {
 
             return "eintragen";
         }
-
-        model.addAttribute("error", "Event nicht gefunden");
-
-        return home(model);
+        throw new EventNotFoundException();
     }
 
     @RequestMapping("/besuchMitCode")
-    public String besuchMitCode(@RequestParam Long vid, @CookieValue(value = "email", required = false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException {
+    public String besuchMitCode(@RequestParam Long vid, @CookieValue(value = "email", required = false) String email, Model model, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException, InvalidExternalUserdataException {
         if (email == null) {
             model.addAttribute("vid", vid);
             return "eintragen";
@@ -159,36 +151,27 @@ public class CtController implements ErrorController {
 
     @PostMapping("/senden")
     public String besucheEintragen(@RequestParam Long vid, @RequestParam String email, @RequestParam(required = false, defaultValue = "false") boolean saveMail, Model model,
-                                   @RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException {
+                                   @RequestHeader(value = "Referer", required = false) String referer, HttpServletResponse response) throws UnsupportedEncodingException, InvalidEmailException, EventNotFoundException, RoomFullException, InvalidExternalUserdataException {
 
         model.addAttribute("vid", vid);
 
         if (referer != null && (referer.contains("/besuch") || referer.contains("/senden") || referer.contains("/besuchMitCode"))) {
             if (email.isEmpty()) {
-                model.addAttribute("message", "Bitte eine Mail-Adresse eingeben.");
+                throw new InvalidEmailException();
             } else {
                 Optional<Event> event = eventService.getEventById(vid);
 
                 if (!event.isPresent()) {
-                    model.addAttribute("error", "Event nicht gefunden.");
-                    model.addAttribute("email", email);
+                    throw new EventNotFoundException();
                 } else {
                     int visitorCount = eventService.getVisitorCount(vid);
                     Event v = event.get();
 
                     if (visitorCount >= v.getRoomCapacity()) {
-                        model.addAttribute("error", "Raumkapazität bereits erreicht, bitte den Raum nicht betreten.");
+                        throw new RoomFullException();
                     } else {
                         Visitor b = null;
-                        try {
-                            b = visitorService.findOrCreateVisitor(email, null, null, null);
-                        } catch (InvalidEmailException e) {
-                            model.addAttribute("error", "Ungültige Mail-Adresse");
-                            return "eintragen";
-                        } catch (InvalidExternalUserdataException e) {
-                            model.addAttribute("error", "Ungültige Userdata");
-                            return "eintragen";
-                        }
+                        b = visitorService.findOrCreateVisitor(email, null, null, null);
 
                         Optional<String> autoAbmeldung = Optional.empty();
                         List<EventVisit> nichtAbgemeldeteBesuche = eventVisitService.signOutVisitor(b, dateTimeService.getDateNow());
@@ -238,7 +221,7 @@ public class CtController implements ErrorController {
     }
 
     @RequestMapping("/zeige")
-    public String showEvent(@RequestParam Long vid, Model model) {
+    public String showEvent(@RequestParam Long vid, Model model) throws EventNotFoundException {
         Optional<Event> event = eventService.getEventById(vid);
 
         if (event.isPresent()) {
@@ -247,23 +230,19 @@ public class CtController implements ErrorController {
 
             return "event";
         }
-
-        model.addAttribute("error", "Event nicht gefunden!");
-
-        return home(model);
+        throw new EventNotFoundException();
     }
 
 
     @RequestMapping("/angemeldet")
     public String angemeldet(
             @RequestParam String email, @RequestParam(value = "veranstaltungId") long eventId,
-            @RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) {
+            @RequestParam(required = false) Optional<String> autoAbmeldung, Model model, HttpServletResponse response) throws EventNotFoundException {
 
         Optional<Event> v = eventService.getEventById(eventId);
 
         if (!v.isPresent()) {
-            model.addAttribute("error", "Event nicht gefunden!");
-            return "index";
+            throw new EventNotFoundException();
         }
 
         model.addAttribute("visitorEmail", email);
@@ -338,6 +317,7 @@ public class CtController implements ErrorController {
         return "howToInkognito";
     }
 
+
     @RequestMapping("/learningRooms")
     public String showLearningRooms(Model model) {
         model.addAttribute("learningRoomsCapacity", roomVisitService.getAllStudyRooms());
@@ -399,9 +379,6 @@ public class CtController implements ErrorController {
         return faqs;
     }
 
-    ;
-
-    // ------------
     // ErrorControllerImpl
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
