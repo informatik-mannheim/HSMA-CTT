@@ -20,7 +20,9 @@ package de.hs_mannheim.informatik.ct.controller;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
 import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
@@ -70,18 +72,59 @@ public class ContactTracingController {
 
     private final List<TracingColumn> tracingColumns = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
-            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate()))
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            // Is it okay to do it like this? more like a workaround from the original datatype
+            new TracingColumn( "Geburtsdatum", contact -> "" ),
+            new TracingColumn( "PLZ", contact -> ""),
+            new TracingColumn( "Ort", contact -> ""),
+            new TracingColumn( "Str., Hausnr.", contact -> "")
+    );
+    private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
+            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Nachname", contact -> getNameOfStaff(contact.getContact().getEmail())),
+            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
+            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
+            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            // Is it okay to do it like this? more like a workaround from the original datatype
+            new TracingColumn( "Geburtsdatum", contact -> "" ),
+            new TracingColumn( "PLZ", contact -> ""),
+            new TracingColumn( "Ort", contact -> ""),
+            new TracingColumn( "Str., Hausnr.", contact -> "")
+    );
+    private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
+            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Nachname", contact -> getName(contact.getTargetVisit().getVisitor())),
+            new TracingColumn("Vorname", contact -> contact.getContact().getEmail().split("@")[0]),
+            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
+            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
+            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            // Is it okay to do it like this? more like a workaround from the original datatype
+            new TracingColumn( "Geburtsdatum", contact -> "" ),
+            new TracingColumn( "PLZ", contact -> ""),
+            new TracingColumn( "Ort", contact -> ""),
+            new TracingColumn( "Str., Hausnr.", contact -> "")
     );
 
     @GetMapping("/search")
     public String searchPage() {
         return "tracing/search";
     }
+    private String getName (Visitor visitor){
+      ExternalVisitor externalVisitor = (ExternalVisitor) visitor;
+      return externalVisitor.getName();
+    };
 
     @PostMapping("/results")
     public String doSearch(@RequestParam String email, Model model) throws InvalidEmailException, InvalidExternalUserdataException {
@@ -155,12 +198,15 @@ public class ContactTracingController {
     // download in 3 exceltabellen unterteilen
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
-        System.out.println("Type: "+type);
         val target = visitorService.findVisitorByEmail(email)
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
         val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
        // contacts.get(1).getTargetVisit().getVisitor().getEmail();
+        Visitor vis= target;
+        ExternalVisitor vi = (ExternalVisitor) target;
+    vi.getAddress();
+
         // generating header
         val generator = new ContactListGenerator(
                 dateTimeService,
@@ -205,5 +251,13 @@ public class ContactTracingController {
         contacts.removeAll(deleteList);
         System.out.println("removed contactlist "+contacts.toString());
         return contacts;
+    }
+
+    private String getNameOfStaff (String email){
+        String name = email.split("@")[0];
+        if(email.contains(".")){
+            email = email.split(".")[1];
+        }
+        return name;
     }
 }

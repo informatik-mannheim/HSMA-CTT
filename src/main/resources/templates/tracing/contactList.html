@@ -24,9 +24,9 @@
                 werden oder alle Kontaktpersonen gesammelt in einer Exceldatei.
             </p>
             <ul>
-                <li><a th:href="@{download(email=${target}, type='students')}">Studenten</a></li>
-                <li><a th:href="@{download(email=${target}, type='staff')}">Lehrende und Hochschulangestellte</a></li>
-                <li><a th:href="@{download(email=${target}, type='guests')}">Gäste</a></li>
+                <li th:if="${!#lists.isEmpty(tableValuesStudents)}"><a th:href="@{download(email=${target}, type='students')}">Studenten</a></li>
+                <li th:if="${!#lists.isEmpty(tableValuesStaff)}"><a th:href="@{download(email=${target}, type='staff')}">Lehrende und Hochschulangestellte</a></li>
+                <li th:if="${!#lists.isEmpty(tableValuesGuests)}"><a th:href="@{download(email=${target}, type='guests')}">Gäste</a></li>
                 <li><a th:href="@{download(email=${target}, type=null)}">Alle Kontaktpersonen</a></li>
             </ul>
             <div style="margin-top: 24px">
@@ -49,7 +49,7 @@
                 </table>
             </div>
             <div style="margin-top: 24px">
-                <h5>Staff</h5>
+                <h5>Lehrende und Hochschulangestellte</h5>
                 <div th:if="${#lists.isEmpty(tableValuesStaff)}">
                     <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
                 </div>
@@ -68,7 +68,7 @@
                 </table>
             </div>
             <div style="margin-top: 24px">
-                <h5>Guests</h5>
+                <h5>Gäste</h5>
 
                 <div th:if="${#lists.isEmpty(tableValuesGuests)}">
                     <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
