@@ -23,24 +23,34 @@
             </div>
         </div>
     </template>
-    <div id="faq-page-container" style="margin-top: 50px">
+    
+    <div id="faq-page-container" style="margin-top: 40px">
         <div>
             <div class="btn-container">
                 <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
                         data-toggle="collapse"
                         data-target="#faq-target" aria-expanded="false" aria-controls="collapseInfo">
-                    Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?<i
+                    	Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?<i
                         class="fa fa-plus-square"></i>
                 </button>
             </div>
             <div class="collapse card card-body" id="faq-target">
-                <p>Wenn Sie positiv getestet wurden ist es sehr wichtig, dass Sie eine E-Mail an <a
-                        href="javascript:linkTo_UnCryptMailto('nbjmup;dpspob/{wAit.nbooifjn/ef')">corona.zv@hs-mannheim.de</a>
-                    schreiben und darin Ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das
-                    Datum des positiven Tests mitteilen.</p>
+                <p>Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie eine E-Mail an
+       				<a href="#" class="crypted" data-name="corona-zv" data-domain="hs-mannheim" data-tld="de"
+   						onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject=Meldung einer Corona-Infektion'; return false;">
+   					</a>
+                    schreiben und darin Ihre Mail-Adresse, mit der Sie sich im CTT eingecheckt hatten, sowie das Datum des positiven Tests mitteilen.</p>
             </div>
         </div>
     </div>
+    
+    <div style="margin-top: -50px">
+     Bei weiteren Fragen kontaktieren Sie uns gerne per E-Mail:
+    	<a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
+   			onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
+   		</a>
+    </div>
+   		
     <script>
         const faqList=[
             {"question": "Wie kann ich mich einchecken?", "answer": "Sie müssen lediglich mit Ihrem Smartphone den QR-Code abscannen, dann werden Sie automatisch zum Check-in für den passenden Raum weitergeleitet. Alternativ, wenn Sie keinen QR-Scanner zur Verfügung haben, können Sie auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort finden Sie ", "link": "https://ctt.hs-mannheim.de/howToQr"},
@@ -48,8 +58,8 @@
             {"question": "Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?", "answer": "Auf jedem Zettel befindet sich oberhalb des QR-Codes eine URL. Sie können auch einfach in einem Browser die URL eintippen und sich so beispielsweise mit Ihrem Laptop oder Tablet einchecken. Falls Sie gar kein Gerät zur Verfügung haben, bitten Sie jemand anderen Sie einzuchecken. Eine ausführliche Anleitung dazu finden Sie ", "link": "https://ctt.hs-mannheim.de/howToInkognito"},
             {"question": "Kann ich auch andere einchecken?", "answer": "Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffnen Sie dazu einfach ein weiteres Fenster in einem Browser und rufen Sie die URL auf dem Zettel auf. Anschließend einfach die Daten der Person eintragen. Der Einfachheit halber können Sie das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen. Eine etwas ausführlichere Beschreibung finden Sie ", "link": "https://ctt.hs-mannheim.de/howToInkognito"},
             {"question": "Kann ich mich auch später ein- bzw. auschecken?", "answer": "Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder verlassen, sonst werden im System falsche Uhrzeiten gespeichert."},
-            {"question": "Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen ?", "answer": "Nein,  leider geht das aktuell nur bei Online-Veranstaltungen."},
-            {"question": "Was ist, wenn ich vergessen habe mich auszuchecken?", "answer": "Sie werden automatisch ausgecheckt, wenn Sie einen anderen Raum betreten. Notfalls checkt Sie das System abends aus. Für die Kontaktverfolgung waren Sie dann leider noch im Raum."},
+            {"question": "Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen ?", "answer": "Nein, leider geht das aktuell nur bei Online-Veranstaltungen."},
+            {"question": "Was ist, wenn ich vergessen habe mich auszuchecken?", "answer": "Sie werden automatisch ausgecheckt, sobald Sie einen anderen Raum betreten. Notfalls checkt Sie das System nachts automatisch aus. Für die Kontaktverfolgung waren Sie dann leider bis dahin noch im Raum."},
         ];
         let temp = document.querySelector("template");
         let container = document.getElementById("faq-page-container");
@@ -73,9 +83,10 @@
             let clon = temp.content.cloneNode(true);
             container.appendChild(clon);
         }
-
     </script>
+
 </div>
+
 </body>
 </html>
 
