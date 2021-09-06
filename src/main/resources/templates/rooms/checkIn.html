@@ -15,8 +15,6 @@
         .checkout-only {
             display: none;
         }
-
-
     </style>
 
 </head>
@@ -61,14 +59,14 @@
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
                 <div class="guest-free-section form-row" style="max-width: 300px">
-                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1" placeholder="Nachname / Vorname">
-                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1" placeholder="Telefonnummer">
+                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1" placeholder="Nachname / Vorname" />
+                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1" placeholder="Telefonnummer" />
                 </div>
                 <div class="guest-free-section form-row">
-                    <input class="email" id="guest-address" name="guest-address" style="min-width: 410px" placeholder="Adresse">
+                    <input class="email" id="guest-address" name="guest-address" style="min-width: 410px" placeholder="Adresse"/>
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
-                    <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox">
+                    <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox" />
                     <label for="email-auto-sign-in">Für künftigen automatischen Check-in speichern</label>
                 </div>
             </form>
@@ -94,6 +92,7 @@
                 </div>
             </form>
         </div>
+          
         <div class="form-row checkout-only">
             <form action="#" th:action="@{/r/checkOut}" method="POST" id="submit-form-checkout" name="submit-form">
                 <input style="margin-left: 24px;" type="submit" value="Abmelden"/>
