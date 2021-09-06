@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,6 +29,7 @@ import java.util.Optional;
 
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
     Optional<Visitor> findByEmail(String email);
+
 
     List<Visitor> findAll();
     /**
@@ -43,3 +45,5 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
             "FROM EventVisit visit)")
     void removeVisitorsWithNoVisits();
 }
+
+// DB Abfrage um external visitor zu finden => mit Visitor klasse sind external visitor getter und setter nicht aufrufbar??
