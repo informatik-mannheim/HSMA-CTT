@@ -406,9 +406,4 @@ public class CtController {
 
         return home(model);
     }
-
-    @Override
-    public String getErrorPath() {
-        return null;
-    }
 }
