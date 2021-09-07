@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.persistence.services;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,33 +9,31 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+package de.hs_mannheim.informatik.ct.persistence.services;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import de.hs_mannheim.informatik.ct.model.Event;
-import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
-import de.hs_mannheim.informatik.ct.persistence.repositories.EventVisitRepository;
-import de.hs_mannheim.informatik.ct.persistence.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.hs_mannheim.informatik.ct.model.Event;
 import de.hs_mannheim.informatik.ct.model.EventVisit;
-
+import de.hs_mannheim.informatik.ct.persistence.repositories.EventRepository;
+import de.hs_mannheim.informatik.ct.persistence.repositories.EventVisitRepository;
 
 @Service
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
-    @Autowired
-    private VisitorRepository visitorRepository;
     @Autowired
     private EventVisitRepository eventVisitRepository;
     @Autowired
