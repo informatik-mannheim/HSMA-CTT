@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.controller;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,27 +9,33 @@ package de.hs_mannheim.informatik.ct.controller;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import de.hs_mannheim.informatik.ct.persistence.services.EventService;
-import lombok.val;
+package de.hs_mannheim.informatik.ct.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponents;
 
-import javax.servlet.http.HttpServletRequest;
-
+import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
+import de.hs_mannheim.informatik.ct.persistence.services.EventService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import lombok.val;
 
 @RestController
 @RequestMapping("/QRCodes")

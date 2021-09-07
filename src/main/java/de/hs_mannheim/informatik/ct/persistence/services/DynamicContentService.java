@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.persistence.services;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,15 +9,33 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+package de.hs_mannheim.informatik.ct.persistence.services;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;  // Import the IOException class to handle errors
+import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import com.google.zxing.EncodeHintType;
-import de.hs_mannheim.informatik.ct.controller.Utilities;
+
 import de.hs_mannheim.informatik.ct.model.Contact;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -28,29 +44,9 @@ import de.hs_mannheim.informatik.ct.util.DocxTemplate;
 import lombok.val;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.xmlbeans.XmlException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import java.io.IOException;  // Import the IOException class to handle errors
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Service
 public class DynamicContentService {
-    @Autowired
-    private Utilities utilities;
-
     private final Path defaultDocxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout.docx");
     private final Path privilegedDocxTemplatePath = FileSystems.getDefault().getPath("templates/printout/room-printout-privileged.docx");
 
@@ -75,7 +71,6 @@ public class DynamicContentService {
         document.write(outputStream);
     }
 
-
     public void writeContactList(Collection<Contact<?>> contacts, Visitor target, ContactListGenerator generator, OutputStream outputStream) throws IOException {
         try (val workbook = generator.generateWorkbook(contacts, target.getEmail())) {
             workbook.write(outputStream);
@@ -83,7 +78,6 @@ public class DynamicContentService {
     }
 
     public XWPFDocument getRoomPrintOutDocx(Room room, Function<Room, UriComponents> uriConverter, boolean privileged) throws IOException, XmlException {
-
         DocxTemplate templateGenerator;
 
         DocxTemplate.TextTemplate<Room> textReplacer = (roomContent, templatePlaceholder) -> {
