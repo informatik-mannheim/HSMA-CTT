@@ -7,14 +7,14 @@ services:
     environment:
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ctt
-      - SPRING_DATASOURCE_USERNAME=${DB_USER:-XXbPWmwdRW}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-tiXXbPWmwdRW}
       - SPRING_DATASOURCE_PASSWORD=${DB_PW:-grEtwOBI4E}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_H2_CONSOLE_ENABLED=false
       - SERVER_TOMCAT_ACCESSLOG_ENABLED=false
       - SERVER_ENV=production
       - SERVER_ADDRESS=0.0.0.0
-      - TZ=${timzone:-Europe/Berlin}
+      - TZ=${timezone:-Europe/Berlin}
       # The URL to prefix absolute URLs with, since nginx handles the outside connections.
       - URL_OVERRIDE=${URL_OVERRIDE}
       # AES Secret used to encrypt personal data in the database, override in .env
@@ -32,12 +32,12 @@ services:
       - POSTGRES_USER=${DB_USER:-XXbPWmwdRW}
       - POSTGRES_PASSWORD=${DB_PW:-grEtwOBI4E}
       - POSTGRES_DB=ctt
-      - TZ=${timzone:-Europe/Berlin}
+      - TZ=${timezone:-Europe/Berlin}
     restart: always
   proxy:
     image: nginx:1-alpine
     environment:
-      - TZ=${timzone:-Europe/Berlin}
+      - TZ=${timezone:-Europe/Berlin}
     depends_on:
       - app
     volumes:
