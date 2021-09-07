@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.persistence.services;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,12 +9,22 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+package de.hs_mannheim.informatik.ct.persistence.services;
+
+import java.util.Optional;
+
+import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
 import de.hs_mannheim.informatik.ct.model.Visitor;
@@ -24,14 +32,6 @@ import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.val;
-import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.util.StringUtils;
-
-import java.util.Optional;
-
 
 @Service
 public class VisitorService {
@@ -47,6 +47,7 @@ public class VisitorService {
     public Visitor findOrCreateVisitor(String email, String name, String number, String address) throws InvalidEmailException, InvalidExternalUserdataException {
         email = email.toLowerCase();
         val visitor = findVisitorByEmail(email);
+        
         if (visitor.isPresent()) {
             return visitor.get();
         } else if (EmailValidator.getInstance().isValid(email)) {
@@ -59,9 +60,9 @@ public class VisitorService {
                     throw new InvalidExternalUserdataException();
                 }
             }
-
         } else {
             throw new InvalidEmailException();
         }
     }
+    
 }
