@@ -11,81 +11,70 @@
     <faq-element id="0">
         <question>Wie kann ich mich einchecken?</question>
         <answer>
-            &lt;p&gt;Du musst lediglich mit deinem Smartphone den QR-Code abscannen, dann wirst du automatisch zum
-            Check in
-            für den passenden Raum weitergeleitet. Alternativ, wenn du keinen QR-Scanner zur Verfügung hast, kannst
-            du auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort findest
-            du &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;. &lt;/p&gt;
+            &lt;p&gt;Sie müssen lediglich mit Ihrem Smartphone den QR-Code abscannen, dann werden Sie automatisch zum Check-in
+            für den passenden Raum weitergeleitet. Alternativ, wenn Sie keinen QR-Scanner zur Verfügung haben, können
+            Sie auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort finden Sie
+            &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;. &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="1">
         <question>Wie kann ich mich auschecken?</question>
         <answer>
-            &lt;p&gt;Das Auschecken funktioniert genau so, wie das Einchecken. Du musst lediglich den QR-Code abscannen
-            und
-            dann ganz unten auf den Button Abmelden klicken. Dann wirst du automatisch zum Check-out weitergeleitet.
-            Eine ausführliche Antwort findest du &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;.
+            &lt;p&gt;Das Auschecken funktioniert genauso, wie das Einchecken. Sie müssen lediglich den QR-Code abscannen und dann ganz unten
+            auf den Button "Abmelden" klicken. Dann werden Sie automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort
+            finden Sie &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="2">
         <question>Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?</question>
         <answer>
-            &lt;p&gt;Auf jedem Zettel befindet sich oberhalb des QR Codes eine URL. Du kannst auch einfach in deinem
-            Browser
-            die
-            URL eintippen und dich so beispielsweise mit deinem Laptop oder Tablet einchecken. Falls du gar kein
-            Gerät zur Verfügung
-            hast bitte jemand anderen dich einzuchecken. Eine ausführliche Anleitung dazu findest du &lt;a
-            href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            &lt;p&gt;Auf jedem Zettel befindet sich oberhalb des QR-Codes eine URL. Sie können auch einfach in einem Browser
+            die URL eintippen und sich so beispielsweise mit Ihrem Laptop oder Tablet einchecken. Falls Sie gar kein Gerät
+            zur Verfügung haben, bitten Sie jemand anderen Sie einzuchecken. Eine ausführliche Anleitung dazu finden Sie
+            &lt;a href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="3">
         <question>Kann ich auch andere einchecken?</question>
         <answer>
-            &lt;p&gt;Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffne dazu einfach ein weiteres Fenster
-            in
-            deinem Browser und rufe die URL auf dem Zettel auf. Anschließend, einfach die Daten der Person
-            eintragen. Der
-            Einfachheitshalber kannst du das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen
-            lassen. Eine etwas
-            ausführlichere Beschreibung findest du &lt;a href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            &lt;p&gt;Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffnen Sie dazu einfach ein weiteres Fenster in
+            einem Browser und rufen Sie die URL auf dem Zettel auf. Anschließend einfach die Daten der Person eintragen.
+            Der Einfachheit halber können Sie das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen.
+            Eine etwas ausführlichere Beschreibung finden Sie &lt;a href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="4">
         <question>Kann ich mich auch später ein- bzw. auschecken?</question>
         <answer>
-            &lt;p&gt;Nein, es ist sehr wichtig dass das ein uns auschecken auch immer genau dann passiert, wenn du den
-            Raum
-            betrittst oder verlässt, sonst werden im System falsche Uhrzeiten gespeichert.
+            &lt;p&gt;Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder verlassen, sonst werden im System falsche Uhrzeiten gespeichert.
             &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="5">
         <question>Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen?</question>
         <answer>
-            &lt;p&gt;Nein, leider geht das aktuell nur bei Online Veranstaltungen. &lt;/p&gt;
+            &lt;p&gt;Nein, leider geht das aktuell nur bei Online-Veranstaltungen." &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="6">
         <question>Was ist, wenn ich vergessen habe mich auszuchecken?</question>
         <answer>
-            &lt;p&gt;Du wirst automatisch ausgecheckt, wenn du einen anderen Raum betrittst. Notfalls checkt dich das
-            System
-            abends aus. Für die Kontaktverfolgung warst du dann leider noch im Raum.
+            &lt;p&gt;Sie werden automatisch ausgecheckt, sobald Sie einen anderen Raum betreten. Notfalls checkt Sie das System
+            nachts automatisch aus. Für die Kontaktverfolgung waren Sie dann leider bis dahin noch im Raum.
             &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="7">
         <question>Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?</question>
         <answer>
-            &lt;p&gt;Wenn du positiv getestet wurdest ist es sehr wichtig, dass du eine E-Mail a &lt;a
+            &lt;p&gt;Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie ihre E-Mail an &lt;a
             href=&quot;javascript:linkTo_UnCryptMailto(&apos; nbjmup;dpspob/{wAit.nbooifjn/ef&apos;)&quot;>corona.zv@hs-mannheim.de
             &lt;/a&gt;
-            schreibst und darin deine Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des
-            positiven Tests mitteilst.
+            schreiben und darin ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des
+            positiven Tests mitteilen.
             &lt;/p&gt;
         </answer>
     </faq-element>
