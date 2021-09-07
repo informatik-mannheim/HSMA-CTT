@@ -78,7 +78,7 @@ public class RoomController {
     public String checkIn(@PathVariable String roomId,
                           @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
                           @RequestParam(required = false, defaultValue = "false") Boolean privileged,
-                          @RequestParam(required = false, value = "roomPin") Optional<String> roomPinFromRequest,
+                          @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
                           @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
                           Model model) throws InvalidRoomPinException {
         if (!allowFullRoomCheckIn) {
@@ -121,19 +121,14 @@ public class RoomController {
     @PostMapping("/checkIn")
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
-        roomPinValidation(visitData);
+        isRoomPinValidOrThrow(visitData);
   
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
-
         val visitorEmail = visitData.getVisitorEmail();
         val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
-        if (visitData.getRoomPin() == null) {
-            System.out.println("Kein Raumpin");
-        } else {
-            System.out.println("Raumpin: " + visitData.getRoomPin());
-            if (!visitData.getRoomPin().equals(room.getRoomPin()))
-                throw new InvalidRoomPinException();
-        }
+
+        isRoomPinEqualOrThrow(visitData.getRoomPin(), room.getRoomPin());
+
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
         String autoCheckoutValue = null;
         if (notCheckedOutVisits.size() != 0) {
@@ -166,9 +161,16 @@ public class RoomController {
         return "rooms/checkedIn";
     }
 
-    private void roomPinValidation(Data visitData) throws InvalidRoomPinException {
+    private void isRoomPinEqualOrThrow(String sendRoomPin, String actualRoomPin) throws InvalidRoomPinException {
+        if (!sendRoomPin.equals(actualRoomPin))
+            throw new InvalidRoomPinException();
+    }
+
+    private void isRoomPinValidOrThrow(Data visitData) throws InvalidRoomPinException {
+        val roomPin = visitData.getRoomPin();
+        if(roomPin==null || roomPin.isEmpty()) throw new InvalidRoomPinException();
         try {
-            Long.parseLong(visitData.getRoomPin());
+            Long.parseLong(roomPin);
         } catch (NumberFormatException err) {
             throw new InvalidRoomPinException();
         }
@@ -184,7 +186,7 @@ public class RoomController {
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
-        roomPinValidation(visitData);
+        isRoomPinValidOrThrow(visitData);
 
         val visitorEmail = visitData.getVisitorEmail();
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
