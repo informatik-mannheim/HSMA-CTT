@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.util;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,25 +9,20 @@ package de.hs_mannheim.informatik.ct.util;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.usermodel.Document;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+package de.hs_mannheim.informatik.ct.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +31,17 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.xwpf.usermodel.Document;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.SneakyThrows;
+import lombok.val;
 
 public class DocxTemplate<T> {
     private XWPFDocument document;
@@ -79,7 +83,6 @@ public class DocxTemplate<T> {
         // Remove template page from final doc
         document.getDocument().setBody(new XWPFDocument().getDocument().getBody());
 
-
         // Generate new Pages
         PageData<T> pageDataSource = ZipPageData(dataSource, imageIds);
 
@@ -90,7 +93,6 @@ public class DocxTemplate<T> {
             val paragraph = document.createParagraph();
             paragraph.getCTP().set(paragraphs.get(paragraphIndex));
         }
-
 
         // Reapply the section properties
         document.getDocument().getBody().setSectPr(sectionProperties);
@@ -197,7 +199,6 @@ public class DocxTemplate<T> {
     public interface TextTemplate<T> {
         String apply(T data, String templatePlaceholder);
     }
-
 
     @Data
     @AllArgsConstructor

@@ -1,23 +1,6 @@
-package de.hs_mannheim.informatik.ct.persistence.services;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import de.hs_mannheim.informatik.ct.controller.RoomController;
-import lombok.val;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.stereotype.Service;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,21 +9,39 @@ import org.springframework.stereotype.Service;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+package de.hs_mannheim.informatik.ct.persistence.services;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.stereotype.Service;
+
+import de.hs_mannheim.informatik.ct.controller.RoomController;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import lombok.NonNull;
 
 @Service
 public class RoomService {
-
-
     private final String COMMA_DELIMITER = ";";
 
     @Autowired
@@ -139,7 +140,6 @@ public class RoomService {
                     continue;
                 }
             } catch (NullPointerException e) {
-
                 // Sometimes POI returns a partially empty row, might be a bug in POI or just weird excel things.
                 continue;
             }

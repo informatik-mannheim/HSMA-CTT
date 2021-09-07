@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.model;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,17 +9,22 @@ package de.hs_mannheim.informatik.ct.model;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import lombok.*;
+package de.hs_mannheim.informatik.ct.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Entity
 
