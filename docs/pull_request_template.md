@@ -21,4 +21,5 @@
 - [ ] Is your code easy to understand or do you need to insert some comments?
 - [ ] Explain the issue for the reviewer and your steps to solve the issue => makes it a lot more easy for the reviewer
 - [ ] Label your pull request (frontend/ backend/ testing/ styling/ sql/...)
-
+- [ ] Open source message is included at the very beginning of every source code file
+- [ ] All imports have been organized, i.e. are up to date and all package imports are removed
