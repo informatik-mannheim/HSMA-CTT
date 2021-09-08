@@ -45,5 +45,3 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
             "FROM EventVisit visit)")
     void removeVisitorsWithNoVisits();
 }
-
-// DB Abfrage um external visitor zu finden => mit Visitor klasse sind external visitor getter und setter nicht aufrufbar??

@@ -102,8 +102,7 @@ public class ContactTracingController {
     );
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Nachname", contact -> getName(contact.getTargetVisit().getVisitor())),
-            new TracingColumn("Vorname", contact -> contact.getContact().getEmail().split("@")[0]),
+            new TracingColumn("Name", contact -> getName(contact.getTargetVisit().getVisitor())),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -203,15 +202,13 @@ public class ContactTracingController {
 
         val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
        // contacts.get(1).getTargetVisit().getVisitor().getEmail();
-        Visitor vis= target;
-        ExternalVisitor vi = (ExternalVisitor) target;
-    vi.getAddress();
-
+        System.out.println("LIstenlänge: "+contacts.size());
+// Liste muss erst noch nach donwload typ gefiltert werden, enthält alle Kontakte dann sollte excel sheet erstellung auch klappen!
         // generating header
         val generator = new ContactListGenerator(
                 dateTimeService,
-                tracingColumns.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
-                tracingColumns.stream().map(TracingColumn::getCellValue).collect(Collectors.toList())
+                tracingColumnsGuests.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
+                tracingColumnsGuests.stream().map(TracingColumn::getCellValue).collect(Collectors.toList())
         );
 
         StreamingResponseBody responseBody = outputStream -> {
