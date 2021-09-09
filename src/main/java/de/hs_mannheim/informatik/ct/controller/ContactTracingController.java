@@ -80,14 +80,30 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             // Is it okay to do it like this? more like a workaround from the original datatype
-            new TracingColumn( "Geburtsdatum", contact -> "" ),
-            new TracingColumn( "PLZ", contact -> ""),
-            new TracingColumn( "Ort", contact -> ""),
-            new TracingColumn( "Str., Hausnr.", contact -> "")
+            new TracingColumn("Geburtsdatum", contact -> ""),
+            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Ort", contact -> ""),
+            new TracingColumn("Str., Hausnr.", contact -> "")
+    );
+    private final List<TracingColumn> tracingColumnsStudents = Arrays.asList(
+            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
+            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
+            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
+            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            // Is it okay to do it like this? more like a workaround from the original datatype
+            new TracingColumn("Geburtsdatum", contact -> ""),
+            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Ort", contact -> ""),
+            new TracingColumn("Str., Hausnr.", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Nachname", contact -> getNameOfStaff(contact.getContact().getEmail())),
+            // Methodenaufruf in lambda funktioniert nicht, bricht excel Tabelle
+            new TracingColumn("Name", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -95,14 +111,14 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             // Is it okay to do it like this? more like a workaround from the original datatype
-            new TracingColumn( "Geburtsdatum", contact -> "" ),
-            new TracingColumn( "PLZ", contact -> ""),
-            new TracingColumn( "Ort", contact -> ""),
-            new TracingColumn( "Str., Hausnr.", contact -> "")
+            new TracingColumn("Geburtsdatum", contact -> ""),
+            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Ort", contact -> ""),
+            new TracingColumn("Str., Hausnr.", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Name", contact -> getName(contact.getTargetVisit().getVisitor())),
+            new TracingColumn("Name", contact -> getName(contact.getContact())),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -110,30 +126,22 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             // Is it okay to do it like this? more like a workaround from the original datatype
-            new TracingColumn( "Geburtsdatum", contact -> "" ),
-            new TracingColumn( "PLZ", contact -> ""),
-            new TracingColumn( "Ort", contact -> ""),
-            new TracingColumn( "Str., Hausnr.", contact -> "")
+            new TracingColumn("Geburtsdatum", contact -> ""),
+            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Ort", contact -> ""),
+            new TracingColumn("Str., Hausnr.", contact -> "")
     );
 
     @GetMapping("/search")
     public String searchPage() {
         return "tracing/search";
     }
-    private String getName (Visitor visitor){
-      ExternalVisitor externalVisitor = (ExternalVisitor) visitor;
-      return externalVisitor.getName();
-    };
 
     @PostMapping("/results")
     public String doSearch(@RequestParam String email, Model model) throws InvalidEmailException, InvalidExternalUserdataException {
         val target = visitorService.findVisitorByEmail(email);
-      /*  if(!target.isPresent()){
-            visitorService.findOrCreateVisitor(email, "test", "101", "test");
-        }
-        val target2 = visitorService.findVisitorByEmail(email);*/
         if (!target.isPresent()) {
-            System.out.println("Email adresse nicht registriert: "+email);
+            System.out.println("Email adresse nicht registriert: " + email);
 
             model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
             return "tracing/search";
@@ -173,27 +181,7 @@ public class ContactTracingController {
 
         return "tracing/contactList.html";
     }
-    // which map best use?
-    // Helper method to seperate contact list in 3 different separate Lists
-    private HashMap<String, ArrayList<String[]>> separeteContactList (List<String[]> contactList){
-        HashMap<String, ArrayList<String[]>> contactListSeparated = new HashMap<String, ArrayList<String[]>>();
-        ArrayList<String[]> students = new ArrayList<String[]>();
-        ArrayList<String[]> universityStaff = new ArrayList<String[]>();
-        ArrayList<String[]> guests = new ArrayList<String[]>();
-        for(String[] contact: contactList){
-            if(contact[0].contains("@stud.hs-mannheim.de")){
-                students.add(contact);
-            }else if(contact[0].contains("@hs-mannheim.de")){
-                universityStaff.add(contact);
-            }else{
-                guests.add(contact);
-            }
-        }
-        contactListSeparated.put("students", students);
-        contactListSeparated.put("universityStaff", universityStaff);
-        contactListSeparated.put("guests", guests);
-        return contactListSeparated;
-    }
+
     // download in 3 exceltabellen unterteilen
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
@@ -201,14 +189,17 @@ public class ContactTracingController {
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
         val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
-       // contacts.get(1).getTargetVisit().getVisitor().getEmail();
-        System.out.println("LIstenlänge: "+contacts.size());
-// Liste muss erst noch nach donwload typ gefiltert werden, enthält alle Kontakte dann sollte excel sheet erstellung auch klappen!
-        // generating header
+        List<ContactTracingController.TracingColumn> tracingColumns = tracingColumnsStudents;
+        if (type.equals("staff")) {
+            tracingColumns = tracingColumnsStaff;
+        } else if (type.equals("guests")) {
+            tracingColumns = tracingColumnsGuests;
+        }
+        //typ tracing Columns
         val generator = new ContactListGenerator(
                 dateTimeService,
-                tracingColumnsGuests.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
-                tracingColumnsGuests.stream().map(TracingColumn::getCellValue).collect(Collectors.toList())
+                tracingColumns.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
+                tracingColumns.stream().map(TracingColumn::getCellValue).collect(Collectors.toList())
         );
 
         StreamingResponseBody responseBody = outputStream -> {
@@ -231,30 +222,57 @@ public class ContactTracingController {
         private String header;
         private Function<Contact<?>, String> cellValue;
     }
+
     // helper method to filter contactList
-    private Collection<Contact<?>> filterContactList(Collection<Contact<?>> contacts, String type){
-        List<Contact<?>> deleteList = new ArrayList<>();
-        System.out.println("all contacts "+contacts.toString());
-        for(Contact contact: contacts){
-            if(type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")){
-                deleteList.add(contact);
-            }else if(type.equals("staff") && contact.getContact().getEmail().contains("@hs-mannheim.de")){
-                deleteList.add(contact);
-            }else if(type.equals("students") && !(contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) && !(contact.getContact().getEmail().contains("@hs-mannheim.de"))){
-                deleteList.add(contact);
+    private List<Contact<?>> filterContactList(Collection<Contact<?>> contacts, String type) {
+        List<Contact<?>> filteredList = new ArrayList<>();
+        System.out.println("all contacts " + contacts.toString());
+        for (Contact contact : contacts) {
+            if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
+                filteredList.add(contact);
+            } else if (type.equals("staff") && contact.getContact().getEmail().contains("@hs-mannheim.de")) {
+                filteredList.add(contact);
+            } else if (type.equals("guests") && !(contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) && !(contact.getContact().getEmail().contains("@hs-mannheim.de"))) {
+                filteredList.add(contact);
             }
         }
-        System.out.println("Delete list: "+deleteList.toString());
-        contacts.removeAll(deleteList);
-        System.out.println("removed contactlist "+contacts.toString());
-        return contacts;
+        System.out.println("Filtered List list: " + filteredList.size() + " | " + filteredList.toString());
+        System.out.println("List " + contacts.size() + " | " + contacts.toString());
+        return filteredList;
     }
 
-    private String getNameOfStaff (String email){
+    // which map best use?
+    // Helper method to seperate contact list in 3 different separate Lists
+    private HashMap<String, ArrayList<String[]>> separeteContactList(List<String[]> contactList) {
+        HashMap<String, ArrayList<String[]>> contactListSeparated = new HashMap<String, ArrayList<String[]>>();
+        ArrayList<String[]> students = new ArrayList<String[]>();
+        ArrayList<String[]> universityStaff = new ArrayList<String[]>();
+        ArrayList<String[]> guests = new ArrayList<String[]>();
+        for (String[] contact : contactList) {
+            if (contact[0].contains("@stud.hs-mannheim.de")) {
+                students.add(contact);
+            } else if (contact[0].contains("@hs-mannheim.de")) {
+                universityStaff.add(contact);
+            } else {
+                guests.add(contact);
+            }
+        }
+        contactListSeparated.put("students", students);
+        contactListSeparated.put("universityStaff", universityStaff);
+        contactListSeparated.put("guests", guests);
+        return contactListSeparated;
+    }
+
+    private String getNameOfStaff(String email) {
         String name = email.split("@")[0];
-        if(email.contains(".")){
+        if (email.contains(".")) {
             email = email.split(".")[1];
         }
         return name;
+    }
+
+    public String getName(Visitor visitor) {
+        ExternalVisitor externalVisitor = (ExternalVisitor) visitor;
+        return externalVisitor.getName();
     }
 }
