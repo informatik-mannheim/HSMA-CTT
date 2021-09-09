@@ -172,7 +172,9 @@ public class ContactTracingController {
         // pass lists to frontend and display for user
         // margin footer
         // adapt downloadable excel sheets to frontend => all data in one file with 3 different sheets vs. 3 files?
-        model.addAttribute("tableHeaders", tracingColumns.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableHeadersStaff", tracingColumnsStaff.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableHeadersGuests", tracingColumnsGuests.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableValues", contactTable);
         model.addAttribute("tableValuesStudents", contactListStudents);
         model.addAttribute("tableValuesStaff", contactListsStaff);

@@ -27,9 +27,8 @@
                 <li th:if="${!#lists.isEmpty(tableValuesStudents)}"><a th:href="@{download(email=${target}, type='students')}">Studenten</a></li>
                 <li th:if="${!#lists.isEmpty(tableValuesStaff)}"><a th:href="@{download(email=${target}, type='staff')}">Lehrende und Hochschulangestellte</a></li>
                 <li th:if="${!#lists.isEmpty(tableValuesGuests)}"><a th:href="@{download(email=${target}, type='guests')}">Gäste</a></li>
-                <li><a th:href="@{download(email=${target}, type=null)}">Alle Kontaktpersonen</a></li>
             </ul>
-            <div style="margin-top: 24px">
+            <div style="margin-top: 24px" class="table-responsive">
                 <h5>Students</h5>
                 <div th:if="${#lists.isEmpty(tableValuesStudents)}">
                     <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
@@ -38,7 +37,7 @@
                        class="table table-hover"> <!-- table table-hover mt-3 -->
                     <thead style="font-weight: bold">
                     <tr>
-                        <th th:each="header: ${tableHeaders}" th:text="${header}"/>
+                        <th th:each="header: ${tableHeadersStudents}" th:text="${header}"/>
                     </tr>
                     </thead>
                     <tbody style="font-size: 13px">
@@ -48,7 +47,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="margin-top: 24px">
+            <div style="margin-top: 24px"  class="table-responsive">
                 <h5>Lehrende und Hochschulangestellte</h5>
                 <div th:if="${#lists.isEmpty(tableValuesStaff)}">
                     <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
@@ -57,7 +56,7 @@
                        class="table table-hover">
                     <thead style="font-weight: bold">
                     <tr>
-                        <th th:each="header: ${tableHeaders}" th:text="${header}"/>
+                        <th th:each="header: ${tableHeadersStaff}" th:text="${header}"/>
                     </tr>
                     </thead>
                     <tbody style="font-size: 13px">
@@ -67,7 +66,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="margin-top: 24px">
+            <div style="margin-top: 24px"  class="table-responsive">
                 <h5>Gäste</h5>
 
                 <div th:if="${#lists.isEmpty(tableValuesGuests)}">
@@ -77,7 +76,7 @@
                        class="table table-hover">
                     <thead style="font-weight: bold">
                     <tr>
-                        <th th:each="header: ${tableHeaders}" th:text="${header}"/>
+                        <th th:each="header: ${tableHeadersGuests}" th:text="${header}"/>
                     </tr>
                     </thead>
                     <tbody style="font-size: 13px">
