@@ -54,7 +54,7 @@ public class ExternalVisitor extends Visitor {
 
     @Override
     public String getName() {
-        return this.getName();
+        return this.name;
     }
 
     @Override
