@@ -28,4 +28,5 @@ public interface Visit {
     Date getEndDate();
 
     String getLocationName();
+
 }

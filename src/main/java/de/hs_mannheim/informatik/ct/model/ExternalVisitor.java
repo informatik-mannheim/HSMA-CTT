@@ -52,4 +52,14 @@ public class ExternalVisitor extends Visitor {
         this.address = address;
     }
 
+    @Override
+    public String getName() {
+        return this.getName();
+    }
+
+    @Override
+    public String getAddress () {
+        return this.address;
+    }
+
 }
