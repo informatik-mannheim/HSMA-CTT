@@ -118,7 +118,7 @@ public class ContactTracingController {
     );
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Name", contact -> getName(contact.getContact())),
+            new TracingColumn("Name", contact ->  contact.getContact().getName()),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -127,7 +127,7 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             // Is it okay to do it like this? more like a workaround from the original datatype
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("PLZ", contact -> ""),
+         //   new TracingColumn("Adresse", contact -> contact.getContact().getAddress()),
             new TracingColumn("Ort", contact -> ""),
             new TracingColumn("Str., Hausnr.", contact -> "")
     );
@@ -148,8 +148,12 @@ public class ContactTracingController {
         }
 
         val contacts = contactTracingService.getVisitorContacts(target.get());
-        ArrayList<String> mails = new ArrayList<>();
-
+        System.out.println("Namenstest "+contacts.size());
+        System.out.println("Ausgabetest: "+contacts.get(7).getContact().getName());
+        for(Contact<?> contact: contacts){
+            System.out.println(contact.getContact().getName());
+            System.out.println(contact.getContact().getEmail());
+        }
 
         // Liste nach hs mail adressen filtern
         // weiter unterteilen in mailadressen mit buchstaben und zahlen
