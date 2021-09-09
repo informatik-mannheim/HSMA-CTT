@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.controller;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,22 +9,21 @@ package de.hs_mannheim.informatik.ct.controller;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Contact;
-import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
-import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
-import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
-import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.val;
+package de.hs_mannheim.informatik.ct.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,13 +36,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
+import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
+import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.val;
 
 @Controller
 @RequestMapping("tracing")

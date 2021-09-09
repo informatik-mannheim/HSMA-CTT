@@ -226,4 +226,6 @@ tbody {
     grid-area: area5;
 }
 
-
+.crypted:after {
+  content: attr(data-name) "@" attr(data-domain) "." attr(data-tld);
+}
