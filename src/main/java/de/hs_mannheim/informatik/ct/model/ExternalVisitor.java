@@ -58,8 +58,13 @@ public class ExternalVisitor extends Visitor {
     }
 
     @Override
-    public String getAddress () {
+    public String getAddress() {
         return this.address;
+    }
+
+    @Override
+    public String getNumber() {
+        return this.number;
     }
 
 }
