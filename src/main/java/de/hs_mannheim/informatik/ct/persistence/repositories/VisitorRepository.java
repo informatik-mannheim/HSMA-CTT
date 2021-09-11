@@ -18,7 +18,7 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.ExternalVisitor;
+
 import de.hs_mannheim.informatik.ct.model.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
