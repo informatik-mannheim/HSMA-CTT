@@ -16,9 +16,7 @@ public class Contact<T extends Visit> {
         return targetVisit.getVisitor();
     } // 'infizierte Person'
 
-    public Visitor getContact() {
-        return contactVisit.getVisitor();
-    } // Kontakte der 'infizierten Person'
+    public Visitor getContact() { return contactVisit.getVisitor(); } // Kontakte der 'infizierten Person'
 
     public String getContactLocation() {
         assert targetVisit.getLocationName().equals(contactVisit.getLocationName());

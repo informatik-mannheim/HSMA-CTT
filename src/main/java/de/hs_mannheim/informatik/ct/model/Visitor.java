@@ -52,9 +52,14 @@ public class Visitor {
     }
 
     public String getName() {
-        return " ";
+        return "";
     }
-    public String getAddress (){
-        return " ";
+
+    public String getAddress() {
+        return "";
+    }
+
+    public String getNumber() {
+        return "";
     }
 }

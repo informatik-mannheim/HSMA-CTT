@@ -70,21 +70,6 @@ public class ContactTracingController {
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
-    private final List<TracingColumn> tracingColumns = Arrays.asList(
-            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
-            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
-            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
-            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
-            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
-            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
-            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            // Is it okay to do it like this? more like a workaround from the original datatype
-            new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("PLZ", contact -> ""),
-            new TracingColumn("Ort", contact -> ""),
-            new TracingColumn("Str., Hausnr.", contact -> "")
-    );
     private final List<TracingColumn> tracingColumnsStudents = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
             new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
@@ -94,15 +79,15 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            // Is it okay to do it like this? more like a workaround from the original datatype
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Straße", contact -> ""),
+            new TracingColumn("Hausnummer", contact -> ""),
+            new TracingColumn("Plz", contact -> ""),
             new TracingColumn("Ort", contact -> ""),
-            new TracingColumn("Str., Hausnr.", contact -> "")
+            new TracingColumn("Tel.", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            // Methodenaufruf in lambda funktioniert nicht, bricht excel Tabelle
             new TracingColumn("Name", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -110,25 +95,48 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            // Is it okay to do it like this? more like a workaround from the original datatype
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("PLZ", contact -> ""),
+            new TracingColumn("Straße", contact -> ""),
+            new TracingColumn("Hausnummer", contact -> ""),
+            new TracingColumn("Plz", contact -> ""),
             new TracingColumn("Ort", contact -> ""),
-            new TracingColumn("Str., Hausnr.", contact -> "")
+            new TracingColumn("Tel.", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Name", contact ->  contact.getContact().getName()),
+            new TracingColumn("Nachname", contact -> contact.getContact().getName().split(" ")[0]),
+            new TracingColumn("Vorname", contact -> contact.getContact().getName().split(" ")[1]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            // Is it okay to do it like this? more like a workaround from the original datatype
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("Straße + Hausnr.", contact -> contact.getContact().getAddress()),
-            new TracingColumn("Ort", contact -> "")
+            // If the adress was not put in the format straße hausnummer plz ort an exception is thrown, to avoid this an empty string gets returned. Better solution would be to to adapt the form so that only adress in the corect format can be send
+            new TracingColumn("Straße", contact -> contact.getContact().getAddress().split(" ")[0]),
+            new TracingColumn("Hausnummer", contact -> {
+                if (contact.getContact().getAddress().split(" ").length > 0) {
+                    return contact.getContact().getAddress().split(" ")[1];
+                } else {
+                    return "";
+                }
+            }),
+            new TracingColumn("Plz", contact -> {
+                if (contact.getContact().getAddress().split(" ").length > 2) {
+                    return contact.getContact().getAddress().split(" ")[2];
+                } else {
+                    return " ";
+                }
+            }),
+            new TracingColumn("Ort", contact -> {
+                if (contact.getContact().getAddress().split(" ").length > 3) {
+                    return contact.getContact().getAddress().split(" ")[3];
+                } else {
+                    return "";
+                }
+            }),
+            new TracingColumn("Tel.", contact -> contact.getContact().getNumber())
     );
 
     @GetMapping("/search")
@@ -137,58 +145,65 @@ public class ContactTracingController {
     }
 
     @PostMapping("/results")
-    public String doSearch(@RequestParam String email, Model model) throws InvalidEmailException, InvalidExternalUserdataException {
+    public String doSearch(@RequestParam String email, Model model) {
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
-            System.out.println("Email adresse nicht registriert: " + email);
-
             model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
             return "tracing/search";
         }
 
         val contacts = contactTracingService.getVisitorContacts(target.get());
+        List<Contact<?>> contactsStudents = filterContactList(contacts, "students");
+        List<Contact<?>> contactsStaff = filterContactList(contacts, "staff");
+        List<Contact<?>> contactsGuests = filterContactList(contacts, "guests");
 
-        System.out.println("Namenstest "+contacts.size());
-        System.out.println("Ausgabetest: "+contacts.get(7).getContact().getAddress());
-        for(Contact<?> contact: contacts){
-            System.out.println(contact.getContact().getName());
-            System.out.println(contact.getContact().getEmail());
-        }
-
-        // Liste nach hs mail adressen filtern
-        // weiter unterteilen in mailadressen mit buchstaben und zahlen
-        // Für alle 3 Listen helfer methode für verschachtelte Liste
-        List<String[]> contactTable = contacts
+        List<String[]> contactTableStudents = contactsStudents
                 .stream()
                 .map(contact -> {
-                    val rowValues = new String[tracingColumns.size()];
-                    for (int columnIndex = 0; columnIndex < tracingColumns.size(); columnIndex++) {
-                        val column = tracingColumns.get(columnIndex);
+                    val rowValues = new String[tracingColumnsStudents.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsStudents.size(); columnIndex++) {
+                        val column = tracingColumnsStudents.get(columnIndex);
+                        rowValues[columnIndex] = column.cellValue.apply(contact);
+                    }
+                    return rowValues;
+                }).collect(Collectors.toList());
+        List<String[]> contactTableStaff = contactsStaff
+                .stream()
+                .map(contact -> {
+                    val rowValues = new String[tracingColumnsStaff.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsStaff.size(); columnIndex++) {
+                        val column = tracingColumnsStaff.get(columnIndex);
                         rowValues[columnIndex] = column.cellValue.apply(contact);
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
 
-        HashMap<String, ArrayList<String[]>> contactLists = separeteContactList(contactTable);
-        ArrayList<String[]> contactListStudents = contactLists.get("students");
-        ArrayList<String[]> contactListsStaff = contactLists.get("universityStaff");
-        ArrayList<String[]> contactListGuests = contactLists.get("guests");
-        // pass lists to frontend and display for user
-        // margin footer
-        // adapt downloadable excel sheets to frontend => all data in one file with 3 different sheets vs. 3 files?
+        List<String[]> contactTableGuests = contactsGuests
+                .stream()
+                .map(contact -> {
+                    val rowValues = new String[tracingColumnsGuests.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsGuests.size(); columnIndex++) {
+                        val column = tracingColumnsGuests.get(columnIndex);
+                        rowValues[columnIndex] = column.cellValue.apply(contact);
+                    }
+                    return rowValues;
+                }).collect(Collectors.toList());
+
+        System.out.println("Contactsize: " + contacts.size());
+
+        model.addAttribute("numberOfContacts", contacts.size());
         model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableHeadersStaff", tracingColumnsStaff.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableHeadersGuests", tracingColumnsGuests.stream().map(TracingColumn::getHeader).toArray());
-        model.addAttribute("tableValues", contactTable);
-        model.addAttribute("tableValuesStudents", contactListStudents);
-        model.addAttribute("tableValuesStaff", contactListsStaff);
-        model.addAttribute("tableValuesGuests", contactListGuests);
+        model.addAttribute("tableValuesStudents", contactTableStudents);
+        model.addAttribute("tableValuesStaff", contactTableStaff);
+        model.addAttribute("tableValuesGuests", contactTableGuests);
         model.addAttribute("target", target.get().getEmail());
 
         return "tracing/contactList.html";
     }
 
-    // download in 3 exceltabellen unterteilen
+
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
         val target = visitorService.findVisitorByEmail(email)
@@ -201,7 +216,7 @@ public class ContactTracingController {
         } else if (type.equals("guests")) {
             tracingColumns = tracingColumnsGuests;
         }
-        //typ tracing Columns
+
         val generator = new ContactListGenerator(
                 dateTimeService,
                 tracingColumns.stream().map(TracingColumn::getHeader).collect(Collectors.toList()),
@@ -229,10 +244,16 @@ public class ContactTracingController {
         private Function<Contact<?>, String> cellValue;
     }
 
-    // helper method to filter contactList
+
+    /**
+     * Helper method to filter the contacts into 3 subcategories: students, employees of the university and guests
+     *
+     * @param contacts List of all possible contacts of the target email
+     * @param type     String of the filter type (students/ staff/ guests)
+     * @return filtered List of Contacts
+     */
     private List<Contact<?>> filterContactList(Collection<Contact<?>> contacts, String type) {
         List<Contact<?>> filteredList = new ArrayList<>();
-        System.out.println("all contacts " + contacts.toString());
         for (Contact contact : contacts) {
             if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
                 filteredList.add(contact);
@@ -242,43 +263,6 @@ public class ContactTracingController {
                 filteredList.add(contact);
             }
         }
-        System.out.println("Filtered List list: " + filteredList.size() + " | " + filteredList.toString());
-        System.out.println("List " + contacts.size() + " | " + contacts.toString());
         return filteredList;
-    }
-
-    // which map best use?
-    // Helper method to seperate contact list in 3 different separate Lists
-    private HashMap<String, ArrayList<String[]>> separeteContactList(List<String[]> contactList) {
-        HashMap<String, ArrayList<String[]>> contactListSeparated = new HashMap<String, ArrayList<String[]>>();
-        ArrayList<String[]> students = new ArrayList<String[]>();
-        ArrayList<String[]> universityStaff = new ArrayList<String[]>();
-        ArrayList<String[]> guests = new ArrayList<String[]>();
-        for (String[] contact : contactList) {
-            if (contact[0].contains("@stud.hs-mannheim.de")) {
-                students.add(contact);
-            } else if (contact[0].contains("@hs-mannheim.de")) {
-                universityStaff.add(contact);
-            } else {
-                guests.add(contact);
-            }
-        }
-        contactListSeparated.put("students", students);
-        contactListSeparated.put("universityStaff", universityStaff);
-        contactListSeparated.put("guests", guests);
-        return contactListSeparated;
-    }
-
-    private String getNameOfStaff(String email) {
-        String name = email.split("@")[0];
-        if (email.contains(".")) {
-            email = email.split(".")[1];
-        }
-        return name;
-    }
-
-    public String getName(Visitor visitor) {
-        ExternalVisitor externalVisitor = (ExternalVisitor) visitor;
-        return externalVisitor.getName();
     }
 }
