@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 
-import java.util.List;
+
 import java.util.Optional;
 
 
@@ -43,9 +43,7 @@ public class VisitorService {
         email = email.toLowerCase();
         return visitorRepo.findByEmail(email);
     }
-  /*  public List<Visitor> getAllVisitors(){
-        return visitorRepo.findAll();
-    }*/
+
     @Transactional
     public Visitor findOrCreateVisitor(String email, String name, String number, String address) throws InvalidEmailException, InvalidExternalUserdataException {
         email = email.toLowerCase();
