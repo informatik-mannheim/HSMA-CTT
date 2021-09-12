@@ -404,32 +404,4 @@ public class CtController {
         }
         return faqs;
     }
-
-    // ErrorControllerImpl
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request, Model model) {
-        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-
-        if (status != null) {
-            int code = Integer.parseInt(status.toString());
-            log.error("Web ErrorCode: " + code);
-            log.error("URL:" + request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString());
-            if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")) {
-                log.error("Der Raum konnte nicht gefunden werden");
-            }
-            if (code == HttpStatus.FORBIDDEN.value())
-                model.addAttribute("error", "Zugriff nicht erlaubt. Evtl. mit einer falschen Rolle eingeloggt?");
-            else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/noId")) {
-                model.addAttribute("error", "Diesen Raum gibt es nicht");
-            } else if (request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI).toString().equals("/r/checkOut")) {
-                log.error("Checkout nicht möglich da Email nicht vorhanden");
-                model.addAttribute("error", "Checkout nicht möglich, Emailadresse nicht im System. Waren Sie eingecheckt?");
-            } else
-                model.addAttribute("error", "Fehler-Code: " + status);
-        } else {
-            model.addAttribute("error", "Unbekannter Fehler!");
-        }
-
-        return home(model);
-    }
 }
