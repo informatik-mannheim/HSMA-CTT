@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+package de.hs_mannheim.informatik.ct.controller;
 
 import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
@@ -198,7 +200,7 @@ public class ContactTracingController {
 
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
-        val target = visitorService.findVisitorByEmail(email)
+        Visitor target = visitorService.findVisitorByEmail(email)
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
         val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
