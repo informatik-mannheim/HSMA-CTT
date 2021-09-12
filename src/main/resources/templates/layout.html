@@ -17,26 +17,19 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.7.2/css/all.css">
 
-    <!-- Email Encryption: https://jumk.de/nospam/stopspam.html -->
-    <script type="text/javascript">
-		function UnCryptMailto( s ){
-			var n = 0;
-			var r = "";
-			for( var i = 0; i < s.length; i++) {
-				n = s.charCodeAt( i );
-				if( n >= 8364 ) {
-					n = 128;
-				}
-				r += String.fromCharCode( n - 1 );
-			}
-			return r;
-		}
+    <style>
+        @media screen and (max-width: 768px){
+            p.footer-copyright{
+                font-size: 2vw;
+            }
+        }
 
-		function linkTo_UnCryptMailto( s ) {
-			location.href=UnCryptMailto( s );
-		}
-		// -->
-    </script>
+        @media screen and (min-width: 769px){
+            p.footer-copyright{
+                font-size: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -125,65 +118,60 @@
 </main>
 <div style="clear:both"></div>
 
-<footer style="margin-top: 50px">
-    <p style="font-size: 85%">&copy; 2020-2021
+<footer style="z-index: 1;">
+    <p class= "footer-copyright">&copy; 2020-2021
+        <a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakultät für Informatik</a>,
+
         <a href="https://www.space.hs-mannheim.de" target="_blank">StartupLab@HSMA</a> und
-        <a href="https://www.informatik.hs-mannheim.de" target="_blank">Fakultät für Informatik</a>
+        <a href="https://www.kis.hs-mannheim.de/home.html" target="_blank">KIS</a>
         <a class="float-right" href="https://www.hs-mannheim.de/impressum.html" target="_blank">Impressum</a>
         <a class="float-right mr-2" th:href="@{/datenschutz}">Datenschutz</a>
-        <a class="float-right mr-2" href="https://www.gnu.org/licenses/agpl-3.0.html">Copyright</a>
+        <a class="float-right mr-2" href="https://www.gnu.org/licenses/agpl-3.0.html">Lizenz</a>
     </p>
 </footer>
 
-</main>
+	<script>
+		$( '#deviceChoice .nav-tabs a' ).on( 'click', function () {
+			$( '#deviceChoice .nav-tabs' ).find( 'li.active' ).removeClass( 'active' );
+			$( this ).parent( 'li' ).addClass( 'active' );
+		});
 
-<script>
-			$( '#deviceChoice .nav-tabs a' ).on( 'click', function () {
-				$( '#deviceChoice .nav-tabs' ).find( 'li.active' ).removeClass( 'active' );
-				$( this ).parent( 'li' ).addClass( 'active' );
-			});
+		window.onload=cookieBanner();
+		window.onload=showCheckin();
 
-			window.onload=cookieBanner();
-			window.onload=showCheckin();
-
-			function cookieBanner() {
-				if (!document.cookie.includes('cookiesAccepted'))
-					document.getElementById("cookieBanner").removeAttribute("hidden");
+		function cookieBanner() {
+			if (!document.cookie.includes('cookiesAccepted'))
+				document.getElementById("cookieBanner").removeAttribute("hidden");
+		}
+		
+		function setBannerCookie() {
+			var d = new Date();
+			d.setTime(d.getTime() + (5*365*24*60*60*1000));
+			document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+			document.getElementById("cookieBanner").setAttribute("hidden", true);
+		}
+		
+		function showCheckin() {
+			if (document.cookie.includes('checked-into') && document.cookie.includes('email')) {
+				document.getElementById("checkin-bar").removeAttribute("hidden");
+				document.getElementById("spacer").removeAttribute("hidden");
 			}
-			
-			function setBannerCookie() {
-				var d = new Date();
-				d.setTime(d.getTime() + (5*365*24*60*60*1000));
-				document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
-				document.getElementById("cookieBanner").setAttribute("hidden", true);
-			}
-			
-			function showCheckin() {
-				if (document.cookie.includes('checked-into') && document.cookie.includes('email')) {
-					document.getElementById("checkin-bar").removeAttribute("hidden");
-					document.getElementById("spacer").removeAttribute("hidden");
-				}
-			}
+		}
 
+		$(document).ready(function() {
+			$('.btn-for-collapsible').click(function() {
+				$(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
+			});	
+		});
 
-			$(document).ready(function() {
-				$('.btn-for-collapsible').click(function() {
-					$(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
-				});	
+		$('.collapse').on('shown.bs.collapse', function () {
+			$("html").animate({ scrollTop: $('.card').offset().top - 50 }, 'slow');
+		});
 
+		$('#collapsibleCheckOut').on('shown.bs.collapse', function () {
+			$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
+		});
+	</script>
 
-			});
-
-
-			$('.collapse').on('shown.bs.collapse', function () {
-				$("html").animate({ scrollTop: $('.card').offset().top - 50 }, 'slow');
-			});
-
-			$('#collapsibleCheckOut').on('shown.bs.collapse', function () {
-				$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
-			});
-			
-
-</script>
 </body>
 </html>

@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.controller;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,12 +9,14 @@ package de.hs_mannheim.informatik.ct.controller;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+package de.hs_mannheim.informatik.ct.controller;
 
 import java.net.URI;
 import java.util.Calendar;
@@ -25,12 +25,8 @@ import java.util.GregorianCalendar;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 @Component
 public class Utilities {
@@ -67,19 +63,27 @@ public class Utilities {
      * @param request   The request is used to differentiate between http/https. Should be moved to setting!
      * @return An absolute URI to the given resource
      */
-    public UriComponents getUriToLocalPath(String localPath, HttpServletRequest request) {
+    public UriComponents getUriToLocalPath(String scheme, String localPath) {
+        return createUriBuilder(scheme, localPath).build();
+    }
+
+    public UriComponents getUriToLocalPath(String scheme, String localPath, String query) {
+        return createUriBuilder(scheme, localPath)
+                .query(query)
+                .build();
+    }
+
+    private UriComponentsBuilder createUriBuilder(String scheme, String path){
         if (urlOverride == null) {
             return UriComponentsBuilder.newInstance()
-                    .scheme(request.getScheme()) // TODO: Optimally http/https should be configured somewhere
+                    .scheme(scheme) // TODO: Optimally http/https should be configured somewhere
                     .host(host)
                     .port(port)
-                    .path(localPath)
-                    .build();
+                    .path(path);
         } else {
             return UriComponentsBuilder.newInstance()
                     .uri(URI.create(urlOverride))
-                    .path(localPath)
-                    .build();
+                    .path(path);
         }
     }
 }

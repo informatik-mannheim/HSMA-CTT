@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("pageshow", () => {
     const storage = window.localStorage;
     const emailText = document.getElementById("email-text");
     const guestFreeSection = document.getElementsByClassName("guest-free-section")

@@ -19,20 +19,20 @@
 
     <div class="border border-secondary p-2">
         <h5 class="mb-4">Einloggen</h5>
+          
+        <p><i>Hinweis: Dieser Login ist nur für administrative Zwecke notwendig, zur Kontakterfassung ist Einloggen nicht nötig.</i></p>
 
         <form th:action="@{/login}" method="post">
             <div class="form group row mb-3">
                 <label class="col-sm-2 col-form-label" for="username">EMail: *</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="EMail" size="32"
-                           autofocus required/>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="EMail" size="32" autofocus required/>
                 </div>
             </div>
             <div class="form group row mb-3">
                 <label class="col-sm-2 col-form-label" for="password">Passwort: *</label>
                 <div class="col-sm-4">
-                    <input class="form-control" type="password" id="password" name="password" size="32"
-                           placeholder="Passwort" autocomplete="off" required/>
+                    <input class="form-control" type="password" id="password" name="password" size="32" placeholder="Passwort" autocomplete="off" required/>
                 </div>
             </div>
 
@@ -42,7 +42,6 @@
                 </div>
                 <p class="ml-4"><small><i>* = notwendige Eingabe</i></small></p>
             </div>
-
 
         </form>
     </div>

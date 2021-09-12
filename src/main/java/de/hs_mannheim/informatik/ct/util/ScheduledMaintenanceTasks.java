@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.util;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,28 +9,24 @@ package de.hs_mannheim.informatik.ct.util;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
-import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+package de.hs_mannheim.informatik.ct.util;
+
+import java.time.LocalTime;
+import java.time.Period;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
+import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 
 /**
  * Schedules maintenance queries such as signing out visitors at the end of the day and deleting expired personal data
