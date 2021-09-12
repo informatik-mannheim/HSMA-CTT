@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!-- In this file all the faqs are stored -->
 <!-- If you want to add a link/ image/... in your answer write html but escape the following characters:
-"   &quot;
-'   &apos;
-<   &lt;
->   &gt;
-&   &amp;
+"   "   &quot;
+'   '   &apos;
+<   <   &lt;
+>   >   &gt;
+&   &   &amp;
 -->
 <faq>
     <faq-element id="0">
@@ -75,6 +75,38 @@
             &lt;/a&gt;
             schreiben und darin ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des
             positiven Tests mitteilen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="8">
+        <question>Wie kann ich als Dozent sicher sein, dass alle Schüler im Raum das System nutzen?</question>
+        <answer>
+            &lt;p&gt;Wenn Sie sich mit dem blauen QR-Code einchecken, können Sie die Anzahl der derzeit eingecheckten
+            Nutzer überprüfen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="9">
+        <question>Warum kann ich mich nicht einloggen?</question>
+        <answer>
+            &lt;p&gt;Für die das Ein- und Auschecken ist eine Anmeldung nicht erforderlich.
+            Der Login ist lediglich für den Administrator bzw. den Kontaktverfolger vorgesehen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="10">
+        <question>Muss ich mich anmelden?</question>
+        <answer>
+            &lt;p&gt;Nein, es sei denn, Sie sind der Administrator oder Kontaktverfolger. Alle anderen müssen sich lediglich
+            normal ein- und auschekcen wenn Sie einen Raum betreten, dafür muss man isch nicht im System einloggen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="11">
+        <question>Wie kann ich das Corona Tracking Tool (CTT) für meine Organisation erhalten?</question>
+        <answer>
+            &lt;p&gt;CTT ist Open Source, das heißt, es ist frei verfügbar. Schreiben Sie eine  Mail (ctt-admin@hs-mannheim.de) oder gehen Sie direkt
+            auf unsere &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Githubseite&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
