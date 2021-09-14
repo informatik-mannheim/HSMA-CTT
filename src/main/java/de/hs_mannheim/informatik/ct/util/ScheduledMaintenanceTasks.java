@@ -39,18 +39,16 @@ public class ScheduledMaintenanceTasks {
     @Autowired
     private EventVisitService eventVisitService;
 
-    //   @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
+    //@Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 Minutes
     @Scheduled(cron = "0 55 3 * * *")    // 3:55 AM
     public void doMaintenance() {
-        signOutAllVisitors(LocalTime.parse("21:00:00"));
+        signOutAllVisitors(LocalTime.parse("00:00:00"));
 
         deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
 
     public void signOutAllVisitors(LocalTime forcedEndTime) {
-        if (LocalTime.now().isAfter(forcedEndTime)) {
-            roomVisitService.checkOutAllVisitors(forcedEndTime);
-        }
+        roomVisitService.checkOutAllVisitors(forcedEndTime);
     }
 
     public void deleteExpiredVisitRecords(Period recordLifeTime) {
