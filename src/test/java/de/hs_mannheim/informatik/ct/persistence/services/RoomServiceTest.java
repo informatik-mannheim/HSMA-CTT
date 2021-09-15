@@ -23,7 +23,7 @@ public class RoomServiceTest {
     @MockBean
     private RoomRepository roomRepositoryMock;
     @InjectMocks
-    private  RoomService roomService;
+    private RoomService roomService;
 
     @Test
     public void shouldThrowException_When_RaumPinIsNotANumberOrNull() {
