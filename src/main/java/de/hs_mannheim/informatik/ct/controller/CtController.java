@@ -59,14 +59,9 @@ import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
-import lombok.extern.slf4j.Slf4j;
-
 
 @Controller
-@Slf4j
-
 public class CtController {
-
     @Autowired
     private EventService eventService;
 
@@ -93,7 +88,6 @@ public class CtController {
 
     @Autowired
     private ContactTracingService contactTracingService;
-
 
     @Value("${server.port}")
     private String port;
