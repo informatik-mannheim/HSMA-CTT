@@ -21,7 +21,6 @@ package de.hs_mannheim.informatik.ct.util;
 import java.time.LocalTime;
 import java.time.Period;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

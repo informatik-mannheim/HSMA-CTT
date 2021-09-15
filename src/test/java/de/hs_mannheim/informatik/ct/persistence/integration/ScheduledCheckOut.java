@@ -27,7 +27,6 @@ import de.hs_mannheim.informatik.ct.model.CheckOutSource;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.model.Visitor;
-import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
@@ -38,7 +37,7 @@ import de.hs_mannheim.informatik.ct.util.TimeUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -46,6 +45,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import org.mockito.InjectMocks;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
@@ -132,7 +133,7 @@ public class ScheduledCheckOut {
     @Test
     void scheduledMaintenanceTasksTest() {
         Room room = entityManager.persist(new Room("A001", "A", 10));
-        // visitors that checked in today and should not get
+        // visitors that checked in today and should not get checked out by maintenance task
         List<RoomVisit> visitsToday = Arrays.asList(
                 entityManager.persist(new RoomVisit(
                         entityManager.persist(new Visitor("1")),
@@ -150,6 +151,7 @@ public class ScheduledCheckOut {
                         TimeUtil.convertToDate(now.withHour(12).withMinute(0).withSecond(0))
                 ))
         );
+        // visitors that checked in yesterday and should get checked out by maintenance task
         List<RoomVisit> visitsYesterday = Arrays.asList(
                 entityManager.persist(new RoomVisit(
                         entityManager.persist(new Visitor("4")),
@@ -207,7 +209,5 @@ public class ScheduledCheckOut {
         assertThat(roomVisitRepository.getRoomVisitorCount(room), is(0));
         assertThat(roomVisit.getCheckOutSource(), is(CheckOutSource.AutomaticCheckout));
         assertThat(roomVisit.getEndDate(), not(nullValue()));
-
-        entityManager.flush();
     }
 }
