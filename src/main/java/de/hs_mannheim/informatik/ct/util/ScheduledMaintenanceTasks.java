@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.util;
 import java.time.LocalTime;
 import java.time.Period;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -39,10 +40,14 @@ public class ScheduledMaintenanceTasks {
     @Autowired
     private EventVisitService eventVisitService;
 
+    private final int CRON_HOUR = 3;
+    private final int CRON_MINUTE = 55;
+    private final String FORCED_END_TIME = "00:00:00";
+
     //@Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 Minutes
-    @Scheduled(cron = "0 55 3 * * *")    // 3:55 AM
+    @Scheduled(cron = "0 " + CRON_MINUTE + " " + CRON_HOUR + " * * *")    // 3:55 AM
     public void doMaintenance() {
-        signOutAllVisitors(LocalTime.parse("00:00:00"));
+        signOutAllVisitors(LocalTime.parse(FORCED_END_TIME));
 
         deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
