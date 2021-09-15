@@ -27,11 +27,13 @@ import org.springframework.stereotype.Component;
 
 import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Schedules maintenance queries such as signing out visitors at the end of the day and deleting expired personal data
  */
 @Component
+@Slf4j
 public class ScheduledMaintenanceTasks {
     @Autowired
     private RoomVisitService roomVisitService;
@@ -46,8 +48,9 @@ public class ScheduledMaintenanceTasks {
     //@Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 Minutes
     @Scheduled(cron = "0 " + CRON_MINUTE + " " + CRON_HOUR + " * * *")    // 3:55 AM
     public void doMaintenance() {
+        log.info("Auto-Checkout and deletion of old records triggered.");
+        
         signOutAllVisitors(LocalTime.parse(FORCED_END_TIME));
-
         deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
 
@@ -59,4 +62,5 @@ public class ScheduledMaintenanceTasks {
         eventVisitService.deleteExpiredRecords(recordLifeTime);
         roomVisitService.deleteExpiredRecords(recordLifeTime);
     }
+    
 }
