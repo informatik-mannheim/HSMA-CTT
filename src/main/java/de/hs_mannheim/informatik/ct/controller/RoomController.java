@@ -147,7 +147,7 @@ public class RoomController {
 
         val visit = roomVisitService.visitRoom(visitor, room);
 
-        Cookie c = new Cookie("roomVisitor", visitor.getEmail());
+        Cookie c = new Cookie("checkedInEmail", visitor.getEmail());
         c.setMaxAge(60 * 60 * 24 * 365 * 5);
         c.setPath("/");
         response.addCookie(c);
@@ -209,7 +209,7 @@ public class RoomController {
         val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
         roomVisitService.checkOutVisitor(visitor);
 
-        Cookie c = new Cookie("roomVisitor", "");
+        Cookie c = new Cookie("checkedInEmail", "");
         c.setMaxAge(0);
         c.setPath("/");
         response.addCookie(c);
