@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
@@ -49,11 +47,11 @@ import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.NonNull;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class RoomVisitService implements VisitService<RoomVisit> {
-    Logger logger = LoggerFactory.getLogger(RoomVisitService.class);
-
     @Autowired
     private RoomVisitRepository roomVisitRepository;
 
@@ -114,8 +112,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     public List<RoomVisit> getCheckedInRoomVisits(@NonNull Visitor visitor) {
         val notCheckedOutVisits = roomVisitRepository.findNotCheckedOutVisits(visitor);
         if (notCheckedOutVisits.size() > 1) {
-            logger.warn(String.format(
-                    "Visitor %s was checked into more than one room at once", visitor.getEmail()));
+            log.warn(String.format("Visitor %s was checked into more than one room at once", visitor.getEmail()));
         }
 
         return notCheckedOutVisits;
@@ -173,8 +170,9 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         }
 
         roomVisitRepository.saveAll(notCheckedOutVisits);
-
         assert getVisitorCount(room) == 0;
+        
+        log.info("Room reset for room {}, {} visitors removed.", room.getName(), notCheckedOutVisits.size());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -182,6 +180,8 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
         roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
         visitorRepository.removeVisitorsWithNoVisits();
+        
+        log.info("Expired records removed.");
     }
 
     public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor) {
