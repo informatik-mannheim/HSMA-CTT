@@ -26,7 +26,7 @@
     <div th:if="${isCheckedIn}">
         <form class="check-out-form" action="#" th:action="@{/r/checkOut}" method="post">
             <p style="font-weight: bold;">Sie sind noch eingecheckt</p>
-            <input name="visitorEmail" type="hidden" th:value="${roomVisitor}"/>
+            <input name="visitorEmail" type="hidden" th:value="${checkedInEmail}"/>
             <button class="btn-for-index-page" type="submit">auschecken</button>
         </form>
         <hr/>
