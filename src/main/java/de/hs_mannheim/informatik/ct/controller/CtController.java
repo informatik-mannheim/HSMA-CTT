@@ -82,23 +82,8 @@ public class CtController {
     private String host;
 
     @RequestMapping("/")
-    public String home(@CookieValue(value = "roomVisitor", required = false) Optional<String> requestRoomVisitor, Model model, HttpServletResponse response) {
-        boolean isCheckedIn = requestRoomVisitor.isPresent();
-        if(requestRoomVisitor.isPresent()){
-            val email = requestRoomVisitor.get();
-            List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
-            if(roomVisits.size()>0){
-                model.addAttribute("roomVisitor", email);
-            }else{
-                isCheckedIn = false;
-                Cookie c = new Cookie("roomVisitor", "");
-                c.setMaxAge(0);
-                c.setPath("/");
-                response.addCookie(c);
-            }
-        }
+    public String home(Model model, HttpServletResponse response) {
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
-        model.addAttribute("isCheckedIn", isCheckedIn);
         return "index";
     }
 
@@ -326,16 +311,5 @@ public class CtController {
     @RequestMapping("/faq")
     public String showFaq() {
         return "faq";
-    }
-
-    private List<RoomVisit> findCurrentRoomVisitsByEmail(String email){
-        List<RoomVisit> roomVisits = new ArrayList<>();
-        val visitor = visitorService.findVisitorByEmail(email);
-        if(visitor.isPresent()) {
-            for(val roomVisit : roomVisitService.getCheckedInRoomVisits(visitor.get())){
-                roomVisits.add(roomVisit);
-            }
-        }
-        return roomVisits;
     }
 }
