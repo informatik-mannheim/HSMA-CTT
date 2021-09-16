@@ -185,7 +185,10 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     }
 
     public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor) {
-        return roomVisitRepository.findVisitsWithContact(visitor);
+        val contacts = roomVisitRepository.findVisitsWithContact(visitor);
+        log.info("Contact tracing delivered {} contacts.", contacts.size());
+        
+        return contacts; 
     }
 
     public int getRemainingStudyPlaces() {
