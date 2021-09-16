@@ -20,8 +20,6 @@ package de.hs_mannheim.informatik.ct.web;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,17 +34,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${server_env:production}")
     private String serverEnvironment;
 
     @Value("${user_credentials:#{null}}")
     private String credentialsEnv;
-
-    Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -63,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
         if (isDevEnv()) {
-            logger.warn("Server is running in developer mode with default credentials!");
+            log.warn("Server is running in developer mode with default credentials!");
             // Use plain text passwords for local development
             auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
             auth.inMemoryAuthentication().withUser("prof").password("prof").roles("PROF");
@@ -84,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .withUser(username)
                         .password(hashedPassword)
                         .roles(roles);
-                logger.info("Added user " + username);
+                log.info("Added user " + username);
             }
         }
     }
