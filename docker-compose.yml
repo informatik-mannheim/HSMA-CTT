@@ -24,7 +24,7 @@ services:
       # Passwords are encrypted using Bcrypt in Java Spring. (Use org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.encode("passwordToEncode") )
       - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;prof,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,PROF;admin,$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a,PROF,ADMIN;}
       # Override current names of the study rooms
-      - CTT_STUDYROOMS=L11;L12;L13;L14;L15;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
+      - CTT_STUDYROOMS=L011;L012;L013;L014;L015;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
     restart: always
   db:
     image: postgres:13-alpine
