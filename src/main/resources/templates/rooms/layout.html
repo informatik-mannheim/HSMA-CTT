@@ -4,6 +4,8 @@
 <head>
     <meta charset='utf-8'>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
+    
+    <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.7.2/css/all.css">
     <link rel="stylesheet" href="/main.css">
     <link rel="shortcut icon"
           href="https://hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Images/favicon.ico"
@@ -24,17 +26,24 @@
     		</a>
         </div>
     </div>
-    
+
     <div class="center-container hidden" id="checkout-bar">
         <p>Momentan eingecheckt in Raum A008</p>
         <button>Abmelden</button>
     </div>
-    
+
     <div class="page-content center-container">
+        <div th:if="${isCheckedIn}" id="checkout-hint" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <form action="#" th:action="@{/r/checkOut}" method="post" >
+                Sie sind angemeldet.
+                <input type="hidden" name="vistorEmail" th:value="${checkedInEmail}">
+                <button type="submit" class="btn-for-index-page"> Abmelden</button>
+            </form>
+        </div>
         <div class="flex-container content-container center-container" id="main-content" layout:fragment="content">
         </div>
     </div>
-    
+
     <footer class="center-container flex-container">
         <div class="footer-content">
             <span>© 2020-2021</span>
