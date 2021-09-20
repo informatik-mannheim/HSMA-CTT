@@ -25,34 +25,34 @@
 
 			<div class="row justify-around">
 
-				<div class="card flex-1">
+				<div class="custom-card flex-1">
 					<h5 class="text-center">Raumkapazität nach IfSG</h5>
 					<p class="text-center"><strong th:text="${roomData.maxCapacity+' '}"></strong>Personen</p>
 				</div>
 
-				<div class="card flex-1">
+				<div class="custom-card flex-1">
 					<h5 class="text-center">eingecheckte Personen</h5>
 					<p id="checked-in-amount" class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
 				</div>
 
 			</div>
 
-			<div class="card">
-				<div class="card-body">
+			<div class="custom-card">
+				<div class="custom-card-body">
 					<p>
 						Wenn die Zahl der im Raum eingecheckten Personen die Raumkapazität überschreitet, können Sie den Raum zurücksetzen.
 						Nach dem Zurücksetzen des Raumes müssen sich alle Personen erneut einchecken.
 					</p>
 				</div>
-				<div class="card-footer">
+				<div class="custom-card-footer">
 					<button id="reset-room" type="button" class="hs-button">Raum zurücksetzen</button>
 				</div>
 			</div>
 
 			<form method="POST" th:action="@{/r/checkOut}">
 
-				<div class="card">
-					<div class="card-body">
+				<div class="custom-card">
+					<div class="custom-card-body">
 						<p>Um an Präsenzveranstaltungen teilnehmen zu können, müssen alle Personen mindestens eines der folgenden Kriterien erfüllen:</p>
 						<p>Die Person...</p>
 						<ul>
@@ -77,12 +77,12 @@
 					</div>
 				</div>
 
-				<div class="card">
+				<div class="custom-card">
 
-						<div class="card-body">
-							<p class="card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
+						<div class="custom-card-body">
+							<p class="custom-card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
 						</div>
-						<div class="card-footer">
+						<div class="custom-card-footer">
 							<button type="submit" class="hs-button">Raum verlassen</button>
 						</div>
 						<input type="hidden" name="visitorEmail" th:value="${visitorEmail}"/>
