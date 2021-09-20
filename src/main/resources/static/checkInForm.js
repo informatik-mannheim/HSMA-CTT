@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (postfix) {
             case "student":
-                emailText.style.minWidth = "270px"
+                emailText.style.minWidth = "75px"
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
