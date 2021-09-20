@@ -137,7 +137,11 @@ public class ErrorController {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unknown error")
-    public String anyException() {
+    public String anyException(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log.error(sw.toString()); 
+
         return "error";
     }
 
