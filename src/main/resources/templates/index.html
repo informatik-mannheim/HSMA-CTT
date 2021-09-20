@@ -23,16 +23,6 @@
 
     <hr/>
 
-    <div th:if="${isCheckedIn}">
-        <form class="check-out-form" action="#" th:action="@{/r/checkOut}" method="post">
-            <p style="font-weight: bold;">Sie sind noch eingecheckt</p>
-            <input name="visitorEmail" type="hidden" th:value="${checkedInEmail}"/>
-            <button class="btn-for-index-page" type="submit">auschecken</button>
-        </form>
-        <hr/>
-    </div>
-
-
     <div id="checkinContainer" class="mt-3 mb-3">
         <form id="checkInForm" action="/r/noId" class="mb-3">
             <h6 id="checkIn">Manueller Check-In</h6><br/>
