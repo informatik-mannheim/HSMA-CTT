@@ -3,7 +3,8 @@
 
 <head>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/layout-style.css">
     <link rel="shortcut icon"
           href="https://hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Images/favicon.ico"
           type="image/vnd.microsoft.icon" crossorigin="anonymous">
@@ -109,6 +110,7 @@
 <div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
 
 <main class="container float-left">
+
     <div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
         <i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur zur
         Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so
@@ -116,6 +118,14 @@
         <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="setBannerCookie()">
             <span aria-hidden="true">&times;</span>
         </button>
+    </div>
+
+    <div th:if="${isCheckedIn}" id="checkout-hint" class="custom-card danger-color" role="alert">
+        <form action="#" th:action="@{/r/checkOut}" method="post" >
+            Sie sind eingecheckt.
+            <input type="hidden" name="visitorEmail" th:value="${checkedInEmail}">
+            <button type="submit" class="btn-for-index-page">Auschecken</button>
+        </form>
     </div>
 
     <div layout:fragment="content">
