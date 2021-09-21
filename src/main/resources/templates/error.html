@@ -10,10 +10,13 @@
 <body>
 
 <div layout:fragment="content">
-
-    <div>Es ist ein Fehler aufgetreten</div>
-    <div>Leider ist uns dieser Fehler nicht bekannt. Bitte melden Sie ihn an: info@hs-mannheim.de </div>
-
+    <div>Es ist ein Fehler aufgetreten!</div>
+      
+    <div>Leider ist uns dieser Fehler nicht bekannt. Bitte melden Sie ihn an: 
+      <a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
+   	            onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
+      </a>
+   </div>
 </div>
 
 </body>
