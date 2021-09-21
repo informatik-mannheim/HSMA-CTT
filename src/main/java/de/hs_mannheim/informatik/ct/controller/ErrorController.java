@@ -18,6 +18,8 @@
 
 package de.hs_mannheim.informatik.ct.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.RequestDispatcher;
@@ -35,8 +37,10 @@ import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
+@Slf4j
 public class ErrorController {
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -137,7 +141,11 @@ public class ErrorController {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unknown error")
-    public String anyException() {
+    public String anyException(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log.error(sw.toString()); 
+
         return "error";
     }
 
