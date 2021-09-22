@@ -57,9 +57,11 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/r")
+@Slf4j
 public class RoomController {
     @Autowired
     private RoomService roomService;
@@ -70,6 +72,9 @@ public class RoomController {
 
     @Value("${allow_full_room_checkIn:false}")
     private boolean allowFullRoomCheckIn;
+
+    @Value("${warning_for_full_room:true}")
+    private boolean warningForFullRoom;
 
     /**
      * Shows the check-in form page for the given room.
@@ -83,12 +88,12 @@ public class RoomController {
     // TODO: Can we handle rooms with non ASCII names?
     @GetMapping("/{roomId}")
     public String checkIn(@PathVariable String roomId,
-                          @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
-                          @RequestParam(required = false, defaultValue = "false") Boolean privileged,
-                          @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
-                          @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
-                          Model model) throws InvalidRoomPinException {
-        
+            @RequestParam(required = false, value = "roomId") Optional<String> roomIdFromRequest,
+            @RequestParam(required = false, defaultValue = "false") Boolean privileged,
+            @RequestParam(required = false, value = "pin") Optional<String> roomPinFromRequest,
+            @RequestParam(required = false, value = "override", defaultValue = "false") boolean overrideFullRoom,
+            Model model) throws InvalidRoomPinException {
+
         if (!allowFullRoomCheckIn) {
             overrideFullRoom = false;
         }
@@ -107,11 +112,7 @@ public class RoomController {
                 throw new InvalidRoomPinException();
             }
         } else {
-                roomPinSet = false;
-        }
-
-        if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
-            return "forward:roomFull/" + room.getId();
+            roomPinSet = false;
         }
 
         Room.Data roomData = new Room.Data(room);
@@ -130,7 +131,7 @@ public class RoomController {
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
         isRoomPinValidOrThrow(visitData);
-  
+
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
         val visitorEmail = visitData.getVisitorEmail();
         val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
@@ -150,17 +151,16 @@ public class RoomController {
             }
         }
 
-        if (roomVisitService.isRoomFull(room)) {
-            return "forward:roomFull/" + room.getId();
-        }
-
-        val visit = roomVisitService.visitRoom(visitor, room);
-
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
             return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
         }
         
+        if (roomVisitService.isRoomFull(room)) {
+            return "forward:roomFull/" + room.getId();
+        }
+
+        val visit = roomVisitService.visitRoom(visitor, room);
         val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
 
@@ -189,12 +189,12 @@ public class RoomController {
     @PostMapping("/checkInOverride")
     @Transactional
     public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws
-            UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
-        
+    UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
+
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
-        
+
         isRoomPinValidOrThrow(visitData);
 
         val visitorEmail = visitData.getVisitorEmail();
@@ -258,7 +258,9 @@ public class RoomController {
         val room = roomService.getRoomOrThrow(roomId);
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity() <= currentRoomVisitorCount;
-        val redirectURI = URLEncoder.encode("/r/" + roomId + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail, "UTF-8");
+        
+        // why is this here?
+        //        val redirectURI = URLEncoder.encode("/r/" + roomId + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail, "UTF-8");
 
         val roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
@@ -273,7 +275,7 @@ public class RoomController {
     public String executeRoomReset(
             @PathVariable String roomId, Model model,
             @RequestParam(required = false, value = "redirectURI") Optional<String> redirectURIRequest) throws UnsupportedEncodingException {
-        
+
         val room = roomService.getRoomOrThrow(roomId);
 
         String redirectURI = "/r/" + roomId + "?&privileged=true";
@@ -290,14 +292,14 @@ public class RoomController {
             @PathVariable String roomId,
             @RequestParam(required = true, value = "roomPin") Optional<String> roomPinRequested,
             Model model) {
-       
+
         try {
             if (!roomPinRequested.isPresent()) throw new Exception("roomPin not found");
             val roomPin = roomPinRequested.get();
             val room = roomService.getRoomOrThrow(roomId);
             if(!room.getRoomPin().equals(roomPin)) throw new Exception("roomPin invalid");
             roomVisitService.resetRoom(room);
-            
+
             return new RestResponse(true);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -322,14 +324,12 @@ public class RoomController {
     public String roomFull(@PathVariable String roomId, Model model) {
         val room = roomService.getRoomOrThrow(roomId);
 
-        int visitorCount = roomVisitService.getVisitorCount(room);
-        int maxCapacity = room.getMaxCapacity();
         Room.Data roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
-        
-        if (visitorCount < maxCapacity) {
-            model.addAttribute("visitData", new RoomVisit.Data(roomData));
-            return "redirect:/r/" + roomId;
+
+        if ((!warningForFullRoom && allowFullRoomCheckIn)) {
+            log.info("room {} reached capacity, but currently no limitations apply.", roomData.getRoomName());
+            return "redirect:/r/" + roomId +"?override=true&pin=" + roomData.getRoomPin();
         } else {
             return "rooms/full";
         }
@@ -403,14 +403,9 @@ public class RoomController {
      * @return The visitor.
      */
     private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) throws
-            InvalidEmailException, InvalidExternalUserdataException {
-//        try {
+                                                            InvalidEmailException, InvalidExternalUserdataException {
+        
         return visitorService.findOrCreateVisitor(email, name, number, address);
-//        } catch (InvalidEmailException e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-//        } catch (InvalidExternalUserdataException e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Userdata");
-//        }
-
     }
+    
 }

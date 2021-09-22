@@ -8,28 +8,33 @@
 </head>
 
 <body>
+
 <div layout:fragment="content">
     <h1 class="content-headers" style="margin-bottom: 0;">Raum voll</h1>
-    <p th:text="${'Der Raum '+roomData.roomName+ ' scheint voll zu sein (Maximal: ' + roomData.maxCapacity+ ' Personen dürfen diesen Raum betreten). Bitte überprüfen Sie ob die Kapazität auf dem Schild mit den Personen im Raum übereinstimmt! '
-      }">
-    </p>
+    
+    <p th:text="${'Der Raum '+roomData.roomName+ ' scheint voll zu sein (Maximal: ' + roomData.maxCapacity+ ' Personen dürfen diesen Raum betreten). 
+    			Bitte überprüfen Sie ob die Kapazität auf dem Schild mit den Personen im Raum übereinstimmt! '}"> </p>
+    
     <div class="icon-container">
         <div class="icon-background no-access"></div>
     </div>
+    
     <p>Sollten weniger Personen im Raum sein als die maximale Kapazität anzeigt, können Sie sich nach Absprache mit der
         Veranstaltungsleitung trotzdem anmelden.</p>
     <p style="font-weight: bold; text-align: justify; justify-content: center">Bitte bedenken Sie, dass es auf Grund der
         Corona-Abstandsregelungen einen Verstoß gegen die
-        Vorschriften des Hygiene-Konzepts darstellt, einen vollen Raum zu betreten!</p>
+        Vorschriften des Hygiene-Konzepts darstellt, einen überfüllten Raum zu betreten!</p>
+    
     <div>
         <a style="background-color: #ffbf00;color: black;font-weight: bold; border-radius: 12px; padding: 10px"
            class="button" th:href="@{${roomData.roomId} + '?override=true'}">TROTZDEM ANMELDEN</a>
     </div>
+    
     <p>Bereits in diesem Raum angemeldet?</p>
     <p>
         <a class="button" th:href="@{${roomData.roomId}+ '/checkOut'}">Abmelden</a>
     </p>
-
 </div>
+
 </body>
 </html>

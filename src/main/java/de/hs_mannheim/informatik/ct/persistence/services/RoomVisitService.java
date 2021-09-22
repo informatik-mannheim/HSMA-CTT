@@ -153,7 +153,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     }
 
     public boolean isRoomFull(@NonNull Room room) {
-        return getVisitorCount(room) >= room.getMaxCapacity();
+        return getVisitorCount(room) > room.getMaxCapacity();
     }
 
     /**

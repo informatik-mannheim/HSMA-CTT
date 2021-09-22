@@ -8,19 +8,27 @@
 </head>
 
 <body>
+
 <div layout:fragment="content">
     <h1 class="content-headers" style="margin-bottom: 0;">Eingecheckt!</h1>
-    <p th:text="${'Raum ' + visitData.roomName + ' ist mit ' +  visitData.currentVisitorCount + ' von ' + visitData.roomCapacity + ' erlaubten Personen gefüllt.'}">
+    
+    <p th:if="${@environment.getProperty('warning_for_full_room')}" 
+    		th:text="${'Raum ' + visitData.roomName + ' ist mit ' +  visitData.currentVisitorCount + ' von ' + visitData.roomCapacity + ' nach dem Hyginekonzept erlaubten Personen gefüllt.'}"> </p>
+    <p th:if="${not @environment.getProperty('warning_for_full_room')}" 
+    		th:text="${'In Raum ' + visitData.roomName + ' sind aktuell ' + visitData.currentVisitorCount + ' Personen angemeldet.'}"> </p>
+    		
     <div class="icon-container">
         <div class="icon-background checkmark"></div>
     </div>
-
-    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post" >
-        Bitte beim Verlassen des Raums auch an das
-        <input type="hidden" th:field="*{visitorEmail}">
-        <a  href="javascript:document.forms[0].submit()">Abmelden</a>
-    denken.
+    
+    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post">
+    	<p> Bitte beim Verlassen des Raums auch an das
+        	<input type="hidden" th:field="*{visitorEmail}" />
+        	<a  href="javascript:document.forms[0].submit()">Abmelden</a> denken.
+        </p>
     </form>
+
 </div>
+
 </body>
 </html>
