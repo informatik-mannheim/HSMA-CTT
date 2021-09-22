@@ -30,7 +30,7 @@
     
     <div th:if="${@environment.getProperty('allow_full_room_checkIn')}">
         <a style="background-color: #ffbf00;color: black;font-weight: bold; border-radius: 12px; padding: 10px"
-           class="button" th:href="@{${roomData.roomId} + '?override=true'}">TROTZDEM ANMELDEN</a>
+           class="button" th:href="@{${roomData.roomId} + '?override=true&pin=' + ${roomData.roomPin}}">TROTZDEM ANMELDEN</a>
     </div>
     
     <p>Bereits in diesem Raum angemeldet?</p>
