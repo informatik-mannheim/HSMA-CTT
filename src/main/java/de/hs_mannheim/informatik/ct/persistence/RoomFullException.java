@@ -18,5 +18,5 @@
 
 package de.hs_mannheim.informatik.ct.persistence;
 
-public class RoomFullException extends Exception{
+public class RoomFullException extends Exception {
 }
