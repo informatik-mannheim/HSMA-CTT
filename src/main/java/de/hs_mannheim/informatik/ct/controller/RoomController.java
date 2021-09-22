@@ -155,8 +155,8 @@ public class RoomController {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
             return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
         }
-        
-        if (roomVisitService.isRoomFull(room)) {
+
+        if ( !(!warningForFullRoom && allowFullRoomCheckIn) && roomVisitService.isRoomFull(room)) {
             return "forward:roomFull/" + room.getId();
         }
 
@@ -258,7 +258,7 @@ public class RoomController {
         val room = roomService.getRoomOrThrow(roomId);
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity() <= currentRoomVisitorCount;
-        
+
         // why is this here?
         //        val redirectURI = URLEncoder.encode("/r/" + roomId + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail, "UTF-8");
 
@@ -327,12 +327,7 @@ public class RoomController {
         Room.Data roomData = new Room.Data(room);
         model.addAttribute("roomData", roomData);
 
-        if ((!warningForFullRoom && allowFullRoomCheckIn)) {
-            log.info("room {} reached capacity, but currently no limitations apply.", roomData.getRoomName());
-            return "redirect:/r/" + roomId +"?override=true&pin=" + roomData.getRoomPin();
-        } else {
-            return "rooms/full";
-        }
+        return "rooms/full";
     }
 
     @RequestMapping("/checkedOut")
@@ -403,9 +398,9 @@ public class RoomController {
      * @return The visitor.
      */
     private Visitor getOrCreateVisitorOrThrow(String email, String name, String number, String address) throws
-                                                            InvalidEmailException, InvalidExternalUserdataException {
-        
+    InvalidEmailException, InvalidExternalUserdataException {
+
         return visitorService.findOrCreateVisitor(email, name, number, address);
     }
-    
+
 }
