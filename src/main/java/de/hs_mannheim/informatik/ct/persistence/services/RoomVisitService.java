@@ -189,6 +189,9 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     }
 
     public int getRemainingStudyPlaces() {
+        if (studyRooms.isEmpty())
+            return -1;      // if no study rooms are configured in application.properties, skip DB queries
+        
         String[] roomNames = studyRooms.split(";");
         int totalCapacity = roomRepository.getTotalStudyRoomsCapacity(roomNames);
         int currentVisitorCount = roomVisitRepository.getTotalStudyRoomsVisitorCount(roomNames);
