@@ -1,5 +1,6 @@
 package de.hs_mannheim.informatik.ct.controller.interceptor;
 
+import de.hs_mannheim.informatik.ct.controller.Utilities;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
@@ -22,26 +23,33 @@ public class CheckInInterceptor implements HandlerInterceptor {
     @Autowired
     private RoomVisitService roomVisitService;
 
+    @Autowired
+    private Utilities util;
+
+    private static final String CHECKED_IN_COOKIE_NAME = "checkedInEmail";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-        Boolean isCheckedIn = false;
-        Cookie cookie = WebUtils.getCookie(request, "checkedInEmail");
-        if(cookie!=null){
-            isCheckedIn = true;
-            val email = cookie.getValue();
-            List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
-            if(roomVisits.size()>0){
-                request.setAttribute("checkedInEmail", email);
-            }else{
-                isCheckedIn = false;
-                Cookie c = new Cookie("checkedInEmail", "");
-                c.setMaxAge(0);
-                c.setPath("/");
-                response.addCookie(c);
-            }
+        val email = getEmailFromCheckedInCookie(request);
+        val isCheckedIn = isVisitorStillCheckedIn(email);
+        // visitor was automatically checked out
+        if((email != null) && (!isCheckedIn)){
+            util.removeCookie(response, CHECKED_IN_COOKIE_NAME);
         }
+        request.setAttribute("checkedInEmail", email);
         request.setAttribute("isCheckedIn", isCheckedIn);
         return true;
+    }
+
+    private String getEmailFromCheckedInCookie(HttpServletRequest request){
+        Cookie cookie = WebUtils.getCookie(request, CHECKED_IN_COOKIE_NAME);
+        return cookie.getValue();
+    }
+
+    private boolean isVisitorStillCheckedIn(String email){
+        if(email==null) return false;
+        List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
+        return roomVisits.size()>0;
     }
 
     private List<RoomVisit> findCurrentRoomVisitsByEmail(String email){
