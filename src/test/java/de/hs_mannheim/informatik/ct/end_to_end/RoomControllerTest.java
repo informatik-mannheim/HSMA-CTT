@@ -126,7 +126,8 @@ public class RoomControllerTest {
                         .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL));
     }
 
     @Test
@@ -175,7 +176,8 @@ public class RoomControllerTest {
                         .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL));
     }
 
     @Test
@@ -253,6 +255,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL))
                 .andDo(
                         // check out
                         result -> mockMvc.perform(
@@ -261,6 +264,7 @@ public class RoomControllerTest {
                                         .param("visitorEmail", TEST_USER_EMAIL)
                                         .with(csrf()))
                                 .andExpect(status().isFound())
+                                .andExpect(cookie().value("checkedInEmail", ""))
                                 .andExpect(redirectedUrl("/r/checkedOut")));
     }
 
@@ -275,6 +279,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL))
                 .andDo(
                         // check out
                         result -> mockMvc.perform(
