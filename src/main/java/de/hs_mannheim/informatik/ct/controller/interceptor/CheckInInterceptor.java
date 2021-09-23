@@ -43,7 +43,7 @@ public class CheckInInterceptor implements HandlerInterceptor {
 
     private String getEmailFromCheckedInCookie(HttpServletRequest request){
         Cookie cookie = WebUtils.getCookie(request, CHECKED_IN_COOKIE_NAME);
-        return cookie.getValue();
+        return cookie!=null ? cookie.getValue() : null;
     }
 
     private boolean isVisitorStillCheckedIn(String email){
