@@ -26,9 +26,9 @@
     <div class="page-content center-container">
 
         <div th:if="${isCheckedIn}" id="checkout-hint" class="custom-card danger-color" role="alert">
-            <form action="#" th:action="@{/r/checkOut}" method="post" >
+            <form id="check-in-alert-form" action="#" th:action="@{/r/checkOut}" method="post" >
                 Sie sind eingecheckt.
-                <input type="hidden" name="vistorEmail" th:value="${checkedInEmail}">
+                <input type="hidden" name="visitorEmail" th:value="${checkedInEmail}">
                 <button type="submit" class="btn-for-index-page">Auschecken</button>
             </form>
         </div>
@@ -51,6 +51,7 @@
     </footer>
 
 </div>
+<script src='/main.js'></script>
 </body>
 
 </html>
