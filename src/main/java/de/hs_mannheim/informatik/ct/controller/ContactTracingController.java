@@ -74,11 +74,7 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("Straße", contact -> ""),
-            new TracingColumn("Hausnummer", contact -> ""),
-            new TracingColumn("Plz", contact -> ""),
-            new TracingColumn("Ort", contact -> ""),
-            new TracingColumn("Tel.", contact -> "")
+            new TracingColumn("Adresse", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
@@ -90,16 +86,12 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             new TracingColumn("Geburtsdatum", contact -> ""),
-            new TracingColumn("Straße", contact -> ""),
-            new TracingColumn("Hausnummer", contact -> ""),
-            new TracingColumn("Plz", contact -> ""),
-            new TracingColumn("Ort", contact -> ""),
-            new TracingColumn("Tel.", contact -> "")
+            new TracingColumn("Adresse", contact -> "")
+
     );
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Nachname", contact -> contact.getContact().getName().split(" ")[0]),
-            new TracingColumn("Vorname", contact -> contact.getContact().getName().split(" ")[1]),
+            new TracingColumn("Name", contact -> contact.getContact().getName()),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -107,29 +99,7 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             new TracingColumn("Geburtsdatum", contact -> ""),
-            // If the adress was not put in the format straße hausnummer plz ort an exception is thrown, to avoid this an empty string gets returned. Better solution would be to to adapt the form so that only adress in the corect format can be send
-            new TracingColumn("Straße", contact -> contact.getContact().getAddress().split(" ")[0]),
-            new TracingColumn("Hausnummer", contact -> {
-                if (contact.getContact().getAddress().split(" ").length > 0) {
-                    return contact.getContact().getAddress().split(" ")[1];
-                } else {
-                    return "";
-                }
-            }),
-            new TracingColumn("Plz", contact -> {
-                if (contact.getContact().getAddress().split(" ").length > 2) {
-                    return contact.getContact().getAddress().split(" ")[2];
-                } else {
-                    return " ";
-                }
-            }),
-            new TracingColumn("Ort", contact -> {
-                if (contact.getContact().getAddress().split(" ").length > 3) {
-                    return contact.getContact().getAddress().split(" ")[3];
-                } else {
-                    return "";
-                }
-            }),
+            new TracingColumn("Adresse", contact -> contact.getContact().getAddress()),
             new TracingColumn("Tel.", contact -> contact.getContact().getNumber())
     );
 
@@ -251,9 +221,9 @@ public class ContactTracingController {
         for (Contact contact : contacts) {
             if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
                 filteredList.add(contact);
-            } else if (type.equals("staff") && contact.getContact().getEmail().contains("@hs-mannheim.de")) {
+            } else if (type.equals("staff") && (contact.getContact().getEmail().contains("@hs-mannheim.de") || contact.getContact().getEmail().contains("@lba.hs-mannheim.de"))) {
                 filteredList.add(contact);
-            } else if (type.equals("guests") && !(contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) && !(contact.getContact().getEmail().contains("@hs-mannheim.de"))) {
+            } else if (type.equals("guests") && !(contact.getContact().getEmail().contains("hs-mannheim.de"))) {
                 filteredList.add(contact);
             }
         }
