@@ -18,32 +18,45 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.*;
-import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
-import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
-import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
-import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
-import de.hs_mannheim.informatik.ct.persistence.services.*;
-import lombok.extern.slf4j.Slf4j;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import lombok.val;
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.model.EventVisit;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
+import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
+import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
+import de.hs_mannheim.informatik.ct.persistence.services.EventService;
+import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 
 @Controller
 @Slf4j
@@ -67,13 +80,7 @@ public class CtController {
     private Utilities util;
 
     @Autowired
-    private DynamicContentService contentService;
-
-    @Autowired
     private DateTimeService dateTimeService;
-
-    @Autowired
-    private ContactTracingService contactTracingService;
 
     @Value("${server.port}")
     private String port;
@@ -215,6 +222,7 @@ public class CtController {
 
             return "event";
         }
+        
         throw new EventNotFoundException();
     }
 

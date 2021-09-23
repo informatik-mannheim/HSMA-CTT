@@ -18,6 +18,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalDate;
 import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
@@ -25,12 +26,10 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import de.hs_mannheim.informatik.ct.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
@@ -38,16 +37,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.hs_mannheim.informatik.ct.model.CheckOutSource;
+import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.RoomVisit;
+import de.hs_mannheim.informatik.ct.model.StudyRoom;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.RoomVisitRepository;
 import de.hs_mannheim.informatik.ct.persistence.repositories.VisitorRepository;
 import lombok.NonNull;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class RoomVisitService implements VisitService<RoomVisit> {
-    Logger logger = LoggerFactory.getLogger(RoomVisitService.class);
-
     @Autowired
     private RoomVisitRepository roomVisitRepository;
 
@@ -108,8 +113,7 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     public List<RoomVisit> getCheckedInRoomVisits(@NonNull Visitor visitor) {
         val notCheckedOutVisits = roomVisitRepository.findNotCheckedOutVisits(visitor);
         if (notCheckedOutVisits.size() > 1) {
-            logger.warn(String.format(
-                    "Visitor %s was checked into more than one room at once", visitor.getEmail()));
+            log.warn(String.format("Visitor %s was checked into more than one room at once", visitor.getEmail()));
         }
 
         return notCheckedOutVisits;
@@ -167,8 +171,9 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         }
 
         roomVisitRepository.saveAll(notCheckedOutVisits);
-
         assert getVisitorCount(room) == 0;
+        
+        log.info("Room reset for room {}, {} visitors removed.", room.getName(), notCheckedOutVisits.size());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -176,13 +181,21 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         val oldestAllowedRecord = LocalDateTime.now().minus(recordLifeTime);
         roomVisitRepository.deleteByEndDateBefore(convertToDate(oldestAllowedRecord));
         visitorRepository.removeVisitorsWithNoVisits();
+        
+        log.info("Expired records removed.");
     }
 
     public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor) {
-        return roomVisitRepository.findVisitsWithContact(visitor);
+        val contacts = roomVisitRepository.findVisitsWithContact(visitor);
+        log.info("Contact tracing delivered {} contacts.", contacts.size());
+        
+        return contacts; 
     }
 
     public int getRemainingStudyPlaces() {
+        if (studyRooms.isEmpty())
+            return -1;      // if no study rooms are configured in application.properties, skip DB queries
+        
         String[] roomNames = studyRooms.split(";");
         int totalCapacity = roomRepository.getTotalStudyRoomsCapacity(roomNames);
         int currentVisitorCount = roomVisitRepository.getTotalStudyRoomsVisitorCount(roomNames);

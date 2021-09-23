@@ -104,6 +104,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     guestFreeSection[i].style.maxHeight = "0";
                 }
                 break;
+            case "internal2":
+                emailText.style.minWidth = "270px"
+                emailText.placeholder = "Nutzername";
+                emailText.type = "text";
+                emailPostfix = "@lba.hs-mannheim.de";
+                for (let i = 0; i < guestFreeSection.length; i++) {
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
+                }
+                break;
             default:
             case "external":
                 emailText.style.minWidth = "410px"

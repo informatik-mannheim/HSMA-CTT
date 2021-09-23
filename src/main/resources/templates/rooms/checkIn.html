@@ -45,12 +45,12 @@
                     <label class="radio-label" for="email-postfix-student">Student:in</label>
                 </div>
                 <div class="form-row">
-                    <input type="radio" id="email-postfix-internal" value="internal" name="email-postfix">
-                    <label class="radio-label" for="email-postfix-internal">Mitarbeiter:in</label>
+                    <input type="radio" id="email-postfix-internal" value="internal" name="email-postfix"/>
+                    <label class="radio-label" for="email-postfix-internal">Hochschulpersonal u. Lehrende</label>
                 </div>
                 <div class="form-row">
-                    <input type="radio" id="email-postfix-internal2" value="internal" name="email-postfix">
-                    <label class="radio-label" for="email-postfix-internal2">Lehrende</label>
+                    <input type="radio" id="email-postfix-internal2" value="internal2" name="email-postfix" />
+                    <label class="radio-label" for="email-postfix-internal2">Externe Lehrbeauftragte</label>
                 </div>
                 <div class="form-row">
                     <input type="radio" id="email-postfix-external" value="external" name="email-postfix">
@@ -64,10 +64,8 @@
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
                 <div class="guest-free-section form-row" style="max-width: 300px">
-                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1"
-                           placeholder="Nachname / Vorname">
-                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1"
-                           placeholder="Telefonnummer">
+                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1" placeholder="Vorname Nachname" />
+                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1" placeholder="Telefonnummer" />
                 </div>
                 <div class="guest-free-section form-row">
                     <input class="email" id="guest-address" name="guest-address" style="min-width: 410px"
@@ -110,6 +108,8 @@
         <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in
             wird automatisch beendet.)</i></p>
     </div>
+  
+<!--  Preliminarily removed as it seems to be confusing
     <div class="priviledged-only" th:if="${privileged}">
         <h3 class="content-header form-header">Raum zurücksetzen</h3>
         <p style="margin-left: 24px; margin-top: 24px;"
@@ -121,6 +121,7 @@
     </div>
 
     <hr style="color: #cccccc; margin-top: 32px;"/>
+-->
 
     <div class="checkin-only" style="margin-top: 32px;">
         <h3 class="content-header">Oder nur vorherigen Check-in beenden?</h3>
@@ -129,6 +130,5 @@
 
 </div>
 
-</div>
 </body>
 </html>

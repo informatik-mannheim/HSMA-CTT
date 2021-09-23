@@ -18,25 +18,29 @@ package de.hs_mannheim.informatik.ct.controller;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
-import org.apache.xpath.operations.Mod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.text.AttributedString;
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
+@Slf4j
 public class ErrorController {
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -137,7 +141,11 @@ public class ErrorController {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unknown error")
-    public String anyException() {
+    public String anyException(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        log.error(sw.toString()); 
+
         return "error";
     }
 

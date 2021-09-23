@@ -21,7 +21,14 @@ package de.hs_mannheim.informatik.ct.model;
 import lombok.*;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
+
+import de.hs_mannheim.informatik.ct.util.AttributeEncryptor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Entity
 
@@ -31,10 +38,13 @@ import javax.persistence.Entity;
 public class ExternalVisitor extends Visitor {
     @Column
     @NonNull
+    @Convert(converter = AttributeEncryptor.class)
     private String name;
     @Column
+    @Convert(converter = AttributeEncryptor.class)
     private String number;
     @Column
+    @Convert(converter = AttributeEncryptor.class)
     private String address;
 
     public static ExternalVisitor visitorWithPhone(String email, String name, String number) {

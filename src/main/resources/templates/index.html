@@ -11,18 +11,18 @@
 <div layout:fragment="content">
 
     <h4>Willkommen beim CTT, dem Corona Tracking Tool der Hochschule Mannheim.</h4>
-    <p>Ihre Daten werden lediglich zum Zwecke der vorgeschriebenen Kontaktnachverfolgung datenschutzsicher aufbewahrt
-        und nach 4 Wochen
-        automatisch gelöscht.<br/>
+    <p>Ihre Daten werden lediglich zum Zwecke der vorgeschriebenen Kontaktnachverfolgung datenschutzsicher aufbewahrt und nach 4 Wochen automatisch gelöscht.</p>
+  
     <hr/>
-    <div id="freeLearningPlaces" class="mt-3 mb-3">
-        <p th:text="${freeLearnerPlaces} == 1 ? 'Aktuell ist ein Lernplatz frei.' : 'Aktuell sind '+${freeLearnerPlaces}+' Lernplätze frei.'">asdf</p>
-        <a href="/learningRooms" class="btn-for-index-page" >Details</a>
-        <a href="/" class="btn-for-index-page" >Aktualisieren</a>
+
+    <div th:if="${freeLearnerPlaces > -1}" id="freeLearningPlaces" class="mt-3 mb-3">
+        <p th:text="${freeLearnerPlaces} == 1 ? 'Aktuell ist ein Lernplatz frei.' : 'Aktuell sind '+${freeLearnerPlaces}+' Lernplätze frei.'"> </p>
+        <a href="/learningRooms" class="btn-for-index-page">Details</a>
+        <a href="/" class="btn-for-index-page">Aktualisieren</a>
     </div>
-
+  
     <hr/>
-
+  
     <div id="checkinContainer" class="mt-3 mb-3">
         <form id="checkInForm" action="/r/noId" class="mb-3">
             <h6 id="checkIn">Manueller Check-In</h6><br/>
@@ -31,14 +31,18 @@
             <button type="submit" id="sendRoom">Los...</button>
         </form>
     </div>
+  
     <hr/>
+    
     <p>Um mit einem Mobilgerät in einen Raum einzuchecken, scannen Sie bitte den QR-Code an dessen Eingang ab und
         öffnen dann die erkannte Webseite.
         Eine detaillierte Anleitung sowie Ansprechpartner finden Sie unter "Weitere Infos".
         <img src="/images/example.png" alt="Checkin mit QR-Code Scanner Beispielbild" width="360" style="float:right"
              class="mt-3"/>
     </p>
+  
     <hr/>
+  
     <div id="infoCollection">
         <div class="btn-container">
             <button class="btn btn-primary btn-block mb-5 btn-for-collapsible" id="collapseButtonInfo" type="button"

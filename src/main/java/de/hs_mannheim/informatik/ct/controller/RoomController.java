@@ -131,11 +131,11 @@ public class RoomController {
         val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
 
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
-
-        String autoCheckoutValue = null;
+        // String autoCheckoutValue = null; // what was this about?
+      
         if (notCheckedOutVisits.size() != 0) {
             val checkedOutRoom = notCheckedOutVisits.get(0).getRoom();
-            autoCheckoutValue = checkedOutRoom.getName();
+            // autoCheckoutValue = checkedOutRoom.getName();
 
             // If the user is automatically checked out of the same room they're trying to
             // check into, show them the checked out page instead (Auto checkout after scanning room qr code twice)
