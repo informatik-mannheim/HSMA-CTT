@@ -63,6 +63,9 @@ public class RoomController {
     @Autowired
     private RoomVisitService roomVisitService;
 
+    @Autowired
+    private Utilities util;
+
     @Value("${allow_full_room_checkIn:false}")
     private boolean allowFullRoomCheckIn;
 
@@ -147,10 +150,7 @@ public class RoomController {
 
         val visit = roomVisitService.visitRoom(visitor, room);
 
-        Cookie c = new Cookie("checkedInEmail", visitor.getEmail());
-        c.setMaxAge(60 * 60 * 24 * 365 * 5);
-        c.setPath("/");
-        response.addCookie(c);
+        util.setCookie(response, "checkedInEmail", visitor.getEmail());
 
         if(visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
@@ -208,12 +208,7 @@ public class RoomController {
     public String checkOut(@ModelAttribute RoomVisit.Data visitData, HttpServletResponse response) {
         val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
         roomVisitService.checkOutVisitor(visitor);
-
-        Cookie c = new Cookie("checkedInEmail", "");
-        c.setMaxAge(0);
-        c.setPath("/");
-        response.addCookie(c);
-
+        util.removeCookie(response, "checkedInEmail");
         return "redirect:/r/checkedOut";
     }
 
