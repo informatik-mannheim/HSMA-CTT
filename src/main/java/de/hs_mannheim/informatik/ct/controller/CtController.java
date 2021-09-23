@@ -59,7 +59,6 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 
 @Controller
-@Slf4j
 public class CtController {
     @Autowired
     private EventService eventService;
