@@ -3,8 +3,8 @@
 
 <head>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
+    <link rel="stylesheet" href="/main.css">
     <link rel="stylesheet" href="/layout.css">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -126,48 +126,51 @@
     </p>
 </footer>
 
-	<script>
-		$( '#deviceChoice .nav-tabs a' ).on( 'click', function () {
-			$( '#deviceChoice .nav-tabs' ).find( 'li.active' ).removeClass( 'active' );
-			$( this ).parent( 'li' ).addClass( 'active' );
-		});
+<script>
+    $( '#deviceChoice .nav-tabs a' ).on( 'click', function () {
+        $( '#deviceChoice .nav-tabs' ).find( 'li.active' ).removeClass( 'active' );
+        $( this ).parent( 'li' ).addClass( 'active' );
+    });
 
-		window.onload=cookieBanner();
-		window.onload=showCheckin();
+    window.onload=cookieBanner();
+    window.onload=showCheckin();
 
-		function cookieBanner() {
-			if (!document.cookie.includes('cookiesAccepted'))
-				document.getElementById("cookieBanner").removeAttribute("hidden");
-		}
-		
-		function setBannerCookie() {
-			var d = new Date();
-			d.setTime(d.getTime() + (5*365*24*60*60*1000));
-			document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
-			document.getElementById("cookieBanner").setAttribute("hidden", true);
-		}
-		
-		function showCheckin() {
-			if (document.cookie.includes('checked-into') && document.cookie.includes('email')) {
-				document.getElementById("checkin-bar").removeAttribute("hidden");
-				document.getElementById("spacer").removeAttribute("hidden");
-			}
-		}
+    function cookieBanner() {
+        if (!document.cookie.includes('cookiesAccepted'))
+            document.getElementById("cookieBanner").removeAttribute("hidden");
+    }
 
-		$(document).ready(function() {
-			$('.btn-for-collapsible').click(function() {
-				$(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
-			});	
-		});
+    function setBannerCookie() {
+        var d = new Date();
+        d.setTime(d.getTime() + (5*365*24*60*60*1000));
+        document.cookie = "cookiesAccepted=KilroyWasHere;" + "expires=" + d.toUTCString() + ";path=/";
+        document.getElementById("cookieBanner").setAttribute("hidden", true);
+    }
 
-		$('.collapse').on('shown.bs.collapse', function () {
-			$("html").animate({ scrollTop: $('.card').offset().top - 50 }, 'slow');
-		});
+    function showCheckin() {
+        if (document.cookie.includes('checked-into') && document.cookie.includes('email')) {
+            document.getElementById("checkin-bar").removeAttribute("hidden");
+            document.getElementById("spacer").removeAttribute("hidden");
+        }
+    }
 
-		$('#collapsibleCheckOut').on('shown.bs.collapse', function () {
-			$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
-		});
-	</script>
+    $(document).ready(function() {
+        $('.btn-for-collapsible').click(function() {
+            $(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
+        });
+    });
+
+    $('.collapse').on('shown.bs.collapse', function () {
+        $("html").animate({ scrollTop: $('.card').offset().top - 50 }, 'slow');
+    });
+
+    $('#collapsibleCheckOut').on('shown.bs.collapse', function () {
+        $("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
+    });
+</script>
+
+<script src="/main.js"></script>
 
 </body>
+
 </html>

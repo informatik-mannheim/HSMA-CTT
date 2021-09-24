@@ -1,0 +1,18 @@
+.danger-color {
+    background: #f8d7da;
+    border-color: #d9534f !important;
+}
+
+.custom-card {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.custom-card .custom-card-footer {
+    display: flex;
+    align-items: center;
+}
