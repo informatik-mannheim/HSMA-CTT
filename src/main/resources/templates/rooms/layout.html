@@ -10,8 +10,10 @@
 </head>
 
 <body>
+
 <div style="width: 100%;" class="flex-container content-container">
-    <div class="flex-container header-bar" id="header-container">
+
+    <nav class="flex-container header-bar" id="header-container">
         <div class="flex-container header-bar center-container">
              <a class="navbar-brand" href="/">
         		<img src="https://www.hs-mannheim.de/typo3conf/ext/hs_mannheim_site/Resources/Public/Icons/logo_bildmarke.svg" alt="HSMA" style="width:40px;" class="mr-2">
@@ -20,16 +22,20 @@
     			<a style="color:white; text-decoration:none" href="/">CTT</a>
     		</h1>
         </div>
-    </div>
-    
-    <div class="center-container hidden" id="checkout-bar">
-        <p>Momentan eingecheckt in Raum A008</p>
-        <button>Abmelden</button>
-    </div>
+    </nav>
     
     <div class="page-content center-container">
-        <div class="flex-container content-container center-container" id="main-content" layout:fragment="content">
+
+        <div th:if="${isCheckedIn}" id="checkout-hint" class="custom-card danger-color" role="alert">
+            <form id="check-in-alert-form" action="#" th:action="@{/r/checkOut}" method="post" >
+                Sie sind eingecheckt.
+                <input type="hidden" name="visitorEmail" th:value="${checkedInEmail}">
+                <button type="submit" class="btn-for-index-page">Auschecken</button>
+            </form>
         </div>
+
+        <div class="flex-container content-container center-container" id="main-content" layout:fragment="content"></div>
+
     </div>
     
     <footer class="center-container flex-container">
