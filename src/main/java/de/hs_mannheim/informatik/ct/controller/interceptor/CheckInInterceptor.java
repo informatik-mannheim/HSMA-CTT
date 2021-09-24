@@ -5,6 +5,7 @@ import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
+import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
@@ -30,13 +31,18 @@ public class CheckInInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-        val email = getEmailFromCheckedInCookie(request);
-        val isCheckedIn = isVisitorStillCheckedIn(email);
-        // visitor was automatically checked out
-        if((email != null) && (!isCheckedIn)){
-            util.removeCookie(response, CHECKED_IN_COOKIE_NAME);
+        var isCheckedIn = false;
+        val checkedInEmail = getEmailFromCheckedInCookie(request);
+        if(checkedInEmail!=null){
+            val checkedInRoom = getCheckedInRoomName(checkedInEmail);
+            if(checkedInRoom!=null){
+                isCheckedIn = true;
+                request.setAttribute("checkedInRoom", checkedInRoom);
+            }else{
+                util.removeCookie(response, CHECKED_IN_COOKIE_NAME);
+            }
         }
-        request.setAttribute("checkedInEmail", email);
+        request.setAttribute("checkedInEmail", checkedInEmail);
         request.setAttribute("isCheckedIn", isCheckedIn);
         return true;
     }
@@ -46,10 +52,9 @@ public class CheckInInterceptor implements HandlerInterceptor {
         return cookie!=null ? cookie.getValue() : null;
     }
 
-    private boolean isVisitorStillCheckedIn(String email){
-        if(email==null) return false;
+    private String getCheckedInRoomName(String email){
         List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
-        return roomVisits.size()>0;
+        return roomVisits.size()>0 ? roomVisits.get(0).getRoom().getName() : null;
     }
 
     private List<RoomVisit> findCurrentRoomVisitsByEmail(String email){
