@@ -28,6 +28,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @Component
 public class Utilities {
     @Value("${server.port}")
@@ -85,5 +88,32 @@ public class Utilities {
                     .uri(URI.create(urlOverride))
                     .path(path);
         }
+    }
+
+    /**
+     * add a cookie to the http response
+     *
+     * @param response      HTTP Response data
+     * @param cookieName    name of the cookie
+     * @param cookieValue   value of the cookie
+     */
+    public void setCookie(HttpServletResponse response, String cookieName, String cookieValue) {
+        Cookie c = new Cookie(cookieName, cookieValue);
+        c.setMaxAge(60 * 60 * 24 * 365 * 5);
+        c.setPath("/");
+        response.addCookie(c);
+    }
+
+    /**
+     * remove a cookie from the http response
+     *
+     * @param response      HTTP Response data
+     * @param cookieName    name of the cookie
+     */
+    public void removeCookie(HttpServletResponse response, String cookieName) {
+        Cookie c = new Cookie(cookieName, "");
+        c.setMaxAge(0);
+        c.setPath("/");
+        response.addCookie(c);
     }
 }
