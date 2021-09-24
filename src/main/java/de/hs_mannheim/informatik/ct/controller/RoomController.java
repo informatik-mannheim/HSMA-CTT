@@ -58,15 +58,23 @@ import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 import lombok.val;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Controller
 @RequestMapping("/r")
 public class RoomController {
+
     @Autowired
     private RoomService roomService;
+
     @Autowired
     private VisitorService visitorService;
+
     @Autowired
     private RoomVisitService roomVisitService;
+
+    @Autowired
+    private Utilities util;
 
     @Value("${allow_full_room_checkIn:false}")
     private boolean allowFullRoomCheckIn;
@@ -128,7 +136,9 @@ public class RoomController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model, HttpServletResponse response) throws
+            UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
+
         isRoomPinValidOrThrow(visitData);
   
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
@@ -155,6 +165,8 @@ public class RoomController {
         }
 
         val visit = roomVisitService.visitRoom(visitor, room);
+
+        util.setCookie(response, "checkedInEmail", visitorEmail);
 
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
@@ -188,7 +200,7 @@ public class RoomController {
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model, HttpServletResponse response) throws
             UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
         
         if (!allowFullRoomCheckIn) {
@@ -205,6 +217,8 @@ public class RoomController {
 
         val visit = roomVisitService.visitRoom(visitor, room);
 
+        util.setCookie(response, "checkedInEmail", visitorEmail);
+
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
             return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
@@ -218,10 +232,10 @@ public class RoomController {
     }
 
     @PostMapping("/checkOut")
-    public String checkOut(@ModelAttribute RoomVisit.Data visitData) {
+    public String checkOut(@ModelAttribute RoomVisit.Data visitData, HttpServletResponse response) {
         val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
-
         roomVisitService.checkOutVisitor(visitor);
+        util.removeCookie(response, "checkedInEmail");
         return "redirect:/r/checkedOut";
     }
 
