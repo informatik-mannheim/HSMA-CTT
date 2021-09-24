@@ -112,9 +112,9 @@
 
     <div th:if="${isCheckedIn}" id="checkout-hint" class="custom-card danger-color" role="alert">
         <form id="check-in-alert-form" action="#" th:action="@{/r/checkOut}" method="post" >
-            Sie sind eingecheckt.
             <input type="hidden" name="visitorEmail" th:value="${checkedInEmail}">
-            <button type="submit" class="btn-for-index-page">Auschecken</button>
+            <p style="margin: 5px;">Sie sind noch in Raum <b th:text="${checkedInRoom}"></b> eingecheckt</p>
+            <button type="submit" class="hs-button">Auschecken</button>
         </form>
     </div>
 
