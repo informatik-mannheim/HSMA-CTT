@@ -16,3 +16,24 @@
     display: flex;
     align-items: center;
 }
+
+#check-in-alert-form{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.hs-button {
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    background: #22376F;
+    color: #FFF;
+    padding: 5px;
+    margin: 0;
+}
+
+.hs-button:hover {
+    background: #FFF;
+    color: #22376F;
+    cursor: pointer;
+}
