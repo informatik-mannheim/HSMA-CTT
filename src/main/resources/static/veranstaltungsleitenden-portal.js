@@ -22,11 +22,10 @@ document.getElementById("reset-room").onclick = async () => {
         if(!csrfToken) throw new Error('csrf token not found')
         if(!roomPin) throw new Error('roomPin not found')
         if(confirm("Wollen Sie wirklich den Raum zurücksetzen?")){
-            if(await requestRoomReset()) {
-                location.reload();
-            }
+            if(!await requestRoomReset()) throw new Error('internal server error')
+            location.reload();
         }
     }catch(err){
-        console.err(err)
+        alert("Beim Zurücksetzen des Raumes ist ein Fehler aufgetreten.");
     }
 }
