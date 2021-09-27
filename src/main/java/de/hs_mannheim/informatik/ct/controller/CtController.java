@@ -29,24 +29,18 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.hs_mannheim.informatik.ct.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import de.hs_mannheim.informatik.ct.model.Event;
-import de.hs_mannheim.informatik.ct.model.EventVisit;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
@@ -87,8 +81,12 @@ public class CtController {
     @Value("${hostname}")
     private String host;
 
+    @Value("${support_mail_address}")
+    private String supportMailAddress;
+
     @RequestMapping("/")
     public String home(Model model) {
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         return "index";
     }
@@ -316,8 +314,9 @@ public class CtController {
     }
 
     @RequestMapping("/faq")
-    public String showFaq() {
+    public String showFaq(Model model) throws MailAddress.MailAddressInvalidException {
+        MailAddress data = MailAddress.parse(supportMailAddress);
+        model.addAttribute("supportMailAddress", data);
         return "faq";
     }
-
 }

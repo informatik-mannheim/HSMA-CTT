@@ -25,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
+import de.hs_mannheim.informatik.ct.model.MailAddress;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,6 +44,10 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
+
+    @Value("${support_mail_address}")
+    private String supportMailAddress;
+
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Room not found")
@@ -124,7 +130,7 @@ public class ErrorController {
     @RequestMapping("/error")
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "error")
-    public String handleError(HttpServletRequest request) {
+    public String handleError(Model model, HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         System.out.println("Request Status: " + status);
 
@@ -135,17 +141,19 @@ public class ErrorController {
             }
 
         }
+
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "error";
     }
 
     @ExceptionHandler({Exception.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unknown error")
-    public String anyException(Exception e) {
+    public String anyException(Model model, Exception e) {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        log.error(sw.toString()); 
-
+        log.error(sw.toString());
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "error";
     }
 
