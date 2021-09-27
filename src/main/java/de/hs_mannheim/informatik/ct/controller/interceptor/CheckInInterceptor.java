@@ -22,13 +22,12 @@ import de.hs_mannheim.informatik.ct.controller.Utilities;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import de.hs_mannheim.informatik.ct.util.CookieManager;
 import lombok.val;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -49,25 +48,21 @@ public class CheckInInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+        val cookieManager = new CookieManager(request, response);
         var isCheckedIn = false;
-        val checkedInEmail = getEmailFromCheckedInCookie(request);
+        val checkedInEmail = cookieManager.getCookieValue(CookieManager.Cookies.CHECKED_IN_EMAIL);
         if(checkedInEmail!=null){
             val checkedInRoom = getCheckedInRoomName(checkedInEmail);
             if(checkedInRoom!=null){
                 isCheckedIn = true;
                 request.setAttribute("checkedInRoom", checkedInRoom);
             }else{
-                util.removeCookie(response, CHECKED_IN_COOKIE_NAME);
+                cookieManager.removeCookie(CookieManager.Cookies.CHECKED_IN_EMAIL);
             }
         }
         request.setAttribute("checkedInEmail", checkedInEmail);
         request.setAttribute("isCheckedIn", isCheckedIn);
         return true;
-    }
-
-    private String getEmailFromCheckedInCookie(HttpServletRequest request){
-        Cookie cookie = WebUtils.getCookie(request, CHECKED_IN_COOKIE_NAME);
-        return cookie!=null ? cookie.getValue() : null;
     }
 
     private String getCheckedInRoomName(String email){
