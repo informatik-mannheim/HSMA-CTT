@@ -298,22 +298,17 @@ public class RoomController {
             
             return new RestResponse(true);
         } catch (Exception e) {
-            return new RestResponse(false, e.getMessage());
+            return new RestResponse(false);
         }
     }
 
     public static class RestResponse {
-        public String message;
         public boolean success;
 
         public RestResponse(boolean success) {
             this.success = success;
         }
 
-        public RestResponse(boolean success, String message) {
-            this(success);
-            this.message = message;
-        }
     }
 
     @RequestMapping("/roomFull/{roomId}")
