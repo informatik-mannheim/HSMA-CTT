@@ -157,7 +157,7 @@
 		$(document).ready(function() {
 			$('.btn-for-collapsible').click(function() {
 				$(this).find('i').toggleClass('fas fa-minus fas fa-plus-square');
-			});	
+			});
 		});
 
 		$('.collapse').on('shown.bs.collapse', function () {
@@ -167,6 +167,19 @@
 		$('#collapsibleCheckOut').on('shown.bs.collapse', function () {
 			$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
 		});
+
+		function mailToCryptAddress(e){
+		    const self = e.target
+		    let link = 'mailto:'
+		    link += self.dataset.name
+		    link += '@' + self.dataset.domain
+		    link += '.' + self.dataset.tld
+		    if(self.dataset.subject){
+		        link += '?subject=' + self.dataset.subject
+		    }
+		    self.target = '_blank'
+		    self.href = link;
+		}
 	</script>
 
 </body>
