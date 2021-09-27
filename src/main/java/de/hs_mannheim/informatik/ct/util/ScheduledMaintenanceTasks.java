@@ -41,9 +41,10 @@ public class ScheduledMaintenanceTasks {
     @Autowired
     private EventVisitService eventVisitService;
 
+    public static final String FORCED_END_TIME = "00:00:00";
+
     private final int CRON_HOUR = 3;
     private final int CRON_MINUTE = 55;
-    private final String FORCED_END_TIME = "00:00:00";
 
     //@Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 Minutes
     @Scheduled(cron = "0 " + CRON_MINUTE + " " + CRON_HOUR + " * * *")    // 3:55 AM
