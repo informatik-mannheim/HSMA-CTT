@@ -51,8 +51,7 @@
 
 			<form method="POST" th:action="@{/r/checkOut}">
 
-				<!-- as of now not required, and removed as a quick fix 
-				<div class="card">
+				<div th:if="${@environment.getProperty('check_3G_status')}" class="card">
 					<div class="card-body">
 						<p>Um an Präsenzveranstaltungen teilnehmen zu können, müssen alle Personen mindestens eines der folgenden Kriterien erfüllen:</p>
 						<p>Die Person...</p>
@@ -77,7 +76,6 @@
 						</div>
 					</div>
 				</div>
-				-->
 
 				<div class="card">
 
