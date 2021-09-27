@@ -33,7 +33,6 @@ import de.hs_mannheim.informatik.ct.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -314,9 +313,8 @@ public class CtController {
     }
 
     @RequestMapping("/faq")
-    public String showFaq(Model model) throws MailAddress.MailAddressInvalidException {
-        MailAddress data = MailAddress.parse(supportMailAddress);
-        model.addAttribute("supportMailAddress", data);
+    public String showFaq(Model model) {
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "faq";
     }
 }
