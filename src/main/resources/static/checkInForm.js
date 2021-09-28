@@ -33,12 +33,21 @@ window.addEventListener("pageshow", () => {
         } else {
             storage.removeItem('email');
         }
-
+       /*if(!checkAdressFields()){
+            document.getElementById("error-message").text = "Ungültige Adresse"
+            document.getElementById("invalid-email-error").classList.remove("hidden");
+            return;
+        }*/
+        // check if any other gest fileds besides email are empty
+        // make shure only numbers can be typed in phone number fields
+        const address =  document.getElementById("guest-address-1").value + " " + document.getElementById("guest-address-2").value + " " + document.getElementById("guest-address-3").value;
         document.getElementById("submit-form-email").value = combinedEmail;
         document.getElementById("submit-form-name").value = document.getElementById("guest-name").value;
         document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
-        document.getElementById("submit-form-address").value = document.getElementById("guest-address").value;
+        document.getElementById("submit-form-address").value =address;
     })
+
+
 
     document.getElementById("submit-form-checkout").addEventListener("submit", (ev) => {
         const autoSignIn = document.getElementById("email-auto-sign-in");

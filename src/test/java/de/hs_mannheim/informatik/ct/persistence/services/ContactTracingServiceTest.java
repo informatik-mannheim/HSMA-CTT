@@ -64,4 +64,5 @@ public class ContactTracingServiceTest extends TestCase {
         verify(eventVisitService, times(1))
                 .getVisitorContacts(any());
     }
+
 }
