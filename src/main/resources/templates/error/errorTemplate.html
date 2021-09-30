@@ -6,15 +6,19 @@
 <head>
     <title>Error</title>
 </head>
+
 <body>
+
 <div layout:fragment="content">
-    <h1>Es ist ein Fehler aufgetreten</h1>
-    <div style="font-size: x-large">Error message: <span th:text="${errorMessage}"></span></div>
-
+    <h1>Es ist ein Fehler aufgetreten!</h1>
+    <div style="font-size: x-large">Fehlermeldung: <span th:text="${errorMessage}"></span></div>
+  
     <br/>
-    <span><a style="color: white" class="backButton" href="javascript:history.back()">Go Back</a></span>
-    <span><a style="color: white" class="backButton" href="/">Home</a></span>
-
+    
+    <span><a style="color: white" class="backButton" href="javascript:history.back()">Zurück</a></span>
+    <span><a style="color: white" class="backButton" href="/">Startseite</a></span>
 </div>
+
 </body>
+
 </html>

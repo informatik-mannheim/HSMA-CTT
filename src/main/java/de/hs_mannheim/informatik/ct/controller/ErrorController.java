@@ -46,7 +46,8 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Room not found")
     public String handleRoomNotFoundException(Model model) {
-        model.addAttribute("errorMessage", "Room not found");
+        model.addAttribute("errorMessage", "Raum nicht gefunden");
+      
         return "error/errorTemplate";
     }
 
@@ -54,7 +55,8 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid file upload")
     public String handleInvalidFileUploadException(Model model) {
-        model.addAttribute("errorMessage", "File upload is invalid");
+        model.addAttribute("errorMessage", "Ungültiger Datei-Upload");
+      
         return "error/errorTemplate";
     }
 
@@ -62,7 +64,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "visitor not found")
     public String handleVisitorNotFoundException(Model model) {
-        model.addAttribute("errorMessage", "Visitor not found");
+        model.addAttribute("errorMessage", "Besucher nicht gefunden");
 
         return "error/errorTemplate";
     }
@@ -71,7 +73,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "invalid email")
     public String handleInvalidEmail(Model model) {
-        model.addAttribute("errorMessage", "Email is invalid");
+        model.addAttribute("errorMessage", "Ungültige Email");
 
         return "error/errorTemplate";
     }
@@ -80,7 +82,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "event not found")
     public String handleEventNotFound(Model model) {
-        model.addAttribute("errorMessage", "Event not found");
+        model.addAttribute("errorMessage", "Ereignis nicht gefunden");
 
         return "error/errorTemplate";
     }
@@ -89,7 +91,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unsupported encoding")
     public String handleUnsupportedEncodingException(Model model) {
-        model.addAttribute("errorMessage", "Encoding is not supported");
+        model.addAttribute("errorMessage", "Codierung wird nicht unterstützt");
 
         return "error/errorTemplate";
     }
@@ -98,7 +100,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "room full")
     public String handleRoomFullException(Model model) {
-        model.addAttribute("errorMessage", "The room is full");
+        model.addAttribute("errorMessage", "Raum ist voll");
 
         return "error/errorTemplate";
     }
@@ -107,7 +109,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "invalid external userdata")
     public String handleInvalidExternalUserdataException(Model model) {
-        model.addAttribute("errorMessage", "Userdata is invalid");
+        model.addAttribute("errorMessage", "Ungültige Benutzerdaten");
 
         return "error/errorTemplate";
     }
@@ -116,7 +118,7 @@ public class ErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "invalid room pin")
     public String handleInvalidRoomPinException(Model model) {
-        model.addAttribute("errorMessage", "Room pin is invalid");
+        model.addAttribute("errorMessage", "Ungültige Raumpin");
 
         return "error/errorTemplate";
     }

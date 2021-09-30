@@ -311,7 +311,7 @@ public class RoomControllerTest {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
-                .andExpect(content().string(containsString("Room not found")));// checking if error message is displayed for user
+                .andExpect(content().string(containsString("Raum nicht gefunden")));// checking if error message is displayed for user
     }
 
 
