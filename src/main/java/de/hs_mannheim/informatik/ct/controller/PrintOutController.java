@@ -39,14 +39,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.val;
 
 @Controller
 @RequestMapping("/printout")
 public class PrintOutController {
-    @Autowired
-    private RoomService roomService;
 
     @Autowired
     private BuildingService buildingService;
