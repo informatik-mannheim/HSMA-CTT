@@ -134,6 +134,7 @@ public class ContactTracingController {
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
+        
         List<String[]> contactTableStaff = contactsStaff
                 .stream()
                 .map(contact -> {
@@ -155,8 +156,6 @@ public class ContactTracingController {
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
-
-        System.out.println("Contactsize: " + contacts.size());
 
         model.addAttribute("numberOfContacts", contacts.size());
         model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
