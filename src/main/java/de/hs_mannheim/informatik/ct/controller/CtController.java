@@ -362,9 +362,6 @@ public class CtController {
                     // get text
                     String question = element.getElementsByTagName("question").item(0).getTextContent();
                     String answer = element.getElementsByTagName("answer").item(0).getTextContent();
-                    if (i == 7) {
-                        System.out.print(answer);
-                    }
                     // save answers and questions in ArrayList to return
                     answers.add(answer);
                     questions.add(question);
