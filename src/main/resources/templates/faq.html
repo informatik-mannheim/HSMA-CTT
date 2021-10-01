@@ -8,100 +8,24 @@
 </head>
 
 <body>
-<div layout:fragment="content">
+<div style="margin-bottom: 50px" layout:fragment="content">
     <h4>Frequently Asked Questions</h4>
-    <template id="try">
-        <div id="faqContainer">
-            <div class="btn-container">
-                <button class="btn btn-block btn-for-collapsible btn-for-faq" id="random" type="button"
-                        data-toggle="collapse"
-                        data-target="#collapseInfo1" aria-expanded="false" aria-controls="collapseInfo">
-                    Question 1<i class="fa fa-plus-square"></i>
-                </button>
-            </div>
-            <div class="collapse card card-body" id="random2">
-            </div>
-        </div>
-    </template>
-    <div id="faq-page-video-students">
-        <div>
-            <div class="btn-container">
-                <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
-                        data-toggle="collapse"
-                        data-target="#faq-video-students" aria-expanded="false" aria-controls="collapseInfo">
-                    Wo finde ich ein Erklärvideo zum Ein- und Auschecken?<i
-                        class="fa fa-plus-square"></i>
-                </button>
-            </div>
-            <div class="collapse card card-body" id="faq-video-students">
-                <p>Ein Erklärvideo für das Ein- und Auschecken für Studierende finden Sie
-                    <a href="https://stream.hs-mannheim.de/paella/ui/watch.html?id=2d38cf6f-8105-42fc-a70d-9226fa466fb2"> hier</a>.
-                </p>
-            </div>
-        </div>
-    </div>
 
-    <div id="faq-page-container" >
-        <div>
-            <div class="btn-container">
-                <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
-                        data-toggle="collapse"
-                        data-target="#faq-target" aria-expanded="false" aria-controls="collapseInfo">
-                    	Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?<i
-                        class="fa fa-plus-square"></i>
-                </button>
-            </div>
-            <div class="collapse card card-body" id="faq-target">
-                <p>Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie eine E-Mail an
-       				<a href="#" class="crypted" data-name="corona.zv" data-domain="hs-mannheim" data-tld="de"
-   						onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject=Meldung einer Corona-Infektion'; return false;">
-   					</a>
-                    schreiben und darin Ihre Mail-Adresse, mit der Sie sich im CTT eingecheckt hatten, sowie das Datum des positiven Tests mitteilen.</p>
-            </div>
+    <div id="faqContainer" th:each="question,iter : ${questions}">
+        <div class="btn-container">
+            <a class="btn btn-block btn-for-collapsible btn-for-faq" id="q-button-+${iter.index}" type="button"
+               data-toggle="collapse"
+               href="javascript:void(0);"
+               th:attr="data-target='#collapseInfo'+${iter.index}"
+               aria-expanded="false" aria-controls="collapseInfo" th:text="${question}"><i
+                    class="fa fa-plus-square"></i>
+
+            </a>
+        </div>
+        <div class="collapse card card-body" th:id="collapseInfo+${iter.index}">
+            <div th:remove="tag" th:utext="${answers[iter.index]}"></div>
         </div>
     </div>
-    
-    <div style="margin-top: -50px">
-     Bei weiteren Fragen kontaktieren Sie uns gerne per E-Mail:
-    	<a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
-   			onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
-   		</a>
-    </div>
-   		
-    <script>
-        const faqList=[
-            {"question": "Wie kann ich mich einchecken?", "answer": "Sie müssen lediglich mit Ihrem Smartphone den QR-Code abscannen, dann werden Sie automatisch zum Check-in für den passenden Raum weitergeleitet. Alternativ, wenn Sie keinen QR-Scanner zur Verfügung haben, können Sie auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort finden Sie ", "link": "https://ctt.hs-mannheim.de/howToQr"},
-            {"question": "Wie kann ich mich auschecken?", "answer": "Das Auschecken funktioniert genauso, wie das Einchecken. Sie müssen lediglich den QR-Code abscannen und dann ganz unten auf den Button \"Abmelden\" klicken. Dann werden Sie automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort finden Sie ", "link": "https://ctt.hs-mannheim.de/howToQr"},
-            {"question": "Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?", "answer": "Auf jedem Zettel befindet sich oberhalb des QR-Codes eine URL. Sie können auch einfach in einem Browser die URL eintippen und sich so beispielsweise mit Ihrem Laptop oder Tablet einchecken. Falls Sie gar kein Gerät zur Verfügung haben, bitten Sie jemand anderen Sie einzuchecken. Eine ausführliche Anleitung dazu finden Sie ", "link": "https://ctt.hs-mannheim.de/howToInkognito"},
-            {"question": "Kann ich auch andere einchecken?", "answer": "Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffnen Sie dazu einfach ein weiteres Fenster in einem Browser und rufen Sie die URL auf dem Zettel auf. Anschließend einfach die Daten der Person eintragen. Der Einfachheit halber können Sie das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen. Eine etwas ausführlichere Beschreibung finden Sie ", "link": "https://ctt.hs-mannheim.de/howToInkognito"},
-            {"question": "Kann ich mich auch später ein- bzw. auschecken?", "answer": "Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder verlassen, sonst werden im System falsche Uhrzeiten gespeichert."},
-            {"question": "Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen ?", "answer": "Nein, leider geht das aktuell nur bei Online-Veranstaltungen."},
-            {"question": "Was ist, wenn ich vergessen habe mich auszuchecken?", "answer": "Sie werden automatisch ausgecheckt, sobald Sie einen anderen Raum betreten. Notfalls checkt Sie das System nachts automatisch aus. Für die Kontaktverfolgung waren Sie dann leider bis dahin noch im Raum."},
-        ];
-        let temp = document.querySelector("template");
-        let container = document.getElementById("faq-page-container");
-        for(let i = 0; i<faqList.length; i++){
-            const button = temp.content.querySelector("button");
-            button.innerHTML=faqList[i].question+`<i class="fa fa-plus-square"></i>`;
-            button.id="collapseButtonFaq"+i;
-            button.setAttribute("data-target", "#faq-target-"+i);
-            const faqAnswerDiv =  temp.content.querySelector(".collapse");
-            faqAnswerDiv.id= "faq-target-"+i;
-            let text = document.createElement("p");
-            text.innerText= faqList[i].answer;
-            if(faqList[i].link !== undefined){
-                let link = document.createElement("a");
-                link.innerText="hier.";
-                link.href=faqList[i].link
-                text.appendChild(link);
-            };
-            faqAnswerDiv.innerHTML="";
-            faqAnswerDiv.appendChild(text);
-            let clon = temp.content.cloneNode(true);
-            container.appendChild(clon);
-        }
-    </script>
-
 </div>
 
 </body>
