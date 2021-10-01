@@ -73,7 +73,6 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            new TracingColumn("Geburtsdatum", contact -> ""),
             new TracingColumn("Adresse", contact -> "")
     );
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
@@ -85,7 +84,6 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            new TracingColumn("Geburtsdatum", contact -> ""),
             new TracingColumn("Adresse", contact -> "")
 
     );
@@ -98,7 +96,6 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            new TracingColumn("Geburtsdatum", contact -> ""),
             new TracingColumn("Adresse", contact -> contact.getContact().getAddress()),
             new TracingColumn("Tel.", contact -> contact.getContact().getNumber())
     );
@@ -112,7 +109,7 @@ public class ContactTracingController {
     public String doSearch(@RequestParam String email, Model model) {
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
-            model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
+            model.addAttribute("error", "Eingegebene Mail-Adresse konnte im System nicht gefunden werden!");
             return "tracing/search";
         }
 
