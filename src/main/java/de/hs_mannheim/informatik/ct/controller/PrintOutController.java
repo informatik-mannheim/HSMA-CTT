@@ -67,7 +67,6 @@ public class PrintOutController {
         return "rooms/roomPrintout";
     }
 
-
     @RequestMapping(value = "/rooms/download")
     public ResponseEntity<StreamingResponseBody> getRoomPrintout(
             HttpServletRequest request,
