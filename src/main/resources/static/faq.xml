@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- In this file all the faqs are stored -->
-<!-- If you want to add a link/ image/... in your answer write html as usual but escape the following characters:
+<!-- If you want to customizer your answer div add want to add a link/ image/... write html as usual but escape the following characters:
 "   "   => &quot;
 '   '   => &apos;
 <   <   => &lt;
@@ -49,7 +49,8 @@
     <faq-element id="4">
         <question>Kann ich mich auch später ein- bzw. auschecken?</question>
         <answer>
-            &lt;p&gt;Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder verlassen, sonst werden im System falsche Uhrzeiten gespeichert.
+            &lt;p&gt;Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder
+            verlassen, sonst werden im System falsche Uhrzeiten gespeichert.
             &lt;/p&gt;
         </answer>
     </faq-element>
@@ -70,9 +71,10 @@
     <faq-element id="7">
         <question>Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?</question>
         <answer>
-            &lt;p&gt;Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie ihre E-Mail an &lt;a
-            href=&quot;javascript:linkTo_UnCryptMailto(&apos; nbjmup;dpspob/{wAit.nbooifjn/ef&apos;)&quot;>corona.zv@hs-mannheim.de
-            &lt;/a&gt;
+            &lt;p&gt;Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie ihre E-Mail an &lt;a href=&quot;#&quot;
+            class=&quot;crypted&quot; data-name=&quot;corona.zv&quot;data-domain=&quot;hs-mannheim&quot; data-tld=&quot;de&quot;
+            onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name + &apos;@&apos; + this.dataset.domain
+            + &apos;.&apos; + this.dataset.tld + &apos;?subject=Meldung einer Corona-Infektion&apos;; return false;&quot;&gt;&lt;/a&gt;
             schreiben und darin ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des
             positiven Tests mitteilen.
             &lt;/p&gt;
@@ -105,8 +107,11 @@
     <faq-element id="11">
         <question>Wie kann ich das Corona Tracking Tool (CTT) für meine Organisation erhalten?</question>
         <answer>
-            &lt;p&gt;CTT ist Open Source, das heißt, es ist frei verfügbar. Schreiben Sie eine  Mail (ctt-admin@hs-mannheim.de) oder gehen Sie direkt
-            auf unsere &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Githubseite&lt;/a&gt;.
+            &lt;p&gt;CTT ist Open Source, das heißt, es ist frei verfügbar. Schreiben Sie eine  Mail an
+            &lt;a href=&quot;#&quot;class=&quot;crypted&quot; data-name=&quot;ctt-admin&quot;data-domain=&quot;hs-mannheim&quot;
+            data-tld=&quot;de&quot;onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name +
+            &apos;@&apos; + this.dataset.domain+ &apos;.&apos; + this.dataset.tld; return false;&quot;&gt;&lt;/a&gt;
+            oder gehen Sie direkt auf unsere &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Githubseite&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
