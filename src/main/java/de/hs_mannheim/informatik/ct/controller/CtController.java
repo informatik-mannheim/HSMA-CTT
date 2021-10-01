@@ -51,22 +51,15 @@ import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
 import de.hs_mannheim.informatik.ct.persistence.RoomFullException;
-import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
-import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
 import de.hs_mannheim.informatik.ct.persistence.services.EventService;
 import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
-import lombok.extern.slf4j.Slf4j;
-
 
 @Controller
-@Slf4j
-
 public class CtController {
-
     @Autowired
     private EventService eventService;
 
@@ -86,14 +79,7 @@ public class CtController {
     private Utilities util;
 
     @Autowired
-    private DynamicContentService contentService;
-
-    @Autowired
     private DateTimeService dateTimeService;
-
-    @Autowired
-    private ContactTracingService contactTracingService;
-
 
     @Value("${server.port}")
     private String port;
@@ -235,6 +221,7 @@ public class CtController {
 
             return "event";
         }
+        
         throw new EventNotFoundException();
     }
 
@@ -321,7 +308,6 @@ public class CtController {
     public String howToInkognito() {
         return "howToInkognito";
     }
-
 
     @RequestMapping("/learningRooms")
     public String showLearningRooms(Model model) {

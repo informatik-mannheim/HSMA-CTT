@@ -27,11 +27,13 @@ import org.springframework.stereotype.Component;
 
 import de.hs_mannheim.informatik.ct.persistence.services.EventVisitService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Schedules maintenance queries such as signing out visitors at the end of the day and deleting expired personal data
  */
 @Component
+@Slf4j
 public class ScheduledMaintenanceTasks {
     @Autowired
     private RoomVisitService roomVisitService;
@@ -39,22 +41,26 @@ public class ScheduledMaintenanceTasks {
     @Autowired
     private EventVisitService eventVisitService;
 
-    //   @Scheduled(fixedRate = 30 * 60 * 1000) // Every 30 minutes
-    @Scheduled(cron = "0 55 3 * * *")    // 3:55 AM
-    public void doMaintenance() {
-        signOutAllVisitors(LocalTime.parse("21:00:00"));
+    private final int CRON_HOUR = 3;
+    private final int CRON_MINUTE = 55;
+    private final String FORCED_END_TIME = "00:00:00";
 
+    //@Scheduled(fixedRate = 5 * 60 * 1000) // Every 5 Minutes
+    @Scheduled(cron = "0 " + CRON_MINUTE + " " + CRON_HOUR + " * * *")    // 3:55 AM
+    public void doMaintenance() {
+        log.info("Auto-Checkout and deletion of old records triggered.");
+        
+        signOutAllVisitors(LocalTime.parse(FORCED_END_TIME));
         deleteExpiredVisitRecords(Period.ofWeeks(4));
     }
 
     public void signOutAllVisitors(LocalTime forcedEndTime) {
-        if (LocalTime.now().isAfter(forcedEndTime)) {
-            roomVisitService.checkOutAllVisitors(forcedEndTime);
-        }
+        roomVisitService.checkOutAllVisitors(forcedEndTime);
     }
 
     public void deleteExpiredVisitRecords(Period recordLifeTime) {
         eventVisitService.deleteExpiredRecords(recordLifeTime);
         roomVisitService.deleteExpiredRecords(recordLifeTime);
     }
+    
 }

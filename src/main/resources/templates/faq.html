@@ -23,8 +23,25 @@
             </div>
         </div>
     </template>
-    
-    <div id="faq-page-container" style="margin-top: 40px">
+    <div id="faq-page-video-students">
+        <div>
+            <div class="btn-container">
+                <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
+                        data-toggle="collapse"
+                        data-target="#faq-video-students" aria-expanded="false" aria-controls="collapseInfo">
+                    Wo finde ich ein Erklärvideo zum Ein- und Auschecken?<i
+                        class="fa fa-plus-square"></i>
+                </button>
+            </div>
+            <div class="collapse card card-body" id="faq-video-students">
+                <p>Ein Erklärvideo für das Ein- und Auschecken für Studierende finden Sie
+                    <a href="https://stream.hs-mannheim.de/paella/ui/watch.html?id=2d38cf6f-8105-42fc-a70d-9226fa466fb2"> hier</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="faq-page-container" >
         <div>
             <div class="btn-container">
                 <button class="btn btn-block btn-for-collapsible btn-for-faq" type="button"
@@ -36,7 +53,7 @@
             </div>
             <div class="collapse card card-body" id="faq-target">
                 <p>Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie eine E-Mail an
-       				<a href="#" class="crypted" data-name="corona-zv" data-domain="hs-mannheim" data-tld="de"
+       				<a href="#" class="crypted" data-name="corona.zv" data-domain="hs-mannheim" data-tld="de"
    						onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld + '?subject=Meldung einer Corona-Infektion'; return false;">
    					</a>
                     schreiben und darin Ihre Mail-Adresse, mit der Sie sich im CTT eingecheckt hatten, sowie das Datum des positiven Tests mitteilen.</p>

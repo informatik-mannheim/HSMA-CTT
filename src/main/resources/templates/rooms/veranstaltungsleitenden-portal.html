@@ -26,7 +26,7 @@
 			<div class="row justify-around">
 
 				<div class="card flex-1">
-					<h5 class="text-center">Raumkapazität nach IfSG</h5>
+					<h5 class="text-center">Raumgröße</h5>
 					<p class="text-center"><strong th:text="${roomData.maxCapacity+' '}"></strong>Personen</p>
 				</div>
 
@@ -40,8 +40,8 @@
 			<div class="card">
 				<div class="card-body">
 					<p>
-						Wenn die Zahl der im Raum eingecheckten Personen die Raumkapazität überschreitet, können Sie den Raum zurücksetzen.
-						Nach dem Zurücksetzen des Raumes müssen sich alle Personen erneut einchecken.
+						Wenn die Zahl der im Raum eingecheckten Personen die Zahl der Anwesenden übersteigt, können Sie den Raum zurücksetzen.
+						Nach dem Zurücksetzen des Raumes müssen sich alle anwesenden Personen erneut einchecken.
 					</p>
 				</div>
 				<div class="card-footer">
@@ -51,34 +51,35 @@
 
 			<form method="POST" th:action="@{/r/checkOut}">
 
-				<div class="card">
+				<div th:if="${@environment.getProperty('check_3G_status')}" class="card">
 					<div class="card-body">
 						<p>Um an Präsenzveranstaltungen teilnehmen zu können, müssen alle Personen mindestens eines der folgenden Kriterien erfüllen:</p>
 						<p>Die Person...</p>
 						<ul>
 							<li>
-								kann ein negatives Corona-Schnelltestergebnis vorweisen (nicht älter als 72h)
+								kann ein negatives Corona-Schnelltestergebnis vorweisen
 								<strong>oder</strong>
 							</li>
 							<li>
-								kann eine vollständige Corona-Impfung nachweisen (vor mind. 3 Wochen abgeschlossen)
+								kann eine vollständige Corona-Impfung nachweisen
 								<strong>oder</strong>
 							</li>
 							<li>
-								ist nach einer Corona-Infektion vollständig genesen (in den letzten 6 Monaten)
+								ist nach einer Corona-Infektion vollständig genesen
 							</li>
 						</ul>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions" required>
+							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions" />
 							<label class="form-check-label" for="confirm_conditions">
 								Ich habe geprüft, ob alle anwesenden Personen mindestens eines der oben genannten Kriterien erfüllen.
 							</label>
 						</div>
+						
+						<br/>
 					</div>
 				</div>
 
 				<div class="card">
-
 						<div class="card-body">
 							<p class="card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
 						</div>
