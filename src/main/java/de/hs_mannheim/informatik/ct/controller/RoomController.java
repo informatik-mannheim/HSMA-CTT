@@ -124,6 +124,9 @@ public class RoomController {
         model.addAttribute("roomPin", roomPin);
         model.addAttribute("checkInOverwrite", overrideFullRoom);
         model.addAttribute("roomPinSet", roomPinSet);
+        
+        log.debug("forwarding to check-in page with room data: " + roomData.toString());
+        
         return "rooms/checkIn";
     }
 
@@ -147,16 +150,19 @@ public class RoomController {
             // If the user is automatically checked out of the same room they're trying to
             // check into, show them the checked out page instead (Auto checkout after scanning room qr code twice)
             if (room.getId().equals(checkedOutRoom.getId())) {
+                log.debug("visitor checked out from same room via qr-code.");
                 return "forward:checkedOut/";
             }
         }
 
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
+            log.debug("privileged check-in to {}", room.getId());
             return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
         }
 
-        if ( !(!warningForFullRoom && allowFullRoomCheckIn) && roomVisitService.isRoomFull(room)) {
+        if (!allowFullRoomCheckIn && roomVisitService.isRoomFull(room)) {
+            log.debug("room {} full!", room.getId());
             return "forward:roomFull/" + room.getId();
         }
 
