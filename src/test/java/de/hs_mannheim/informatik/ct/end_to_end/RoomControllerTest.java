@@ -224,7 +224,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(content().string(containsString("Email is invalid")));
+                .andExpect(content().string(containsString("Ungültige Email.")));
     }
 
     @Test
@@ -238,7 +238,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
                         .with(csrf()))
                 .andExpect(status().is(400))
-                .andExpect(content().string(containsString("Room pin is invalid")));
+                .andExpect(content().string(containsString("Ungültige Raum-Pin.")));
     }
 
     @Test
@@ -311,7 +311,7 @@ public class RoomControllerTest {
         this.mockMvc.perform(
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
-                .andExpect(content().string(containsString("Room not found")));// checking if error message is displayed for user
+                .andExpect(content().string(containsString("Raum nicht gefunden")));// checking if error message is displayed for user
     }
 
 

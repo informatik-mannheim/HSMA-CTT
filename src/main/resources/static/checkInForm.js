@@ -104,6 +104,16 @@ window.addEventListener("pageshow", () => {
                     guestFreeSection[i].style.maxHeight = "0";
                 }
                 break;
+            case "internal2":
+                emailText.style.minWidth = "270px"
+                emailText.placeholder = "Nutzername";
+                emailText.type = "text";
+                emailPostfix = "@lba.hs-mannheim.de";
+                for (let i = 0; i < guestFreeSection.length; i++) {
+                    guestFreeSection[i].style.visibility = "hidden";
+                    guestFreeSection[i].style.maxHeight = "0";
+                }
+                break;
             default:
             case "external":
                 emailText.style.minWidth = "410px"
@@ -124,12 +134,13 @@ window.addEventListener("pageshow", () => {
         }
     }
 
-    function getFullEmail() {
+	function getFullEmail() {
         // Check if the postfix is null
+        const emailTextValue = emailText.value.trim()
         if (!!emailPostfix) {
-            return emailText.value + emailPostfix;
+            return emailTextValue + emailPostfix;
         } else {
-            return emailText.value;
+            return emailTextValue;
         }
     }
 
