@@ -103,7 +103,8 @@
     </div>
     
 <!--  Preliminarily removed as it seems to be confusing
-    <div class="priviledged-only" th:if="${privileged}">
+	<!-- TODO where is privileged-only defined, btw? -->
+    <div class="privileged-only" th:if="${privileged}">
         <h3 class="content-header form-header">Raum zurücksetzen</h3>
         <p style="margin-left: 24px; margin-top: 24px;"
            th:text="${visitorCount}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${visitorCount}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
