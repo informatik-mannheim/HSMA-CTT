@@ -38,13 +38,17 @@ window.addEventListener("pageshow", () => {
             document.getElementById("invalid-email-error").classList.remove("hidden");
             return;
         }*/
-        // check if any other gest fileds besides email are empty
+        // check if any other gest fileds besides email are empty and print error message
         // make shure only numbers can be typed in phone number fields
+        //cookies? => für künftige checkins speichern?
         const address =  document.getElementById("guest-address-1").value + " " + document.getElementById("guest-address-2").value + " " + document.getElementById("guest-address-3").value;
+        const firstname = document.getElementById("guest-first-name").value ;
+        const surname = document.getElementById("guest-surname").value; // fehler in nachname
+        const name = firstname +" "+ surname;
         document.getElementById("submit-form-email").value = combinedEmail;
-        document.getElementById("submit-form-name").value = document.getElementById("guest-name").value;
+        document.getElementById("submit-form-name").value = name;
         document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
-        document.getElementById("submit-form-address").value =address;
+        document.getElementById("submit-form-address").value = address;
     })
 
 

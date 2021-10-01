@@ -58,9 +58,12 @@
                     <input style="min-width: 270px" id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer" value="" required />
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
-                <div class="guest-free-section form-row" style="max-width: 300px">
-                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1" placeholder="Vorname Nachname" />
-                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1" placeholder="Telefonnummer" />
+                <div class="guest-free-section form-row" style="margin-right: 12px">
+                    <input class="email" id="guest-first-name" name="guest-name" style="margin-right: 6px; flex-grow: 1" placeholder="Vorname" />
+                    <input class="email" id="guest-surname" name="guest-name" style="margin-left: 6px; flex-grow: 1" placeholder="Nachname" />
+                </div>
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-number" name="guest-number" style="min-width: 410px" placeholder="Telefonnummer" />
                 </div>
                 <div class="guest-free-section form-row">
                     <input class="email" id="guest-address-1" name="guest-address" style="min-width: 410px" placeholder="Straße & Hausnummer"/>
@@ -92,9 +95,9 @@
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value=""/>
                     <input type="hidden" name="privileged" th:value="${privileged}" />
                     <input type="hidden" name="rid" th:field="*{roomId}"/>
-                    <input id="submit-form-name" type="hidden" name="name"/>
-                    <input id="submit-form-address" type="hidden" name="address"/>
-                    <input id="submit-form-number" type="hidden" name="number"/>
+                    <input id="submit-form-name" type="hidden" name="name" value=""/>
+                    <input id="submit-form-address" type="hidden" name="address" value=""/>
+                    <input id="submit-form-number" type="hidden" name="number" value=""/>
                 </div>
             </form>
         </div>

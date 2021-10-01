@@ -130,10 +130,10 @@ public class RoomController {
     @Transactional
     public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
         isRoomPinValidOrThrow(visitData);
+
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
         val visitorEmail = visitData.getVisitorEmail();
         val visitor = getOrCreateVisitorOrThrow(visitorEmail, visitData.getName(), visitData.getNumber(), visitData.getAddress());
-
         isRoomPinEqualOrThrow(visitData.getRoomPin(), room.getRoomPin());
 
         val notCheckedOutVisits = roomVisitService.checkOutVisitor(visitor);
