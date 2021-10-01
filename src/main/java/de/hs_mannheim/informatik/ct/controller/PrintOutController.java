@@ -72,11 +72,9 @@ public class PrintOutController {
 
 
     @RequestMapping(value = "/rooms/download")
-    public ResponseEntity<StreamingResponseBody> getRoomPrintout(
-            HttpServletRequest request,
-            @RequestParam(value = "privileged") boolean privileged) {
+    public ResponseEntity<StreamingResponseBody> getRoomPrintout(HttpServletRequest request, @RequestParam(value = "privileged") boolean privileged) {
         val allRooms = buildingService.getAllRooms();
-
+        System.out.println("Privileged: " + privileged+" | "+request.toString());
         StreamingResponseBody responseBody = outputStream -> {
             try (val zos = new ZipOutputStream(outputStream)) {
 

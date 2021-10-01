@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package de.hs_mannheim.informatik.ct.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Visit;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
@@ -64,14 +67,43 @@ public class ContactTracingController {
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
-    private final List<TracingColumn> tracingColumns = Arrays.asList(
+    private final List<TracingColumn> tracingColumnsStudents = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
-            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate()))
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            new TracingColumn("Adresse", contact -> ""),
+            new TracingColumn("Telefon", contact -> "")
+    );
+   
+    private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
+            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Name", contact -> contact.getContact().getEmail().split("@")[0]),
+            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
+            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
+            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            new TracingColumn("Adresse", contact -> ""),
+            new TracingColumn("Telefon", contact -> "")
+    );
+  
+    private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
+            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Name", contact -> contact.getContact().getName()),
+            new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
+            new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
+            new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
+            new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
+            new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
+            new TracingColumn("Adresse", contact -> contact.getContact().getAddress()),
+            new TracingColumn("Telefon", contact -> contact.getContact().getNumber())
     );
 
     @GetMapping("/search")
@@ -83,36 +115,73 @@ public class ContactTracingController {
     public String doSearch(@RequestParam String email, Model model) {
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
-            model.addAttribute("error", "Eingegebene Mail-Adresse nicht gefunden!");
+            model.addAttribute("error", "Eingegebene Mail-Adresse konnte im System nicht gefunden werden!");
             return "tracing/search";
         }
 
         val contacts = contactTracingService.getVisitorContacts(target.get());
+        List<Contact<?>> contactsStudents = filterContactList(contacts, "students");
+        List<Contact<?>> contactsStaff = filterContactList(contacts, "staff");
+        List<Contact<?>> contactsGuests = filterContactList(contacts, "guests");
 
-        List<String[]> contactTable = contacts
+        List<String[]> contactTableStudents = contactsStudents
                 .stream()
                 .map(contact -> {
-                    val rowValues = new String[tracingColumns.size()];
-                    for (int columnIndex = 0; columnIndex < tracingColumns.size(); columnIndex++) {
-                        val column = tracingColumns.get(columnIndex);
+                    val rowValues = new String[tracingColumnsStudents.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsStudents.size(); columnIndex++) {
+                        val column = tracingColumnsStudents.get(columnIndex);
+                        rowValues[columnIndex] = column.cellValue.apply(contact);
+                    }
+                    return rowValues;
+                }).collect(Collectors.toList());
+        
+        List<String[]> contactTableStaff = contactsStaff
+                .stream()
+                .map(contact -> {
+                    val rowValues = new String[tracingColumnsStaff.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsStaff.size(); columnIndex++) {
+                        val column = tracingColumnsStaff.get(columnIndex);
                         rowValues[columnIndex] = column.cellValue.apply(contact);
                     }
                     return rowValues;
                 }).collect(Collectors.toList());
 
-        model.addAttribute("tableHeaders", tracingColumns.stream().map(TracingColumn::getHeader).toArray());
-        model.addAttribute("tableValues", contactTable);
+        List<String[]> contactTableGuests = contactsGuests
+                .stream()
+                .map(contact -> {
+                    val rowValues = new String[tracingColumnsGuests.size()];
+                    for (int columnIndex = 0; columnIndex < tracingColumnsGuests.size(); columnIndex++) {
+                        val column = tracingColumnsGuests.get(columnIndex);
+                        rowValues[columnIndex] = column.cellValue.apply(contact);
+                    }
+                    return rowValues;
+                }).collect(Collectors.toList());
+
+        model.addAttribute("numberOfContacts", contacts.size());
+        model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableHeadersStaff", tracingColumnsStaff.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableHeadersGuests", tracingColumnsGuests.stream().map(TracingColumn::getHeader).toArray());
+        model.addAttribute("tableValuesStudents", contactTableStudents);
+        model.addAttribute("tableValuesStaff", contactTableStaff);
+        model.addAttribute("tableValuesGuests", contactTableGuests);
         model.addAttribute("target", target.get().getEmail());
 
         return "tracing/contactList.html";
     }
 
+
     @GetMapping("/download")
-    public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email) {
-        val target = visitorService.findVisitorByEmail(email)
+    public ResponseEntity<StreamingResponseBody> downloadExcel(@RequestParam String email, @RequestParam String type) {
+        Visitor target = visitorService.findVisitorByEmail(email)
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
-        val contacts = contactTracingService.getVisitorContacts(target);
+        val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
+        List<ContactTracingController.TracingColumn> tracingColumns = tracingColumnsStudents;
+        if (type.equals("staff")) {
+            tracingColumns = tracingColumnsStaff;
+        } else if (type.equals("guests")) {
+            tracingColumns = tracingColumnsGuests;
+        }
 
         val generator = new ContactListGenerator(
                 dateTimeService,
@@ -139,5 +208,26 @@ public class ContactTracingController {
     public static class TracingColumn {
         private String header;
         private Function<Contact<?>, String> cellValue;
+    }
+
+    /**
+     * Helper method to filter the contacts into 3 subcategories: students, employees of the university and guests
+     *
+     * @param contacts List of all possible contacts of the target email
+     * @param type     String of the filter type (students/ staff/ guests)
+     * @return filtered List of Contacts
+     */
+    private List<Contact<?>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
+        List<Contact<?>> filteredList = new ArrayList<>();
+        for (Contact<? extends Visit> contact : contacts) {
+            if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
+                filteredList.add(contact);
+            } else if (type.equals("staff") && (contact.getContact().getEmail().contains("@hs-mannheim.de") || contact.getContact().getEmail().contains("@lba.hs-mannheim.de"))) {
+                filteredList.add(contact);
+            } else if (type.equals("guests") && !(contact.getContact().getEmail().contains("hs-mannheim.de"))) {
+                filteredList.add(contact);
+            }
+        }
+        return filteredList;
     }
 }

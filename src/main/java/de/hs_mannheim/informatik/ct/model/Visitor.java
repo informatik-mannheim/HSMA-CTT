@@ -60,4 +60,16 @@ public class Visitor {
     public String toString() {
         return "{email='" + email + "'}";
     }
+
+    public String getName() {
+        return "";
+    }
+
+    public String getAddress() {
+        return "";
+    }
+
+    public String getNumber() {
+        return "";
+    }
 }
