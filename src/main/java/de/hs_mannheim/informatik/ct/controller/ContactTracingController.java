@@ -17,16 +17,13 @@
  */
 package de.hs_mannheim.informatik.ct.controller;
 
-import de.hs_mannheim.informatik.ct.model.Contact;
-import de.hs_mannheim.informatik.ct.model.Visitor;
-import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
-import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
-import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
-import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.val;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -40,11 +37,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.model.Visit;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import de.hs_mannheim.informatik.ct.persistence.services.ContactTracingService;
+import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
+import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+import de.hs_mannheim.informatik.ct.util.ContactListGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.val;
 
 @Controller
 @RequestMapping("tracing")
@@ -73,8 +76,10 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            new TracingColumn("Adresse", contact -> "")
+            new TracingColumn("Adresse", contact -> ""),
+            new TracingColumn("Telefon", contact -> "")
     );
+   
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
             new TracingColumn("Name", contact -> contact.getContact().getEmail().split("@")[0]),
@@ -84,9 +89,10 @@ public class ContactTracingController {
             new TracingColumn("Anmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getStartDate())),
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
-            new TracingColumn("Adresse", contact -> "")
-
+            new TracingColumn("Adresse", contact -> ""),
+            new TracingColumn("Telefon", contact -> "")
     );
+  
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
             new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
             new TracingColumn("Name", contact -> contact.getContact().getName()),
@@ -97,7 +103,7 @@ public class ContactTracingController {
             new TracingColumn("Abmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getEndDate())),
             new TracingColumn("Abmeldung Kontakt", contact -> timeFormatter.format(contact.getContactVisit().getEndDate())),
             new TracingColumn("Adresse", contact -> contact.getContact().getAddress()),
-            new TracingColumn("Tel.", contact -> contact.getContact().getNumber())
+            new TracingColumn("Telefon", contact -> contact.getContact().getNumber())
     );
 
     @GetMapping("/search")
@@ -205,7 +211,6 @@ public class ContactTracingController {
         private Function<Contact<?>, String> cellValue;
     }
 
-
     /**
      * Helper method to filter the contacts into 3 subcategories: students, employees of the university and guests
      *
@@ -213,9 +218,9 @@ public class ContactTracingController {
      * @param type     String of the filter type (students/ staff/ guests)
      * @return filtered List of Contacts
      */
-    private List<Contact<?>> filterContactList(Collection<Contact<?>> contacts, String type) {
+    private List<Contact<?>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
         List<Contact<?>> filteredList = new ArrayList<>();
-        for (Contact contact : contacts) {
+        for (Contact<? extends Visit> contact : contacts) {
             if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
                 filteredList.add(contact);
             } else if (type.equals("staff") && (contact.getContact().getEmail().contains("@hs-mannheim.de") || contact.getContact().getEmail().contains("@lba.hs-mannheim.de"))) {
