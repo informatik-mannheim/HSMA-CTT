@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.end_to_end;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -11,19 +9,27 @@ package de.hs_mannheim.informatik.ct.end_to_end;
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
-import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
-import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
+package de.hs_mannheim.informatik.ct.end_to_end;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,22 +42,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
+import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
+import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = Replace.ANY)
+@TestPropertySource(properties="allow_full_room_checkIn=false")
+@TestPropertySource(properties="warning_for_full_room=true")
 public class RoomControllerTest {
     @TestConfiguration
     static class RoomControllerTestConfig {
@@ -164,7 +170,6 @@ public class RoomControllerTest {
 
     @Test
     public void checkInFilledRoom() throws Exception {
-        // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 5);
 
@@ -180,7 +185,6 @@ public class RoomControllerTest {
 
     @Test
     public void checkInFullRoom() throws Exception {
-        // find and fill testroom
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
         fillRoom(testRoom, 10);
 
@@ -192,30 +196,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void checkInFullRoomWithOverride() throws Exception {
-        // find and fill testroom
-        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
-        fillRoom(testRoom, 10);
-
-        this.mockMvc.perform(
-                get("/r/" + TEST_ROOM_NAME + "?override=true").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(forwardedUrl(null));
-
-        this.mockMvc.perform(
-                post("/r/checkInOverride")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("visitorEmail", TEST_USER_EMAIL)
-                        .param("roomId", TEST_ROOM_NAME)
-                        .param("roomPin", TEST_ROOM_PIN)
-                        .with(csrf()))
-                .andExpect(forwardedUrl(null))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void checkInInvalidCredentials() throws Exception {
-        // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -229,7 +210,6 @@ public class RoomControllerTest {
 
     @Test
     public void checkInInvalidRoomPin() throws Exception {
-        // check in with empty username should
         this.mockMvc.perform(
                 post("/r/checkIn")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -257,11 +237,11 @@ public class RoomControllerTest {
                         // check out
                         result -> mockMvc.perform(
                                 post("/r/checkOut")
-                                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                        .param("visitorEmail", TEST_USER_EMAIL)
-                                        .with(csrf()))
-                                .andExpect(status().isFound())
-                                .andExpect(redirectedUrl("/r/checkedOut")));
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .param("visitorEmail", TEST_USER_EMAIL)
+                                .with(csrf()))
+                        .andExpect(status().isFound())
+                        .andExpect(redirectedUrl("/r/checkedOut")));
     }
 
     @Test
@@ -313,7 +293,6 @@ public class RoomControllerTest {
                 .andExpect(status().is(404))  // checking for response status code 404
                 .andExpect(content().string(containsString("Raum nicht gefunden")));// checking if error message is displayed for user
     }
-
 
     /**
      * Helper method that creates users to fill room.
