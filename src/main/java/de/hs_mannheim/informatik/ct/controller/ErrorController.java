@@ -126,7 +126,7 @@ public class ErrorController {
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "error")
     public String handleError(HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        System.out.println("Request Status: " + status);
+        log.error("Request Status: {}", status);
 
         if (status != null) {
             Integer statusCode = Integer.valueOf(status.toString());
