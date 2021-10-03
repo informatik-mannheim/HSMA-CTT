@@ -134,12 +134,13 @@ window.addEventListener("pageshow", () => {
         }
     }
 
-    function getFullEmail() {
+	function getFullEmail() {
         // Check if the postfix is null
+        const emailTextValue = emailText.value.trim()
         if (!!emailPostfix) {
-            return emailText.value + emailPostfix;
+            return emailTextValue + emailPostfix;
         } else {
-            return emailText.value;
+            return emailTextValue;
         }
     }
 

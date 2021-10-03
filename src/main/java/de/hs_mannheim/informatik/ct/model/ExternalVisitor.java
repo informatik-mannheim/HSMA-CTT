@@ -60,4 +60,19 @@ public class ExternalVisitor extends Visitor {
         this.address = address;
     }
 
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getAddress() {
+        return this.address;
+    }
+
+    @Override
+    public String getNumber() {
+        return this.number;
+    }
+
 }

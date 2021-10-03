@@ -9,31 +9,86 @@
 <div layout:fragment="content">
 
     <div class="border border-secondary p-2 mb-3">
-        <h5 class="mb-4">Kontaktverfolgung</h5>
+        <h4 class="mb-4">Kontaktverfolgung</h4>
 
-        <div th:if="${#lists.isEmpty(tableValues)}">
+        <div th:if="${numberOfContacts}  == 0">
             <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
         </div>
 
-        <div th:unless="${#lists.isEmpty(tableValues)}">
+        <div th:unless="${numberOfContacts} == 0">
 
             <p>Hier sind die Kontakte f&uuml;r <span th:text="${target}"></span>.
-                Zur Weitergabe an das Gesundheitsamt können die Daten <a
-                        th:href="@{download(email=${target})}">hier
-                    als Excel-Datei</a>
-                heruntergeladen werden.</p>
+                Zur Weitergabe an das Gesundheitsamt können die Daten in Form von Excel Dateien heruntergeladen werden.
+                Dabei kann jeweils eine seperate Excel-Datei für Studenten, Lehrende/Hochschulangestellte und Gäste
+                heruntergeladen werden.
+            </p>
+            <ul>
+                <li th:if="${!#lists.isEmpty(tableValuesStudents)}"><a
+                        th:href="@{download(email=${target}, type='students')}">Studenten</a></li>
+                <li th:if="${!#lists.isEmpty(tableValuesStaff)}"><a
+                        th:href="@{download(email=${target}, type='staff')}">Lehrende und Hochschulangestellte</a></li>
+                <li th:if="${!#lists.isEmpty(tableValuesGuests)}"><a
+                        th:href="@{download(email=${target}, type='guests')}">Gäste</a></li>
+            </ul>
+            <div style="margin-top: 24px" class="table-responsive">
+                <h5>Students</h5>
+                <div th:if="${#lists.isEmpty(tableValuesStudents)}">
+                    <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
+                </div>
+                <table th:unless="${#lists.isEmpty(tableValuesStudents)}" style="margin-top: 20px;"
+                       class="table table-hover">
+                    <thead style="font-weight: bold">
+                    <tr>
+                        <th th:each="header: ${tableHeadersStudents}" th:text="${header}"/>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 13px">
+                    <tr th:each="row: ${tableValuesStudents}">
+                        <td th:each="cell: ${row}" th:text="${cell}"/>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 24px" class="table-responsive">
+                <h5>Lehrende und Hochschulangestellte</h5>
+                <div th:if="${#lists.isEmpty(tableValuesStaff)}">
+                    <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
+                </div>
+                <table th:unless="${#lists.isEmpty(tableValuesStaff)}" style="margin-top: 20px;"
+                       class="table table-hover">
+                    <thead style="font-weight: bold">
+                    <tr>
+                        <th th:each="header: ${tableHeadersStaff}" th:text="${header}"/>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 13px">
+                    <tr th:each="row: ${tableValuesStaff}">
+                        <td th:each="cell: ${row}" th:text="${cell}"/>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 24px" class="table-responsive">
+                <h5>Gäste</h5>
 
-            <table class="table table-hover mt-3">
-                <thead class="table-info">
-                <tr>
-                    <th th:each="header: ${tableHeaders}" th:text="${header}"/>
-                </tr>
-                </thead>
+                <div th:if="${#lists.isEmpty(tableValuesGuests)}">
+                    <p>Für die angegebene Mail-Adresse konnten keine Kontakte gefunden werden.</p>
+                </div>
+                <table th:unless="${#lists.isEmpty(tableValuesGuests)}" style="margin-top: 20px;"
+                       class="table table-hover">
+                    <thead style="font-weight: bold">
+                    <tr>
+                        <th th:each="header: ${tableHeadersGuests}" th:text="${header}"/>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 13px">
 
-                <tr th:each="row: ${tableValues}">
-                    <td th:each="cell: ${row}" th:text="${cell}"/>
-                </tr>
-            </table>
+                    <tr th:each="row: ${tableValuesGuests}">
+                        <td th:each="cell: ${row}" th:text="${cell}"/>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>

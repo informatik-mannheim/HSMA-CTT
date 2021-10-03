@@ -193,10 +193,6 @@ tbody {
     margin-bottom: 100px;
 }
 
-#learningRoomsTable{
-  width: 60%;
-}
-
 .errorMessage{
     font-size: xx-large;
     padding-bottom: 15px;
@@ -224,6 +220,9 @@ tbody {
 }
 .grid-item-5 {
     grid-area: area5;
+}
+.error-contact-tracing {
+    color: red;
 }
 
 .crypted:after {

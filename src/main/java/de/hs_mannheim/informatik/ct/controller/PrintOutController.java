@@ -39,14 +39,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.persistence.services.BuildingService;
 import de.hs_mannheim.informatik.ct.persistence.services.DynamicContentService;
-import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import lombok.val;
 
 @Controller
 @RequestMapping("/printout")
 public class PrintOutController {
-    @Autowired
-    private RoomService roomService;
 
     @Autowired
     private BuildingService buildingService;
@@ -70,13 +67,10 @@ public class PrintOutController {
         return "rooms/roomPrintout";
     }
 
-
     @RequestMapping(value = "/rooms/download")
-    public ResponseEntity<StreamingResponseBody> getRoomPrintout(
-            HttpServletRequest request,
-            @RequestParam(value = "privileged") boolean privileged) {
+    public ResponseEntity<StreamingResponseBody> getRoomPrintout(HttpServletRequest request, @RequestParam(value = "privileged") boolean privileged) {
         val allRooms = buildingService.getAllRooms();
-
+        System.out.println("Privileged: " + privileged+" | "+request.toString());
         StreamingResponseBody responseBody = outputStream -> {
             try (val zos = new ZipOutputStream(outputStream)) {
 
