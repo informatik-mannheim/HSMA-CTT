@@ -25,14 +25,14 @@
 
 			<div class="row justify-around">
 
-				<div class="card flex-1">
+				<div th:if="${@environment.getProperty('warning_for_full_room')}" class="card flex-1">
 					<h5 class="text-center">Raumgröße</h5>
 					<p class="text-center"><strong th:text="${roomData.maxCapacity+' '}"></strong>Personen</p>
 				</div>
 
 				<div class="card flex-1">
 					<h5 class="text-center">eingecheckte Personen</h5>
-					<p id="checked-in-amount" class="text-center"><strong th:attr="style=${isRoomOvercrowded ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
+					<p id="checked-in-amount" class="text-center"><strong th:attr="style=${(@environment.getProperty('warning_for_full_room') && isRoomOvercrowded) ? 'color: red;' : ''}" th:text="${currentRoomVisitorCount+' '}"></strong>Personen</p>
 				</div>
 
 			</div>
