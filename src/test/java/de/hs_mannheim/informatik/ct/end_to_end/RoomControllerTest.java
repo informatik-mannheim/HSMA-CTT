@@ -185,7 +185,6 @@ public class RoomControllerTest {
     
     // TODO create a test for a full room, the proposed one here seems tests functionality we do not have (yet?)
     // It requires a room full notification even before the check-in is attempted (which would make sense, of course)
-    /*
     @Test
     public void checkInFullRoom() throws Exception {
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
@@ -197,7 +196,6 @@ public class RoomControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(forwardedUrl("roomFull/" + TEST_ROOM_NAME));
     }
-    */
 
     @Test
     public void checkInInvalidCredentials() throws Exception {

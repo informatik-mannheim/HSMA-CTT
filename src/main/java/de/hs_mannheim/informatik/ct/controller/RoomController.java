@@ -115,6 +115,10 @@ public class RoomController {
             roomPinSet = false;
         }
 
+        if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
+            return "forward:roomFull/" + room.getId();
+        }
+
         Room.Data roomData = new Room.Data(room);
         model.addAttribute("room", room);
         model.addAttribute("visitorCount", roomVisitService.getVisitorCount(room));
