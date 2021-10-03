@@ -97,10 +97,10 @@
         </answer>
     </faq-element>
     <faq-element id="10">
-        <question>Muss ich mich anmelden?</question>
+        <question>Muss ich mich im System einloggen?</question>
         <answer>
             &lt;p&gt;Nein, es sei denn, Sie sind der Administrator oder Kontaktverfolger. Alle anderen müssen sich lediglich
-            normal ein- und auschekcen wenn Sie einen Raum betreten, dafür muss man isch nicht im System einloggen.
+            normal ein- und auschecken wenn Sie einen Raum betreten, dafür muss man sich nicht im System einloggen.
             &lt;/p&gt;
         </answer>
     </faq-element>
