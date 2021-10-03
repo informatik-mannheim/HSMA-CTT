@@ -64,11 +64,21 @@ window.addEventListener("pageshow", () => {
     // Change the form layout to allow the user to checkout of a previous room
     document.getElementById("checkout-button").addEventListener("click", () => doSignOut());
 
-    // E-Mail input validation
+    // E-Mail input validation for students
     emailText.addEventListener("keypress", (ev) => {
         if (emailText.type === "number") {
             // For anything that's not a number prevent the input
             if (/\D/.test(ev.key)) {
+                ev.preventDefault();
+            }
+        }
+    });
+
+    // E-Mail input Validation for internals
+    emailText.addEventListener("keypress", (ev) => {
+        if (emailText.type === "text") {
+            // Disabled the @-symbol from the valid input characters
+            if (/[@]/.test(ev.key)) {
                 ev.preventDefault();
             }
         }
