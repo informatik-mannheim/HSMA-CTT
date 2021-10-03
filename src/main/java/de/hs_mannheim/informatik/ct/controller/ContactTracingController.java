@@ -175,7 +175,7 @@ public class ContactTracingController {
         Visitor target = visitorService.findVisitorByEmail(email)
                 .orElseThrow(RoomController.RoomNotFoundException::new);
 
-        val contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
+        List<Contact<?>> contacts = filterContactList(contactTracingService.getVisitorContacts(target), type);
         List<ContactTracingController.TracingColumn> tracingColumns = tracingColumnsStudents;
         if (type.equals("staff")) {
             tracingColumns = tracingColumnsStaff;
