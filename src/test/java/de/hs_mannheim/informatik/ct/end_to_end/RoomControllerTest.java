@@ -182,9 +182,7 @@ public class RoomControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
-    
-    // TODO create a test for a full room, the proposed one here seems tests functionality we do not have (yet?)
-    // It requires a room full notification even before the check-in is attempted (which would make sense, of course)
+
     @Test
     public void checkInFullRoom() throws Exception {
         Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
