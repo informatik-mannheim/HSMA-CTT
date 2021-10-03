@@ -51,6 +51,7 @@ import de.hs_mannheim.informatik.ct.persistence.services.VisitorService;
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 @TestPropertySource(properties="allow_full_room_checkIn=true")      // this can only be set on class level, hence an extra test class is necessary
+@TestPropertySource(properties="warning_for_full_room=false")
 public class RoomControllerOverrideTest {
     @TestConfiguration
     static class RoomControllerTestConfig {
