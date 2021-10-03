@@ -115,7 +115,7 @@ public class RoomController {
             roomPinSet = false;
         }
 
-        if (!overrideFullRoom && roomVisitService.isRoomFull(room)) {
+        if (warningForFullRoom && !overrideFullRoom && roomVisitService.isRoomFull(room)) {
             return "forward:roomFull/" + room.getId();
         }
 
