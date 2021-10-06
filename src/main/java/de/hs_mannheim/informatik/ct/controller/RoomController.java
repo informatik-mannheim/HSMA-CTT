@@ -159,18 +159,21 @@ public class RoomController {
             }
         }
 
+        if (!allowFullRoomCheckIn && roomVisitService.isRoomFull(room) && !visitData.isPrivileged()) {
+            log.debug("room {} full!", room.getId());
+            return "forward:roomFull/" + room.getId();
+        }
+        
+        // room manager should always be allowed to check-in
+        // and needs to be checked in before the browser is forwarded to a different page!
+        val visit = roomVisitService.visitRoom(visitor, room);
+        
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
             log.debug("privileged check-in to {}", room.getId());
             return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
         }
 
-        if (!allowFullRoomCheckIn && roomVisitService.isRoomFull(room)) {
-            log.debug("room {} full!", room.getId());
-            return "forward:roomFull/" + room.getId();
-        }
-
-        val visit = roomVisitService.visitRoom(visitor, room);
         val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
 
@@ -185,7 +188,7 @@ public class RoomController {
 
     private void isRoomPinValidOrThrow(Data visitData) throws InvalidRoomPinException {
         val roomPin = visitData.getRoomPin();
-        if(roomPin==null || roomPin.isEmpty()) throw new InvalidRoomPinException();
+        if(roomPin == null || roomPin.isEmpty()) throw new InvalidRoomPinException();
         try {
             Long.parseLong(roomPin);
         } catch (NumberFormatException err) {
@@ -199,8 +202,10 @@ public class RoomController {
     @PostMapping("/checkInOverride")
     @Transactional
     public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws
-    UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
+                UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
 
+        // TODO: this method is very similar with the normal check-in, maybe this should be refactored?
+        
         if (!allowFullRoomCheckIn) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Checking into a full room is not allowed");
         }
@@ -214,12 +219,6 @@ public class RoomController {
         roomVisitService.checkOutVisitor(visitor);
 
         val visit = roomVisitService.visitRoom(visitor, room);
-
-        if (visitData.isPrivileged()) {
-            val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
-            return "redirect:/r/" + room.getId() + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail;
-        }
-
         val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
         model.addAttribute("visitData", visitData);
