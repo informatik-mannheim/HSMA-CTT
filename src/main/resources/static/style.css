@@ -1,3 +1,4 @@
+
 body {
     padding-top: 90px;
     padding-left: 15px;
@@ -201,15 +202,7 @@ tbody {
     font-size: xx-large;
     padding-bottom: 15px;
 }
-.index-page-grid{
-    display: grid;
-    width: 150px;
-    column-gap: 20px;
-    row-gap: 5px;
-    grid-template:
-    [row1-start] "area1 area2 ." [row1-end]
-    [row2-start] "area3 area4 area5" [row2-end]
-}
+
 .grid-item-1 {
     grid-area: area1;
 }
@@ -228,4 +221,14 @@ tbody {
 
 .crypted:after {
   content: attr(data-name) "@" attr(data-domain) "." attr(data-tld);
+}
+
+.index-page-grid{
+    display: grid;
+    width: 150px;
+    column-gap: 20px;
+    row-gap: 5px;
+    grid-template:
+    [row1-start] "area1 area2 ." [row1-end]
+    [row2-start] "area3 area4 area5" [row2-end]
 }

@@ -14,7 +14,6 @@ window.addEventListener("pageshow", () => {
         radio.addEventListener('change', () => postFixChanged())
     });
     postFixChanged();
-
     // Inject the actual email into the final form submitted to the server
     document.getElementById("submit-form").addEventListener("submit", (ev) => {
         const autoSignIn = document.getElementById("email-auto-sign-in");
@@ -33,23 +32,45 @@ window.addEventListener("pageshow", () => {
         } else {
             storage.removeItem('email');
         }
-       /*if(!checkAdressFields()){
-            document.getElementById("error-message").text = "Ungültige Adresse"
-            document.getElementById("invalid-email-error").classList.remove("hidden");
-            return;
-        }*/
-        // check if any other gest fileds besides email are empty and print error message
-        // make shure only numbers can be typed in phone number fields
-        //cookies? => für künftige checkins speichern?
+        if(postFixRadioButtons[3].checked){
+            if(checkForEmptyGuestFields() != ""){
+                ev.preventDefault();
+                document.getElementById("invalid-email-error").getElementsByTagName("h4")[0].innerText = checkForEmptyFields();
+                document.getElementById("invalid-email-error").classList.remove("hidden");
+                return;
+            }
+        }
         const address =  document.getElementById("guest-address-1").value + " " + document.getElementById("guest-address-2").value + " " + document.getElementById("guest-address-3").value;
         const firstname = document.getElementById("guest-first-name").value ;
-        const surname = document.getElementById("guest-surname").value; // fehler in nachname
+        const surname = document.getElementById("guest-surname").value;
         const name = firstname +" "+ surname;
         document.getElementById("submit-form-email").value = combinedEmail;
         document.getElementById("submit-form-name").value = name;
         document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
         document.getElementById("submit-form-address").value = address;
     })
+
+    function checkForEmptyGuestFields(){
+        if(document.getElementById("guest-first-name").value == ""){
+            return "Unvollständiger Vorname.";
+        }
+        if(document.getElementById("guest-surname").value == ""){
+            return "Unvollständiger Nachname.";
+        }
+        if(document.getElementById("guest-number").value == ""){
+            return "Ungültige Telefonnummer.";
+        }
+        if(document.getElementById("guest-address-1").value == ""){
+            return "Unvollständige Straßeneingabe.";
+        }
+         if(document.getElementById("guest-address-2").value == ""){
+            return "Unvollständige Ortseingabe.";
+        }
+        if(document.getElementById("guest-address-3").value == ""){
+            return "Unvollständige Ländereingabe.";
+        }
+        return "";
+    }
 
 
 
@@ -98,7 +119,6 @@ window.addEventListener("pageshow", () => {
 
         switch (postfix) {
             case "student":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
@@ -108,7 +128,6 @@ window.addEventListener("pageshow", () => {
                 }
                 break;
             case "internal":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
@@ -118,7 +137,6 @@ window.addEventListener("pageshow", () => {
                 }
                 break;
             case "internal2":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@lba.hs-mannheim.de";
@@ -129,8 +147,7 @@ window.addEventListener("pageshow", () => {
                 break;
             default:
             case "external":
-                emailText.style.minWidth = "410px"
-                emailText.placeholder = "Vollständige E-Mail";
+                emailText.placeholder = "E-Mail-Adresse";
                 emailText.type = "email";
                 emailPostfix = null;
                 for (let i = 0; i < guestFreeSection.length; i++) {
@@ -142,8 +159,11 @@ window.addEventListener("pageshow", () => {
 
         if (emailPostfix !== null) {
             emailLabel.textContent = emailPostfix;
+            emailLabel.style.paddingLeft = "5px";
+            emailLabel.style.width = "80%";
         } else {
             emailLabel.textContent = "";
+            emailLabel.style.width = "0%";
         }
     }
 
