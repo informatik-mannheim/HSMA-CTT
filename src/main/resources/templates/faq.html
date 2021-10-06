@@ -26,6 +26,12 @@
             <div th:remove="tag" th:utext="${answers[iter.index]}"></div>
         </div>
     </div>
+    <div style="margin-top: 50px; margin-bottom: 100px;">
+        Bei weiteren Fragen kontaktieren Sie uns gerne per E-Mail:
+        <a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
+           onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
+        </a>
+    </div>
 </div>
 
 </body>
