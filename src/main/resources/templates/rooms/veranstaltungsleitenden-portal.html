@@ -51,36 +51,34 @@
 
 			<form method="POST" th:action="@{/r/checkOut}">
 
-				<!-- as of now not required, and removed as a quick fix 
-				<div class="custom-card">
+				<div th:if="${@environment.getProperty('check_3G_status')}" class="custom-card">
 					<div class="custom-card-body">
 						<p>Um an Präsenzveranstaltungen teilnehmen zu können, müssen alle Personen mindestens eines der folgenden Kriterien erfüllen:</p>
 						<p>Die Person...</p>
 						<ul>
 							<li>
-								kann ein negatives Corona-Schnelltestergebnis vorweisen (nicht älter als 72h)
+								kann ein negatives Corona-Schnelltestergebnis vorweisen
 								<strong>oder</strong>
 							</li>
 							<li>
-								kann eine vollständige Corona-Impfung nachweisen (vor mind. 3 Wochen abgeschlossen)
+								kann eine vollständige Corona-Impfung nachweisen
 								<strong>oder</strong>
 							</li>
 							<li>
-								ist nach einer Corona-Infektion vollständig genesen (in den letzten 6 Monaten)
+								ist nach einer Corona-Infektion vollständig genesen
 							</li>
 						</ul>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions">
+							<input class="form-check-input" type="checkbox" value="" id="confirm_conditions" />
 							<label class="form-check-label" for="confirm_conditions">
 								Ich habe geprüft, ob alle anwesenden Personen mindestens eines der oben genannten Kriterien erfüllen.
 							</label>
 						</div>
+						<br/>
 					</div>
 				</div>
-				-->
 
 				<div class="custom-card">
-
 						<div class="custom-card-body">
 							<p class="custom-card-text">Hier können Sie sich selbst aus dem Raum auschecken</p>
 						</div>
