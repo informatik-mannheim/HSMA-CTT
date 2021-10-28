@@ -1,0 +1,40 @@
+.danger-color {
+    background: #f8d7da;
+    border-color: #d9534f !important;
+}
+
+.custom-card {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+    background: #E9EBF1;
+}
+
+.custom-card .custom-card-footer {
+    display: flex;
+    align-items: center;
+}
+
+#check-in-alert-form{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.hs-button {
+    border: 2px solid #22376F;
+    border-radius: 3px;
+    background: #22376F;
+    color: #FFF;
+    padding: 5px;
+    margin: 0;
+}
+
+.hs-button:hover {
+    background: #FFF;
+    color: #22376F;
+    cursor: pointer;
+}

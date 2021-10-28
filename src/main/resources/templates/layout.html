@@ -3,6 +3,7 @@
 
 <head>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
+    <link rel="stylesheet" href="/general.css">
     <link rel="stylesheet" href="/style.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -100,6 +101,7 @@
 <div id="spacer" style="height: 32px;" hidden>&nbsp;</div>
 
 <main class="container float-left">
+
     <div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
         <i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur zur
         Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so
@@ -107,6 +109,14 @@
         <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="setBannerCookie()">
             <span aria-hidden="true">&times;</span>
         </button>
+    </div>
+
+    <div th:if="${isCheckedIn}" id="checkout-hint" class="custom-card" role="alert">
+        <form id="check-in-alert-form" action="#" th:action="@{/r/checkOut}" method="post" >
+            <input type="hidden" name="visitorEmail" th:value="${checkedInEmail}">
+            <p style="margin: 5px;">Sie sind noch in Raum <b th:text="${checkedInRoom}"></b> eingecheckt</p>
+            <button type="submit" class="hs-button">Auschecken</button>
+        </form>
     </div>
 
     <div layout:fragment="content" style="margin-bottom: 50px;">
@@ -170,6 +180,8 @@
 			$("html").animate({ scrollTop: $('.second').offset().top - 50 }, 'slow');
 		});
 	</script>
+
+    <script src="/main.js"></script>
 
 </body>
 </html>
