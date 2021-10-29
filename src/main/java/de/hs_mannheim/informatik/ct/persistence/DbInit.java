@@ -39,7 +39,7 @@ public class DbInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (serverEnvironment.equals("dev")) {
+        if (serverEnvironment.equalsIgnoreCase("dev")) {
             val roomList = Arrays.asList(
                     new Room("A007a", "A", 3),
                     new Room("test", "test", 12),
