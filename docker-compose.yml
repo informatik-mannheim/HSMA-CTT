@@ -7,7 +7,7 @@ services:
     environment:
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ctt
-      - SPRING_DATASOURCE_USERNAME=${DB_USER:-tiXXbPWmwdRW}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-XXbPWmwdRW}
       - SPRING_DATASOURCE_PASSWORD=${DB_PW:-grEtwOBI4E}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_H2_CONSOLE_ENABLED=false
