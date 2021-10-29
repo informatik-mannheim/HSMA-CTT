@@ -16,13 +16,14 @@ services:
       - SERVER_ADDRESS=0.0.0.0
       - TZ=${timezone:-Europe/Berlin}
       # The URL to prefix absolute URLs with, since nginx handles the outside connections.
-      - URL_OVERRIDE=${URL_OVERRIDE}
+      - URL_OVERRIDE=${URL_OVERRIDE:-https://localhost/}
       # AES Secret used to encrypt personal data in the database, override in .env
       - DB_ENCRYPTION_SECRET=${DB_ENCRYPTION_SECRET:-corona-ctt-20201}
       # A list of users in the format Username1,EncryptedPassword1,Role1,Role2;Username2,EncryptedPassword2,Role2;
       # Override with your own credentials in a .env file next to docker-compose.yml
       # Passwords are encrypted using Bcrypt in Java Spring. (Use org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.encode("passwordToEncode") )
-      - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;prof,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,PROF;admin,$2a$10$nW.GjVHey9UA47Xv8V8yHe5WQ67rNLsI3bjdi8gIM/28MufxGc53a,PROF,ADMIN;}
+      # The default passwords used in this file are 'admin' for the admin user and 'test' for both the user and prof login.
+      - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$.ijpJy/EW4HuyV4VRSKy1uR.UEhBsviVMlF6cZfFsxMiCbP1BYnIG,USER;prof,$2a$10$.ijpJy/EW4HuyV4VRSKy1uR.UEhBsviVMlF6cZfFsxMiCbP1BYnIG,PROF;admin,$2a$10$a7UcofefK8gm5Udh47ub1OJAMMGQqdqabESULmGmlODR4ecEPIsmm,PROF,ADMIN;}
       # Override current names of the study rooms
       - CTT_STUDYROOMS=L011;L012;L013;L014;L015;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
     restart: always
