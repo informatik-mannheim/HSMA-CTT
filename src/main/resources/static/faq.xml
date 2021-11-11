@@ -14,7 +14,7 @@
             &lt;p&gt;Sie müssen lediglich mit Ihrem Smartphone den QR-Code abscannen, dann werden Sie automatisch zum Check-in
             für den passenden Raum weitergeleitet. Alternativ, wenn Sie keinen QR-Scanner zur Verfügung haben, können
             Sie auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort finden Sie
-            &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;. &lt;/p&gt;
+            &lt;a href=&apos;/howToQr&apos;&gt;hier&lt;/a&gt;. &lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="1">
@@ -22,7 +22,7 @@
         <answer>
             &lt;p&gt;Das Auschecken funktioniert genauso, wie das Einchecken. Sie müssen lediglich den QR-Code abscannen und dann ganz unten
             auf den Button "Abmelden" klicken. Dann werden Sie automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort
-            finden Sie &lt;a href=&apos;https://ctt.hs-mannheim.de/howToQr&apos;&gt;hier&lt;/a&gt;.
+            finden Sie &lt;a href=&apos;/howToQr&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
