@@ -131,7 +131,7 @@ public class ErrorController {
     @RequestMapping("/error")
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "error")
-    public String handleError(HttpServletRequest request) {
+    public String handleError(Model model, HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         log.error("Request Status: {}", status);
 
@@ -149,7 +149,7 @@ public class ErrorController {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 //    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "unknown error")
-    public String anyException(Exception e) {
+    public String anyException(Model model, Exception e) {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         log.error(sw.toString());
