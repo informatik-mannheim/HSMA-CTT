@@ -28,7 +28,7 @@
     </div>
     <div style="margin-top: 50px; margin-bottom: 100px;">
         Bei weiteren Fragen kontaktieren Sie uns gerne per E-Mail:
-        <a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
+        <a href="#" class="crypted" th:data-name="${supportMailAddress.name}" th:data-domain="${supportMailAddress.domain}" th:data-tld="${supportMailAddress.tld}"
            onclick="window.location.href = 'mailto:' + this.dataset.name + '@' + this.dataset.domain + '.' + this.dataset.tld; return false;">
         </a>
     </div>
