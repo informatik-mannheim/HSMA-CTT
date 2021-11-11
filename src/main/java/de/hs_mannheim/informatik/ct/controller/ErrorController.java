@@ -25,8 +25,10 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
+import de.hs_mannheim.informatik.ct.util.MailAddress;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +44,11 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
+
+    @Value("${support_mail_address}")
+    private String supportMailAddress;
+
+
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Room not found")
@@ -135,6 +142,7 @@ public class ErrorController {
             }
 
         }
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "error";
     }
 
@@ -144,8 +152,8 @@ public class ErrorController {
     public String anyException(Exception e) {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        log.error(sw.toString()); 
-
+        log.error(sw.toString());
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "error";
     }
 
