@@ -33,11 +33,21 @@ window.addEventListener("pageshow", () => {
         } else {
             storage.removeItem('email');
         }
-
+        if(postFixRadioButtons[3].checked){
+            if(checkForEmptyGuestFields() != ""){
+                ev.preventDefault();
+                document.getElementById("invalid-email-error").getElementsByTagName("h4")[0].innerText = checkForEmptyFields();
+                document.getElementById("invalid-email-error").classList.remove("hidden");
+                return;
+            }
+        }
+        const firstname = document.getElementById("guest-first-name").value ;
+        const surname = document.getElementById("guest-surname").value;
+        const name = firstname +" "+ surname;
         document.getElementById("submit-form-email").value = combinedEmail;
-        document.getElementById("submit-form-name").value = document.getElementById("guest-name").value;
+        document.getElementById("submit-form-name").value = name;
         document.getElementById("submit-form-number").value = document.getElementById("guest-number").value;
-        document.getElementById("submit-form-address").value = document.getElementById("guest-address").value;
+        document.getElementById("submit-form-address").value = address;
     })
 
     document.getElementById("submit-form-checkout").addEventListener("submit", (ev) => {
@@ -85,7 +95,6 @@ window.addEventListener("pageshow", () => {
 
         switch (postfix) {
             case "student":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Matrikelnummer";
                 emailText.type = "number";
                 emailPostfix = "@stud.hs-mannheim.de";
@@ -95,7 +104,6 @@ window.addEventListener("pageshow", () => {
                 }
                 break;
             case "internal":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@hs-mannheim.de";
@@ -105,7 +113,6 @@ window.addEventListener("pageshow", () => {
                 }
                 break;
             case "internal2":
-                emailText.style.minWidth = "270px"
                 emailText.placeholder = "Nutzername";
                 emailText.type = "text";
                 emailPostfix = "@lba.hs-mannheim.de";
@@ -116,8 +123,6 @@ window.addEventListener("pageshow", () => {
                 break;
             default:
             case "external":
-                emailText.style.minWidth = "410px"
-                emailText.placeholder = "Vollständige E-Mail";
                 emailText.type = "email";
                 emailPostfix = null;
                 for (let i = 0; i < guestFreeSection.length; i++) {
@@ -129,8 +134,11 @@ window.addEventListener("pageshow", () => {
 
         if (emailPostfix !== null) {
             emailLabel.textContent = emailPostfix;
+            emailLabel.style.paddingLeft = "5px";
+            emailLabel.style.width = "80%";
         } else {
             emailLabel.textContent = "";
+            emailLabel.style.width = "0%";
         }
     }
 
@@ -158,7 +166,27 @@ window.addEventListener("pageshow", () => {
             document.getElementById("submit-form").submit();
         }
     }
-
+    function checkForEmptyGuestFields(){
+        if(document.getElementById("guest-first-name").value == ""){
+            return "Unvollständiger Vorname.";
+        }
+        if(document.getElementById("guest-surname").value == ""){
+            return "Unvollständiger Nachname.";
+        }
+        if(document.getElementById("guest-number").value == ""){
+            return "Ungültige Telefonnummer.";
+        }
+        if(document.getElementById("guest-address-1").value == ""){
+            return "Unvollständige Straßeneingabe.";
+        }
+        if(document.getElementById("guest-address-2").value == ""){
+            return "Unvollständige Ortseingabe.";
+        }
+        if(document.getElementById("guest-address-3").value == ""){
+            return "Unvollständige Ländereingabe.";
+        }
+        return "";
+    }
     // https://stackoverflow.com/a/46181
     function validateEmail(email) {
         const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
