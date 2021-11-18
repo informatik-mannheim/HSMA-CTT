@@ -15,21 +15,21 @@
     <div th:if="${@environment.getProperty('warning_for_full_room')}" >
     	<h1 style="color:#f80; text-align:center;">&#9888;</h1>
     	
-    	<p th:text="${'Raum ' + visitData.roomName + ' ist mit ' +  visitData.currentVisitorCount + ' von ' + visitData.roomCapacity + 
-    		' nach dem Hygienekonzept erlaubten Personen gefüllt. Das ist aktuell zwar erlaubt, sollte aber an dieser Stelle erwähnt werden.'}"></p>
+    	<p th:text="${'Raum ' + visitData.roomName + ' ist mit ' +  visitData.currentVisitorCount + ' von ' + visitData.roomCapacity +
+    		' nach dem Hygienekonzept erlaubten Personen gefüllt. Das ist aktuell zwar erlaubt, sollte aber an dieser Stelle erwähnt werden.'}" style="width: 100%; text-align: center;"></p>
     </div>
    
-    <p th:if="${not @environment.getProperty('warning_for_full_room')}" 
-    		th:text="${'In Raum ' + visitData.roomName + ' sind aktuell ' + visitData.currentVisitorCount + ' Personen angemeldet.'}"> </p>
+    <p th:if="${not @environment.getProperty('warning_for_full_room')}"
+    		th:text="${'In Raum ' + visitData.roomName + ' sind aktuell ' + visitData.currentVisitorCount + ' Personen angemeldet.'}" style="width: 100%; text-align: center;"> </p>
     		
     <div class="icon-container">
         <div class="icon-background checkmark"></div>
     </div>
     
-    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post">
+    <form action="#" th:action="@{/r/checkOut}" th:object="${visitData}" method="post" style="width: 100%; text-align: center;">
     	<p> Bitte beim Verlassen des Raums auch an das
         	<input type="hidden" th:field="*{visitorEmail}" />
-        	<a  href="javascript:document.forms[0].submit()">Abmelden</a> denken.
+        	<a  href="javascript:document.forms[0].submit()">Auschecken</a> denken.
         </p>
     </form>
 
