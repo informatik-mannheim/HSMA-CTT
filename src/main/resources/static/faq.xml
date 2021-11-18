@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!-- In this file all the faqs are stored -->
+<!-- If you want to customizer your answer div add want to add a link/ image/... write html as usual but escape the following characters:
+"   "   => &quot;
+'   '   => &apos;
+<   <   => &lt;
+>   >   => &gt;
+&   &   => &amp;
+-->
+<faq>
+    <faq-element id="0">
+        <question>Wie kann ich mich einchecken?</question>
+        <answer>
+            &lt;p&gt;Sie müssen lediglich mit Ihrem Smartphone den QR-Code abscannen, dann werden Sie automatisch zum Check-in
+            für den passenden Raum weitergeleitet. Alternativ, wenn Sie keinen QR-Scanner zur Verfügung haben, können
+            Sie auch manuell die URL in einen beliebigen Browser eingeben. Eine etwas ausführlichere Antwort finden Sie
+            &lt;a href=&apos;/howToQr&apos;&gt;hier&lt;/a&gt;. &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="1">
+        <question>Wie kann ich mich auschecken?</question>
+        <answer>
+            &lt;p&gt;Das Auschecken funktioniert genauso, wie das Einchecken. Sie müssen lediglich den QR-Code abscannen und dann ganz unten
+            auf den Button "Abmelden" klicken. Dann werden Sie automatisch zum Check-out weitergeleitet. Eine ausführliche Antwort
+            finden Sie &lt;a href=&apos;/howToQr&apos;&gt;hier&lt;/a&gt;.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="2">
+        <question>Ich habe kein Smartphone zur Verfügung, wie kann ich mich trotzdem einchecken?</question>
+        <answer>
+            &lt;p&gt;Auf jedem Zettel befindet sich oberhalb des QR-Codes eine URL. Sie können auch einfach in einem Browser
+            die URL eintippen und sich so beispielsweise mit Ihrem Laptop oder Tablet einchecken. Falls Sie gar kein Gerät
+            zur Verfügung haben, bitten Sie jemand anderen Sie einzuchecken. Eine ausführliche Anleitung dazu finden Sie
+            &lt;a href=&apos;/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="3">
+        <question>Kann ich auch andere einchecken?</question>
+        <answer>
+            &lt;p&gt;Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffnen Sie dazu einfach ein weiteres Fenster in
+            einem Browser und rufen Sie die URL auf dem Zettel auf. Anschließend einfach die Daten der Person eintragen.
+            Der Einfachheit halber können Sie das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen.
+            Eine etwas ausführlichere Beschreibung finden Sie &lt;a href=&apos;/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="4">
+        <question>Kann ich mich auch später ein- bzw. auschecken?</question>
+        <answer>
+            &lt;p&gt;Nein, es ist sehr wichtig, dass das Ein- und Auschecken auch immer genau dann passiert, wenn Sie den Raum betreten oder
+            verlassen, sonst werden im System falsche Uhrzeiten gespeichert.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="5">
+        <question>Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen?</question>
+        <answer>
+            &lt;p&gt;Nein, leider geht das aktuell nur bei Online-Veranstaltungen." &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="6">
+        <question>Was ist, wenn ich vergessen habe mich auszuchecken?</question>
+        <answer>
+            &lt;p&gt;Sie werden automatisch ausgecheckt, sobald Sie einen anderen Raum betreten. Notfalls checkt Sie das System
+            nachts automatisch aus. Für die Kontaktverfolgung waren Sie dann leider bis dahin noch im Raum.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="7">
+        <question>Ich habe Corona und war in den vergangenen Tagen an der Hochschule, was muss ich jetzt tun?</question>
+        <answer>
+            &lt;p&gt;Wenn Sie positiv getestet wurden, ist es sehr wichtig, dass Sie ihre E-Mail an &lt;a href=&quot;#&quot;
+            class=&quot;crypted&quot; data-name=&quot;corona.zv&quot;data-domain=&quot;hs-mannheim&quot; data-tld=&quot;de&quot;
+            onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name + &apos;@&apos; + this.dataset.domain
+            + &apos;.&apos; + this.dataset.tld + &apos;?subject=Meldung einer Corona-Infektion&apos;; return false;&quot;&gt;&lt;/a&gt;
+            schreiben und darin ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie das Datum des
+            positiven Tests mitteilen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="8">
+        <question>Wie kann ich als Dozent sicher sein, dass alle Studierenden im Raum das System nutzen?</question>
+        <answer>
+            &lt;p&gt;Wenn Sie sich mit dem blauen QR-Code einchecken, können Sie die Anzahl der derzeit eingecheckten
+            Nutzer überprüfen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="9">
+        <question>Warum kann ich mich nicht einloggen?</question>
+        <answer>
+            &lt;p&gt;Für die das Ein- und Auschecken ist eine Anmeldung nicht erforderlich.
+            Der Login ist lediglich für den Administrator bzw. den Kontaktverfolger vorgesehen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="10">
+        <question>Muss ich mich im System einloggen?</question>
+        <answer>
+            &lt;p&gt;Nein, es sei denn, Sie sind der Administrator oder Kontaktverfolger. Alle anderen müssen sich lediglich
+            normal ein- und auschecken wenn Sie einen Raum betreten, dafür muss man sich nicht im System einloggen.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+    <faq-element id="11">
+        <question>Wie kann ich das Corona Tracking Tool (CTT) für meine Organisation erhalten?</question>
+        <answer>
+            &lt;p&gt;CTT ist Open Source, das heißt, es ist frei verfügbar. Schreiben Sie eine  Mail an
+            &lt;a href=&quot;#&quot;class=&quot;crypted&quot; data-name=&quot;ctt-admin&quot;data-domain=&quot;hs-mannheim&quot;
+            data-tld=&quot;de&quot;onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name +
+            &apos;@&apos; + this.dataset.domain+ &apos;.&apos; + this.dataset.tld; return false;&quot;&gt;&lt;/a&gt;
+            oder gehen Sie direkt auf unsere &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Githubseite&lt;/a&gt;.
+            &lt;/p&gt;
+        </answer>
+    </faq-element>
+</faq>
+
+
+
+

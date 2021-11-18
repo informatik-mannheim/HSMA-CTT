@@ -133,6 +133,7 @@ input[type=number].email {
 
 .email {
     font-size: 1em;
+    width: 100%;
 }
 
 /* Hide the increment/decrement buttons on number inputs used for roomPin*/

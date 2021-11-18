@@ -55,15 +55,26 @@
 
                 <h3 class="content-header form-header">Mailadresse eingeben</h3>
                 <div class="form-row" style="margin-left: 24px;">
-                    <input style="min-width: 270px" id="email-text" name="email" type="number" class="email" placeholder="Matrikelnummer" value="" required />
+                    <input id="email-text" name="email" type="number" class="email" placeholder="E-Mail Adresse" value="" required/>
                     <label for="email-text" id="email-text-label">@stud.hs-mannheim.de</label>
                 </div>
-                <div class="guest-free-section form-row" style="max-width: 300px">
-                    <input class="email" id="guest-name" name="guest-name" style="flex-grow: 1" placeholder="Vorname Nachname" />
-                    <input class="email" id="guest-number" name="guest-number" style="margin-left: 12px; flex-grow: 1" placeholder="Telefonnummer" />
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-first-name" name="guest-name" style="" placeholder="Vorname"/>
                 </div>
                 <div class="guest-free-section form-row">
-                    <input class="email" id="guest-address" name="guest-address" style="min-width: 410px" placeholder="Adresse"/>
+                    <input class="email" id="guest-surname" name="guest-name" style="" placeholder="Nachname"/>
+                </div>
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-number" type="number" name="guest-number" placeholder="Telefonnummer"/>
+                </div>
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-address-1" name="guest-address" placeholder="Straße & Hausnummer"/>
+                </div>
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-address-2" name="guest-address" placeholder="PLZ & Ort"/>
+                </div>
+                <div class="guest-free-section form-row">
+                    <input class="email" id="guest-address-3" name="guest-address" placeholder="Land" value="Deutschland"/>
                 </div>
                 <div class="form-row checkin-only" style="margin-left: 22px;">
                     <input id="email-auto-sign-in" name="email-auto-sign-in" type="checkbox" />
@@ -86,9 +97,9 @@
                     <input id="submit-form-email" name="visitorEmail" type="hidden" value=""/>
                     <input type="hidden" name="privileged" th:value="${privileged}" />
                     <input type="hidden" name="rid" th:field="*{roomId}"/>
-                    <input id="submit-form-name" type="hidden" name="name"/>
-                    <input id="submit-form-address" type="hidden" name="address"/>
-                    <input id="submit-form-number" type="hidden" name="number"/>
+                    <input id="submit-form-name" type="hidden" name="name" value=""/>
+                    <input id="submit-form-address" type="hidden" name="address" value=""/>
+                    <input id="submit-form-number" type="hidden" name="number" value=""/>
                 </div>
             </form>
         </div>
@@ -99,11 +110,11 @@
                 <input id="submit-form-email-checkout" name="visitorEmail" type="hidden" value=""/>
             </form>
         </div>
-        <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in wird automatisch beendet.)</i></p>
+        <p class="checkin-only" style="margin-left: 24px; margin-top: 24px;"><i>(Ein evtl. noch aktiver Check-in in einem anderen Raum wird automatisch beendet.)</i></p>
     </div>
     
-<!--  Preliminarily removed as it seems to be confusing
-    <div class="priviledged-only" th:if="${privileged}">
+<!--  Preliminarily removed as it seems to be confusing, TODO where is privileged-only defined, btw?
+    <div class="privileged-only" th:if="${privileged}">
         <h3 class="content-header form-header">Raum zurücksetzen</h3>
         <p style="margin-left: 24px; margin-top: 24px;"
            th:text="${visitorCount}!=1 ? 'Aktuell befinden sich in Raum  '+${roomData.roomName}+' '+${visitorCount}+' Personen.': 'Aktuell befindet sich in Raum  '+${roomData.roomName}+' eine Person.' "></p>
@@ -113,7 +124,6 @@
 
     <hr style="color: #cccccc; margin-top: 32px;"/>
 -->
-
     <div class="checkin-only" style="margin-top: 32px;">
         <h3 class="content-header">Oder nur vorherigen Check-in beenden?</h3>
         <button style="margin-left: 24px;" id="checkout-button">Abmelden...</button>

@@ -18,16 +18,24 @@
 
 package de.hs_mannheim.informatik.ct.controller;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +50,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.hs_mannheim.informatik.ct.model.Event;
 import de.hs_mannheim.informatik.ct.model.EventVisit;
@@ -221,7 +234,7 @@ public class CtController {
 
             return "event";
         }
-        
+
         throw new EventNotFoundException();
     }
 
@@ -276,13 +289,13 @@ public class CtController {
     }
 
     // zum Testen ggf. wieder aktivieren
-    //	@RequestMapping("/loeschen")
-    //	public String kontakteLoeschen(Model model) {
-    //		vservice.loescheAlteBesuche();
-    //		model.addAttribute("message", "Alte Kontakte gelöscht!");
+    //  @RequestMapping("/loeschen")
+    //  public String kontakteLoeschen(Model model) {
+    //      vservice.loescheAlteBesuche();
+    //      model.addAttribute("message", "Alte Kontakte gelöscht!");
     //
-    //		return "index";
-    //	}
+    //      return "index";
+    //  }
 
     @RequestMapping("/neuVer")
     public String neu() {
@@ -316,8 +329,61 @@ public class CtController {
     }
 
     @RequestMapping("/faq")
-    public String showFaq() {
+    public String showFaq(Model model) {
+        Map<String, ArrayList<String>> faqs = getFAQText();
+        ArrayList<String> answers = faqs.get("answers");
+        ArrayList<String> questions = faqs.get("questions");
+        model.addAttribute("questions", questions);
+        model.addAttribute("answers", answers);
         return "faq";
+    }
+
+    /**
+     * Helper method to get all the text needed for the FAQ page, stored in a xml file
+     *
+     * @return Map with 2 Array lists, one for all the answers and one for all the questions
+     */
+
+    public Map<String, ArrayList<String>> getFAQText() {
+        String FILENAME = "static/faq.xml";
+        
+        Map<String, ArrayList<String>> faqs = new HashMap<>();
+        ArrayList<String> answers = new ArrayList<>();
+        ArrayList<String> questions = new ArrayList<>();
+        
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+       
+        try {
+            // optional, but recommended process XML securely, avoid attacks like XML External Entities (XXE)
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+           
+            // parse XML file
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(this.getClass().getClassLoader().getResourceAsStream(FILENAME));
+            doc.getDocumentElement().normalize();
+            
+            // get all faqs
+            NodeList faqNodes = doc.getElementsByTagName("faq-element");
+            for (int i = 0; i < faqNodes.getLength(); i++) {
+                Node node = faqNodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    String question = element.getElementsByTagName("question").item(0).getTextContent();
+                    String answer = element.getElementsByTagName("answer").item(0).getTextContent();
+
+                    answers.add(answer);
+                    questions.add(question);
+                }
+            }
+            
+            faqs.put("answers", answers);
+            faqs.put("questions", questions);
+            
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+        }
+        
+        return faqs;
     }
 
 }
