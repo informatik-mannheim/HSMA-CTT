@@ -39,16 +39,16 @@ public class CookieManager {
         this.response = response;
     }
 
-    public static enum Cookies{
+    public enum Cookies{
         CHECKED_IN_EMAIL("checkedInEmail");
 
-        private String name;
+        String name;
 
-        private Cookies(String name) {
+        Cookies(String name) {
             this.name = name;
         }
 
-        public String getName(){
+        String getName(){
             return this.name;
         }
     }

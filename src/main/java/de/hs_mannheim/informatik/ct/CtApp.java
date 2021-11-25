@@ -18,6 +18,9 @@
 
 package de.hs_mannheim.informatik.ct;
 
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.persistence.repositories.RoomRepository;
+import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;

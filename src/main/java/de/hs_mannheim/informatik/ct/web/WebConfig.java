@@ -1,5 +1,3 @@
-package de.hs_mannheim.informatik.ct.web;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -17,6 +15,8 @@ package de.hs_mannheim.informatik.ct.web;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+package de.hs_mannheim.informatik.ct.web;
 
 import de.hs_mannheim.informatik.ct.controller.interceptor.CheckInInterceptor;
 import de.hs_mannheim.informatik.ct.controller.resolver.CookieManagerResolver;
