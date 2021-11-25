@@ -26,7 +26,9 @@ import de.hs_mannheim.informatik.ct.util.CookieManager;
 import lombok.val;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +49,13 @@ public class CheckInInterceptor implements HandlerInterceptor {
     private static final String CHECKED_IN_COOKIE_NAME = "checkedInEmail";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                            @Nullable ModelAndView modelAndView) throws Exception {
         val cookieManager = new CookieManager(request, response);
         var isCheckedIn = false;
         val checkedInEmail = cookieManager.getCookieValue(CookieManager.Cookies.CHECKED_IN_EMAIL);
@@ -62,7 +70,6 @@ public class CheckInInterceptor implements HandlerInterceptor {
         }
         request.setAttribute("checkedInEmail", checkedInEmail);
         request.setAttribute("isCheckedIn", isCheckedIn);
-        return true;
     }
 
     private String getCheckedInRoomName(String email){
