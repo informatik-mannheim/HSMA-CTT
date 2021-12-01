@@ -23,7 +23,8 @@ services:
       # Override with your own credentials in a .env file next to docker-compose.yml
       # Passwords are encrypted using Bcrypt in Java Spring. (Use org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.encode("passwordToEncode") )
       # The default passwords used in this file are 'admin' for the admin user and 'test' for both the user and prof login.
-      - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$.ijpJy/EW4HuyV4VRSKy1uR.UEhBsviVMlF6cZfFsxMiCbP1BYnIG,USER;prof,$2a$10$.ijpJy/EW4HuyV4VRSKy1uR.UEhBsviVMlF6cZfFsxMiCbP1BYnIG,PROF;admin,$2a$10$a7UcofefK8gm5Udh47ub1OJAMMGQqdqabESULmGmlODR4ecEPIsmm,PROF,ADMIN;}
+      # To change dev environment passwords edit WebSecurityConfig::globalSecurityConfiguration.
+      - USER_CREDENTIALS=${USER_CREDENTIALS:-user,$2a$10$1RyXIZehTC/4Kh1mbOYlqOeE4ImaxQOME5XMVaD2j2405DD/0zYtW,USER;prof,$2a$10$1RyXIZehTC/4Kh1mbOYlqOeE4ImaxQOME5XMVaD2j2405DD/0zYtW,PROF;admin,$2a$10$a7UcofefK8gm5Udh47ub1OJAMMGQqdqabESULmGmlODR4ecEPIsmm,PROF,ADMIN;}
       # Override current names of the study rooms
       - CTT_STUDYROOMS=L011;L012;L013;L014;L015;L111;L112;L113;L114;L115;L206;L207;L208;L209;L210
     restart: always

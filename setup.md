@@ -31,7 +31,7 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
     DB_PW=grEtwOBI4E
     # Add the user credentials for the site, see docker-compose for more information
     # Note that user accounts are recreated on every startup from this variable and are not persisted anywhere else.
-    USER_CREDENTIALS=user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;
+    USER_CREDENTIALS=admin,$2a$10$BMCXL.xl/nHYAZWHsXNS8u6pOIlIYUU.8kJWD7raecbz/8rKoeRvC,ADMIN;
     # AES Secret used to encrypt personal data in the database
     DB_ENCRYPTION_SECRET=corona-ctt-20201
     ```
