@@ -21,6 +21,7 @@ package de.hs_mannheim.informatik.ct.persistence.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hs_mannheim.informatik.ct.model.Visit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class ContactTracingService {
     private List<VisitService<?>> visitServices;
 
     @NonNull
-    public List<Contact<?>> getVisitorContacts(@NonNull Visitor visitor) {
+    public List<Contact<? extends Visit>> getVisitorContacts(@NonNull Visitor visitor) {
         val contacts = new ArrayList<Contact<?>>();
         for (val service : visitServices) {
             contacts.addAll(service.getVisitorContacts(visitor));
