@@ -235,6 +235,13 @@
 
 		<!-- Überschreiben der älteren Versionen (von anderen Dependencies importiert), 
 			die eine Vulnerability haben -->
+		
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.15.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.github.jai-imageio</groupId>
 			<artifactId>jai-imageio-core</artifactId>
