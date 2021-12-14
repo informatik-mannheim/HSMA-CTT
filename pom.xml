@@ -198,14 +198,14 @@
 			</exclusions>
 		</dependency>
 
-		<!-- für QRCodes -->
+		<!-- for QRCode generation -->
 		<dependency>
 			<groupId>com.github.kenglxn.qrgen</groupId>
 			<artifactId>javase</artifactId>
 			<version>2.6.0</version>
 		</dependency>
 
-		<!-- für Excel- und Word-Exporte -->
+		<!-- for Excel- und Word-Exports -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -233,15 +233,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Überschreiben der älteren Versionen (von anderen Dependencies importiert), 
-			die eine Vulnerability haben -->
-		
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.15.0</version>
-		</dependency>
-		
+		<!-- Overwrite older versions of libs with vulnerabilities (coming from other dependencies) -->
 		<dependency>
 			<groupId>com.github.jai-imageio</groupId>
 			<artifactId>jai-imageio-core</artifactId>
@@ -258,6 +250,18 @@
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-svggen</artifactId>
 			<version>1.14</version>
+		</dependency>
+		
+		<!-- the (in)famous log4j vulnerability is in log4j-core, which is not in our classpath, but as we looked into it, we can update this anyway -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-to-slf4j</artifactId>
+			<version>2.15.0</version>
 		</dependency>
 	</dependencies>
 
