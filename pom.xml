@@ -83,7 +83,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Für mvn site -->
+			<!-- For mvn site -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -197,14 +197,14 @@
 			</exclusions>
 		</dependency>
 
-		<!-- für QRCodes -->
+		<!-- for QRCode generation -->
 		<dependency>
 			<groupId>com.github.kenglxn.qrgen</groupId>
 			<artifactId>javase</artifactId>
 			<version>2.6.0</version>
 		</dependency>
 
-		<!-- für Excel- und Word-Exporte -->
+		<!-- for Excel- und Word-Exports -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -232,9 +232,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Überschreiben der älteren Versionen (von anderen Dependencies importiert), 
-			die eine Vulnerability haben -->
-		
+		<!-- Overwrite older versions of libs with vulnerabilities (coming from other dependencies) -->
 		<dependency>
     			<groupId>org.thymeleaf</groupId>
     			<artifactId>thymeleaf</artifactId>
@@ -252,9 +250,14 @@
 			<version>1.21</version>
 		</dependency>
 		
+	  <dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.15.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
+			<artifactId>log4j-to-slf4j</artifactId>
 			<version>2.15.0</version>
 		</dependency>
 		
