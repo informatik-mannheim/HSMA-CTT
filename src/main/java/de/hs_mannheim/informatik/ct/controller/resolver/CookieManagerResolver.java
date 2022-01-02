@@ -1,5 +1,3 @@
-package de.hs_mannheim.informatik.ct.controller.resolver;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -17,19 +15,20 @@ package de.hs_mannheim.informatik.ct.controller.resolver;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package de.hs_mannheim.informatik.ct.controller.resolver;
 
-import de.hs_mannheim.informatik.ct.util.CookieManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import de.hs_mannheim.informatik.ct.util.CookieManager;
 
-public class CookieManagerResolver
-        implements HandlerMethodArgumentResolver {
+public class CookieManagerResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {

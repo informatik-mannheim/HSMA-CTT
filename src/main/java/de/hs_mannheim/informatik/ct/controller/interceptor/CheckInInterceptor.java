@@ -1,5 +1,3 @@
-package de.hs_mannheim.informatik.ct.controller.interceptor;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -17,6 +15,7 @@ package de.hs_mannheim.informatik.ct.controller.interceptor;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package de.hs_mannheim.informatik.ct.controller.interceptor;
 
 import de.hs_mannheim.informatik.ct.controller.Utilities;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
@@ -59,9 +58,9 @@ public class CheckInInterceptor implements HandlerInterceptor {
         val cookieManager = new CookieManager(request, response);
         var isCheckedIn = false;
         val checkedInEmail = cookieManager.getCookieValue(CookieManager.Cookies.CHECKED_IN_EMAIL);
-        if(checkedInEmail!=null){
+        if(checkedInEmail != null){
             val checkedInRoom = getCheckedInRoomName(checkedInEmail);
-            if(checkedInRoom!=null){
+            if(checkedInRoom != null){
                 isCheckedIn = true;
                 request.setAttribute("checkedInRoom", checkedInRoom);
             }else{
@@ -74,7 +73,7 @@ public class CheckInInterceptor implements HandlerInterceptor {
 
     private String getCheckedInRoomName(String email){
         List<RoomVisit> roomVisits = findCurrentRoomVisitsByEmail(email);
-        return roomVisits.size()>0 ? roomVisits.get(0).getRoom().getName() : null;
+        return roomVisits.size() > 0 ? roomVisits.get(0).getRoom().getName() : null;
     }
 
     private List<RoomVisit> findCurrentRoomVisitsByEmail(String email){

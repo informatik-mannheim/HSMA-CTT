@@ -1,5 +1,3 @@
-package de.hs_mannheim.informatik.ct.util;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
  * Copyright (C) 2021 Hochschule Mannheim
@@ -18,13 +16,16 @@ package de.hs_mannheim.informatik.ct.util;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import lombok.val;
-import org.springframework.web.util.WebUtils;
+package de.hs_mannheim.informatik.ct.util;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalTime;
+
+import org.springframework.web.util.WebUtils;
+
+import lombok.val;
 
 public class CookieManager {
     private HttpServletRequest request;
