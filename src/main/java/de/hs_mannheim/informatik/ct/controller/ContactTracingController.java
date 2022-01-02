@@ -217,7 +217,7 @@ public class ContactTracingController {
      * @param type     String of the filter type (students/ staff/ guests)
      * @return filtered List of Contacts
      */
-    private List<Contact<?>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
+    private List<Contact<? extends Visit>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
         List<Contact<?>> filteredList = new ArrayList<>();
         for (Contact<? extends Visit> contact : contacts) {
             if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {
