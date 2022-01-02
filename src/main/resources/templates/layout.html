@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HSMA CTT</title>
@@ -102,11 +102,14 @@
 
 <main class="container float-left">
 
-    <div id="cookieBanner" class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
+    <div id="cookieBanner" th:class="${@environment.getProperty('demo_system') ? 'alert alert-danger alert-dismissible fade show' : 'alert alert-warning alert-dismissible fade show'}" role="alert" hidden>
         <i class="fas fa-cookie-bite"></i> Hinweis: Die von dieser Seite verwendeten internen Cookies dienen nur zur
         Verbesserung der Bedienbarkeit und werden nicht weitergegeben. Sie können Ihren Browser jederzeit so
         konfigurieren, dass Sie nach dem Verlassen der Seite wieder gelöscht werden.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="setBannerCookie()">
+        <div th:if="${@environment.getProperty('demo_system')}">
+            <br/>Vorsicht, Testserver. Bitte keine echten Daten eingeben. Alle eingegebenen Daten sind von anderen Nutzern der Demo sichtbar.
+        </div>
+        <button th:if="${!@environment.getProperty('demo_system')}" type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="setBannerCookie()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

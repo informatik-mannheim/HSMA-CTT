@@ -38,6 +38,7 @@ public class ContactTracingService {
     @NonNull
     public List<Contact<? extends Visit>> getVisitorContacts(@NonNull Visitor visitor) {
         val contacts = new ArrayList<Contact<? extends Visit>>();
+      
         for (val service : visitServices) {
             contacts.addAll(service.getVisitorContacts(visitor));
         }
