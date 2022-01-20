@@ -17,6 +17,7 @@
  */
 package de.hs_mannheim.informatik.ct.controller;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -165,6 +166,8 @@ public class ContactTracingController {
                     return rowValues;
                 }).collect(Collectors.toList());
 
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
         model.addAttribute("numberOfContacts", contacts.size());
         model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableHeadersStaff", tracingColumnsStaff.stream().map(TracingColumn::getHeader).toArray());
@@ -173,6 +176,7 @@ public class ContactTracingController {
         model.addAttribute("tableValuesStaff", contactTableStaff);
         model.addAttribute("tableValuesGuests", contactTableGuests);
         model.addAttribute("target", target.get().getEmail());
+        model.addAttribute("searchStartDate", startDate.isPresent() ? dateFormat.format(startDate.get()) : null);
 
         return "tracing/contactList.html";
     }
