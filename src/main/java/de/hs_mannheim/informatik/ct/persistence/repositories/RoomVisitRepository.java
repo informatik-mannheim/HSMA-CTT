@@ -71,6 +71,18 @@ public interface RoomVisitRepository extends JpaRepository<RoomVisit, Long> {
             "ORDER BY visitTarget.startDate")
     List<Contact<RoomVisit>> findVisitsWithContact(@Param(value = "visitor") Visitor visitor);
 
+    @Query("SELECT NEW de.hs_mannheim.informatik.ct.model.Contact(visitTarget, visitOther) " +
+            "FROM RoomVisit visitTarget," +
+            "RoomVisit visitOther " +
+            "WHERE visitTarget.visitor = :visitor AND " +
+            "visitTarget.visitor != visitOther.visitor AND " +
+            "visitTarget.room = visitOther.room AND " +
+            "visitTarget.startDate <= visitOther.endDate AND " +
+            "visitOther.startDate <= visitTarget.endDate AND " +
+            "visitOther.startDate >= :startDate " +
+            "ORDER BY visitTarget.startDate")
+    List<Contact<RoomVisit>> findVisitsWithContactAndStartDate(@Param(value = "visitor") Visitor visitor, @Param(value = "startDate") Date startDate);
+
     /**
      * Gets the total number of people currently checked in in a study room
      *

@@ -25,6 +25,7 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -189,6 +190,13 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         log.info("Contact tracing delivered {} contacts.", contacts.size());
         
         return contacts; 
+    }
+
+    public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor, Date startDate) {
+        val contacts = roomVisitRepository.findVisitsWithContactAndStartDate(visitor, startDate);
+        log.info("Contact tracing delivered {} contacts.", contacts.size());
+
+        return contacts;
     }
 
     public int getRemainingStudyPlaces() {

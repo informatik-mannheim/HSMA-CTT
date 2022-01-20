@@ -18,6 +18,7 @@
 
 package de.hs_mannheim.informatik.ct.persistence.services;
 
+import java.util.Date;
 import java.util.List;
 
 import de.hs_mannheim.informatik.ct.model.Contact;
@@ -27,4 +28,5 @@ import lombok.NonNull;
 
 public interface VisitService<T extends Visit> {
     List<Contact<T>> getVisitorContacts(@NonNull Visitor visitor);
+    List<Contact<T>> getVisitorContacts(@NonNull Visitor visitor, Date startDate);
 }

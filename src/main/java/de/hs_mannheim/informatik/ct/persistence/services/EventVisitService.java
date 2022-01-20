@@ -93,4 +93,9 @@ public class EventVisitService implements VisitService<EventVisit> {
     public List<Contact<EventVisit>> getVisitorContacts(@NonNull Visitor visitor) {
         return eventVisitRepository.findVisitsWithContact(visitor);
     }
+
+    @Override
+    public List<Contact<EventVisit>> getVisitorContacts(@NonNull Visitor visitor, Date startDate) {
+        return eventVisitRepository.findVisitsWithContact(visitor);
+    }
 }

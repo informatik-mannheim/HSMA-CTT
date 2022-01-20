@@ -18,14 +18,12 @@
 package de.hs_mannheim.informatik.ct.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -112,14 +110,24 @@ public class ContactTracingController {
     }
 
     @PostMapping("/results")
-    public String doSearch(@RequestParam String email, Model model) {
+    public String doSearch(
+            @RequestParam String email,
+            @RequestParam(required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<Date> startDate,
+            Model model) {
+
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
             model.addAttribute("error", "Eingegebene E-Mail-Adresse konnte im System nicht gefunden werden!");
             return "tracing/search";
         }
 
-        val contacts = contactTracingService.getVisitorContacts(target.get());
+        List<Contact<? extends Visit>> contacts;
+        if(startDate.isPresent()){
+            contacts = contactTracingService.getVisitorContacts(target.get(), startDate.get());
+        }else{
+            contacts = contactTracingService.getVisitorContacts(target.get());
+        }
+
         List<Contact<?>> contactsStudents = filterContactList(contacts, "students");
         List<Contact<?>> contactsStaff = filterContactList(contacts, "staff");
         List<Contact<?>> contactsGuests = filterContactList(contacts, "guests");
