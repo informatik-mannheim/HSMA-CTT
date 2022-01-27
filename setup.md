@@ -109,7 +109,7 @@ If an error occurs, please check the steps above and redo the instructions.
     USER_CREDENTIALS=admin,$2a$10$BMCXL.xl/nHYAZWHsXNS8u6pOIlIYUU.8kJWD7raecbz/8rKoeRvC,ADMIN;
     # AES Secret used to encrypt personal data in the database
     DB_ENCRYPTION_SECRET=corona-ctt-20201
-    ```
+```	
     
 4.	Navigate to the created repository in step ‘CTT Setup, 2.’ (/ctt-app).
 a.	cd ../../mnt
