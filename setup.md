@@ -48,12 +48,12 @@ If this is not the case, enable Virtualization by following online instructions.
 
 3. Start your Windows Command Terminal (enter cmd in the Windows search bar).
 4. Enter following code in the command line:
-	``` conf
-	wsl --set-default-version 2
-	```
-	``` conf
-    	wsl --list -v
-	```
+``` conf
+wsl --set-default-version 2
+```
+``` conf
+wsl --list -v
+```
 
 ![image](https://user-images.githubusercontent.com/63195459/151388524-847a4a05-23dc-4d35-bee9-5c7090d6eeb1.png)
 
