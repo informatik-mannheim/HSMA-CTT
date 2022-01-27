@@ -68,8 +68,8 @@ public class ContactTracingController {
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
     private final List<TracingColumn> tracingColumnsStudents = Arrays.asList(
-            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
-            new TracingColumn("Mtknr.", contact -> contact.getContact().getEmail().split("@")[0]),
+            new TracingColumn("E-Mail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("Matr.Nr.", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
             new TracingColumn("Anmeldung Ziel", contact -> timeFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -81,7 +81,7 @@ public class ContactTracingController {
     );
    
     private final List<TracingColumn> tracingColumnsStaff = Arrays.asList(
-            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("E-Mail-Adresse", contact -> contact.getContact().getEmail()),
             new TracingColumn("Name", contact -> contact.getContact().getEmail().split("@")[0]),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -94,7 +94,7 @@ public class ContactTracingController {
     );
   
     private final List<TracingColumn> tracingColumnsGuests = Arrays.asList(
-            new TracingColumn("EMail-Adresse", contact -> contact.getContact().getEmail()),
+            new TracingColumn("E-Mail-Adresse", contact -> contact.getContact().getEmail()),
             new TracingColumn("Name", contact -> contact.getContact().getName()),
             new TracingColumn("Raum/Veranstaltung", Contact::getContactLocation),
             new TracingColumn("Datum", contact -> dateFormatter.format(contact.getTargetVisit().getStartDate())),
@@ -115,7 +115,7 @@ public class ContactTracingController {
     public String doSearch(@RequestParam String email, Model model) {
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
-            model.addAttribute("error", "Eingegebene Mail-Adresse konnte im System nicht gefunden werden!");
+            model.addAttribute("error", "Eingegebene E-Mail-Adresse konnte im System nicht gefunden werden!");
             return "tracing/search";
         }
 
@@ -217,7 +217,7 @@ public class ContactTracingController {
      * @param type     String of the filter type (students/ staff/ guests)
      * @return filtered List of Contacts
      */
-    private List<Contact<?>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
+    private List<Contact<? extends Visit>> filterContactList(Collection<Contact<? extends Visit>> contacts, String type) {
         List<Contact<?>> filteredList = new ArrayList<>();
         for (Contact<? extends Visit> contact : contacts) {
             if (type.equals("students") && contact.getContact().getEmail().contains("@stud.hs-mannheim.de")) {

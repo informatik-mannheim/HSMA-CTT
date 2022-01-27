@@ -18,7 +18,7 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 
 1. Add the current user to the `docker` group to use docker commands without sudo.
 1. Create a directory, preferably with permissions restricted to the root user. For our server we use `/var/local/ctt-app`, but any location is valid. All further instructions will be relative to this folder.  
-1. Create a certs directory and copy your key, certificate, and the a file with the password for the key into the certs directory. The files should be named `app.key` and `app.pem` respectively. The file with the password must be linked in nginx.conf under server -> ssl_password_file. Make sure the key can only be accessed by the root user!
+1. Create a certs directory and copy your key, certificate, and optionally a file with the password for the key into the certs directory. The files should be named `app.key` and `app.pem` respectively. The file with the password must be linked in nginx.conf under server -> ssl_password_file. Make sure the key can only be accessed by the root user!
 1. Create a file named `.env`. It will contain deployment specific configuration:
 
     ``` conf
@@ -30,7 +30,8 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
     DB_USER=XXbPWmwdRW
     DB_PW=grEtwOBI4E
     # Add the user credentials for the site, see docker-compose for more information
-    USER_CREDENTIALS=user,$2a$10$WUJevKFYLHfIheVZ3yv7J.7uIHeoPV8fAb9wFqdW50kFD8O4EWJ4u,USER;
+    # Note that user accounts are recreated on every startup from this variable and are not persisted anywhere else.
+    USER_CREDENTIALS=admin,$2a$10$BMCXL.xl/nHYAZWHsXNS8u6pOIlIYUU.8kJWD7raecbz/8rKoeRvC,ADMIN;
     # AES Secret used to encrypt personal data in the database
     DB_ENCRYPTION_SECRET=corona-ctt-20201
     ```
@@ -40,6 +41,11 @@ CTT only requires Docker and Docker-Compose to be installed on the server. Provi
 1. To stop the server again use `docker-compose down`.
 
 ## Configuration
+
+### Default passwords
+
+If you haven't made changes to the password hashes provided in `docker-compose.yml`, the default login `admin` with password `admin` can be used.
+Make sure to use safe passwords when deploying this app publicly!
 
 ### Import a room list
 

@@ -32,7 +32,7 @@
             &lt;p&gt;Auf jedem Zettel befindet sich oberhalb des QR-Codes eine URL. Sie können auch einfach in einem Browser
             die URL eintippen und sich so beispielsweise mit Ihrem Laptop oder Tablet einchecken. Falls Sie gar kein Gerät
             zur Verfügung haben, bitten Sie jemand anderen Sie einzuchecken. Eine ausführliche Anleitung dazu finden Sie
-            &lt;a href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            &lt;a href=&apos;/howToInkognito&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
@@ -42,7 +42,7 @@
             &lt;p&gt;Ja, das geht natürlich auch, per Handy, Tablet oder Laptop. Öffnen Sie dazu einfach ein weiteres Fenster in
             einem Browser und rufen Sie die URL auf dem Zettel auf. Anschließend einfach die Daten der Person eintragen.
             Der Einfachheit halber können Sie das Fenster für die Veranstaltungsdauer direkt für das Auschecken offen lassen.
-            Eine etwas ausführlichere Beschreibung finden Sie &lt;a href=&apos;https://ctt.hs-mannheim.de/howToInkognito&apos;&gt;hier&lt;/a&gt;.
+            Eine etwas ausführlichere Beschreibung finden Sie &lt;a href=&apos;/howToInkognito&apos;&gt;hier&lt;/a&gt;.
             &lt;/p&gt;
         </answer>
     </faq-element>
@@ -57,7 +57,7 @@
     <faq-element id="5">
         <question>Kann ich auch ohne Kontaktverfolgung an Veranstaltungen der Hochschule teilnehmen?</question>
         <answer>
-            &lt;p&gt;Nein, leider geht das aktuell nur bei Online-Veranstaltungen." &lt;/p&gt;
+            &lt;p&gt;Nein, leider geht das aktuell nur bei Online-Veranstaltungen.&lt;/p&gt;
         </answer>
     </faq-element>
     <faq-element id="6">

@@ -39,10 +39,14 @@ public class DbInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (serverEnvironment.equals("dev")) {
+        if (serverEnvironment.equalsIgnoreCase("dev")) {
+            val testRoom = new Room("test", "test", 12);
+            // Don't randomly generate the pin for the test room in dev mode
+            testRoom.setRoomPin("1234");
+
             val roomList = Arrays.asList(
                     new Room("A007a", "A", 3),
-                    new Room("test", "test", 12),
+                    testRoom,
                     new Room("A210", "A", 19)
             );
 
