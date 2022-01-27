@@ -62,10 +62,12 @@ To check if it succeeded enter:
     ``` conf
     wsl --list -v
     ```
+    
 ![image](https://user-images.githubusercontent.com/63195459/151388596-6a0eb82b-0cba-4131-bcbc-b1e34fe648ad.png)
 
 
 ### Enable WSL2 in Docker Desktop
+
 ![image](https://user-images.githubusercontent.com/63195459/151388684-6ead7bc8-eb0b-46e5-811a-48f792a59476.png)
 
 Go to Settings (1)  Resources (2)  WSL Integration (3)  enable Ubuntu-20.04 (4)
