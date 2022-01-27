@@ -37,7 +37,7 @@ In case the WSL 2 installation is incomplete, follow the following steps:
 Go to the Microsoft Store and install ‘Ubuntu 20.04 LTS’
 
 ### Activating WSL2
-1. Check if Linux subsystems are activated. To do so navigate to the Windows features: Windows search bar -> Control Panel  Programs  Turn Windows features on or off
+1. Check if Linux subsystems are activated. To do so navigate to the Windows features: Windows search bar -> Control Panel -> Programs -> Turn Windows features on or off
 2. Check if ‘Virtual Machine Platform’ and ‘Windows Subsystem for Linux’ are checked: 
 ![image](https://user-images.githubusercontent.com/63195459/151388427-52f802dc-99d0-4be4-b37a-208c20c43a36.png)
 
@@ -70,7 +70,7 @@ To check if it succeeded enter:
 
 ![image](https://user-images.githubusercontent.com/63195459/151388684-6ead7bc8-eb0b-46e5-811a-48f792a59476.png)
 
-Go to Settings (1)  Resources (2)  WSL Integration (3)  enable Ubuntu-20.04 (4)
+Go to Settings (1) -> Resources (2) -> WSL Integration (3) -> enable Ubuntu-20.04 (4)
 Then, apply and restart Docker Desktop.
 
 ### GitHub login in Docker
