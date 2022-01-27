@@ -21,11 +21,13 @@ package de.hs_mannheim.informatik.ct.controller;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
+import de.hs_mannheim.informatik.ct.controller.rest.InvalidPinRestException;
+import de.hs_mannheim.informatik.ct.controller.rest.RestErrorMessage;
+import de.hs_mannheim.informatik.ct.controller.rest.RoomNotFoundRestException;
 import de.hs_mannheim.informatik.ct.persistence.EventNotFoundException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidEmailException;
 import de.hs_mannheim.informatik.ct.persistence.InvalidExternalUserdataException;
@@ -42,6 +47,21 @@ import lombok.extern.slf4j.Slf4j;
 @ControllerAdvice
 @Slf4j
 public class ErrorController {
+    
+    @ExceptionHandler(value = {RoomNotFoundRestException.class})
+    public ResponseEntity<RestErrorMessage> handleRoomNotFoundRestException() {
+        RestErrorMessage rem = new RestErrorMessage(404, new Date(), "Room not found.");
+        
+        return new ResponseEntity<RestErrorMessage>(rem, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(value = {InvalidPinRestException.class})
+    public ResponseEntity<RestErrorMessage> handleRoomPinException() {
+        RestErrorMessage rem = new RestErrorMessage(400, new Date(), "Room Pin not valid or not submitted.");
+        
+        return new ResponseEntity<RestErrorMessage>(rem, HttpStatus.BAD_REQUEST);
+    }
+    
     @ExceptionHandler({RoomController.RoomNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
 //    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Room not found")

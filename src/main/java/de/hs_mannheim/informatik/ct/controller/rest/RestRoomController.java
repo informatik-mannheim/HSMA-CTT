@@ -36,21 +36,26 @@ import lombok.val;
 public class RestRoomController {   // couldn't resist using this name ;-)
     @Autowired
     private RoomVisitService rvs;
-    
+
     @Autowired
     private RoomService roomService;
-    
+
     @RequestMapping(value="/rooms/{roomId}/visitors", method=RequestMethod.GET)
     public String getNumberOfCheckedInVisitors(@PathVariable(value = "roomId") String id, 
                                                @RequestParam(value = "pin", required=false) String pin) 
-                                               throws InvalidRoomPinException, RoomNotFoundException {
-       
-        val room = roomService.getRoomOrThrow(id);
-        
-        if (pin == null || !room.getRoomPin().equals(pin))
-            throw new InvalidRoomPinException();
-        
-        return "" + rvs.getVisitorCount(room);
+                                                       throws InvalidRoomPinException, RoomNotFoundRestException {
+
+        try {
+            val room = roomService.getRoomOrThrow(id);
+
+            if (pin == null || !room.getRoomPin().equals(pin))
+                throw new InvalidPinRestException();
+
+            return "" + rvs.getVisitorCount(room);
+        } catch(RoomNotFoundException rnfe) {
+            throw new RoomNotFoundRestException();
+        }
+
     }
-    
+
 }
