@@ -118,7 +118,7 @@ cd ./c/Users/username/Desktop/CTT_Docker_App/var/local/ctt-app
 
 
 
-5.	Copy the [docker-compose.yml](https://github.com/informatik-mannheim/HSMA-CTT/blob/dev/docker-compose.yml) and nginx.conf (https://github.com/informatik-mannheim/HSMA-CTT/blob/dev/nginx.conf) files from the repository into the /ct-app repository. Neither should require further customization. If further customization is required, check the .env file for more information. 
+5.	Copy the [docker-compose.yml](https://github.com/informatik-mannheim/HSMA-CTT/blob/dev/docker-compose.yml) and [nginx.conf](https://github.com/informatik-mannheim/HSMA-CTT/blob/dev/nginx.conf) files from the repository into the /ct-app repository. Neither should require further customization. If further customization is required, check the .env file for more information. 
 
 6.	Run docker-compose pull && docker-compose up -d. This will ensure that the newest images are pulled and containers restarted, if necessary. The containers are configured to restart if anything breaks (cf. docker-compose.yml).
 
