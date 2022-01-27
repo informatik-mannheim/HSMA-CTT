@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.hs_mannheim.informatik.ct.controller.RoomController.RoomNotFoundException;
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomService;
 import de.hs_mannheim.informatik.ct.persistence.services.RoomVisitService;
@@ -40,7 +41,9 @@ public class RestRoomController {   // couldn't resist using this name ;-)
     private RoomService roomService;
     
     @RequestMapping(value="/rooms/{roomId}/visitors", method=RequestMethod.GET)
-    public String getNumberOfCheckedInVisitors(@PathVariable(value = "roomId") String id, @RequestParam(value = "pin") String pin) throws InvalidRoomPinException {
+    public String getNumberOfCheckedInVisitors(@PathVariable(value = "roomId") String id, 
+                                               @RequestParam(value = "pin", required=false) String pin) 
+                                               throws InvalidRoomPinException, RoomNotFoundException {
        
         val room = roomService.getRoomOrThrow(id);
         

@@ -326,6 +326,11 @@ public class RoomControllerTest {
                 get("/api/rooms/" + TEST_ROOM_NAME + "/visitors").with(csrf()))
                 .andExpect(status().isBadRequest()
         );
+        
+        this.mockMvc.perform(
+                get("/api/rooms/notExistingName/visitors").with(csrf()))
+                .andExpect(status().isNotFound()
+        );
     }
 
     /**
