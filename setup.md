@@ -41,15 +41,19 @@ Go to the Microsoft Store and install ‘Ubuntu 20.04 LTS’
 2. Check if ‘Virtual Machine Platform’ and ‘Windows Subsystem for Linux’ are checked: 
 ![image](https://user-images.githubusercontent.com/63195459/151388427-52f802dc-99d0-4be4-b37a-208c20c43a36.png)
 
-In case ‘Virtual Machine Platform’ is not displayed, go to Task Manger -> Performance  CPU and check if Virtualization is enabled. 
+In case ‘Virtual Machine Platform’ is not displayed, go to Task Manger -> Performance -> CPU and check if Virtualization is enabled. 
 If this is the Case, continue follwing this Docker Setup (3. Start your Windows Command Terminal)
 If this is not the case, enable Virtualization by following online instructions. 
 
 
 3. Start your Windows Command Terminal (enter cmd in the Windows search bar).
 4. Enter following code in the command line:
+	``` conf
 	wsl --set-default-version 2
-    wsl --list -v
+	```
+	``` conf
+    	wsl --list -v
+	```
 
 ![image](https://user-images.githubusercontent.com/63195459/151388524-847a4a05-23dc-4d35-bee9-5c7090d6eeb1.png)
 
@@ -127,7 +131,7 @@ cd ./c/Users/username/Desktop/CTT_Docker_App/var/local/ctt-app
 
 
 
-## Docker Setup
+## Quick Docker Setup
 
 1. Add the current user to the `docker` group to use docker commands without sudo.
 1. Create a directory, preferably with permissions restricted to the root user. For our server we use `/var/local/ctt-app`, but any location is valid. All further instructions will be relative to this folder.  
