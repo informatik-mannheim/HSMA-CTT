@@ -72,7 +72,11 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     private String studyRooms;
 
     public RoomVisit visitRoom(Visitor visitor, Room room) {
-        return roomVisitRepository.save(new RoomVisit(visitor, room, dateTimeService.getDateNow()));
+        return visitRoom(visitor, room, dateTimeService.getDateNow());
+    }
+
+    public RoomVisit visitRoom(Visitor visitor, Room room, Date date) {
+        return roomVisitRepository.save(new RoomVisit(visitor, room, date));
     }
 
     /**
@@ -100,9 +104,14 @@ public class RoomVisitService implements VisitService<RoomVisit> {
      */
     @NonNull
     public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
+        return checkOutVisitor(visitor, dateTimeService.getDateNow());
+    }
+
+    @NonNull
+    public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor, Date date) {
         List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
         notSignedOutVisits.forEach((visit) -> {
-            visit.checkOut(dateTimeService.getDateNow(), CheckOutSource.UserCheckout);
+            visit.checkOut(date, CheckOutSource.UserCheckout);
             roomVisitRepository.save(visit);
         });
 
