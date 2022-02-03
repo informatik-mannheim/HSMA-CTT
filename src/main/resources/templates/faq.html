@@ -14,18 +14,16 @@
     <div id="faqContainer" th:each="question,iter : ${questions}">
         <div class="btn-container">
             <a class="btn btn-block btn-for-collapsible btn-for-faq" id="q-button-+${iter.index}" type="button"
-               data-toggle="collapse"
-               href="javascript:void(0);"
-               th:attr="data-target='#collapseInfo'+${iter.index}"
-               aria-expanded="false" aria-controls="collapseInfo" th:text="${question}"><i
-                    class="fa fa-plus-square"></i>
-
+               data-toggle="collapse" href="javascript:void(0);" aria-controls="collapseInfo"
+                th:attr="data-target='#collapseInfo'+${iter.index}" aria-expanded="false" th:text="${question}">
+                 <i class="fa fa-plus-square"></i>
             </a>
         </div>
         <div class="collapse card card-body" th:id="collapseInfo+${iter.index}">
             <div th:remove="tag" th:utext="${answers[iter.index]}"></div>
         </div>
     </div>
+
     <div style="margin-top: 50px; margin-bottom: 100px;">
         Bei weiteren Fragen kontaktieren Sie uns gerne per E-Mail:
         <a href="#" class="crypted" data-name="ctt-admin" data-domain="hs-mannheim" data-tld="de"
