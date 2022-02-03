@@ -33,4 +33,8 @@ public class DateTimeService {
     public Date getDateNow() {
         return Date.from(getNow().atZone(ZoneId.systemDefault()).toInstant());
     }
+
+    public Date getDate(int year, int month, int dayOfMonth, int hour, int minute){
+        return Date.from(LocalDateTime.of(year, month, dayOfMonth, hour, minute).atZone(ZoneId.systemDefault()).toInstant());
+    }
 }
