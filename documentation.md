@@ -1,21 +1,21 @@
 
 
-## Inhaltsverzeichnis
+## Table of contents
 
- - [Umfeld und Kontext](#Umfeld-und-Kontext)
- - [Datenhaltung](#Datenhaltung)
+ - [Purpose of the project](#Purpose-of-the-project)
+ - [Data management](#Data-management)
  - [Hosting](#Hosting)
- - [Rollen und Rechte](#Rollen-und-Rechte)
- - [Ansprechpartner](#Ansprechpartner)
+ - [Roles and rights](#Roles-and-rights)
+ - [Contact](#Contact)
 
-## Umfeld und Kontext
-### Zweck des Projekts
-Das Projekt dient der Kontaktverfolgung für den Infektionsschutz durch das Gesundheitsamt. Das Corona Tracking Tool (CTT) speichert den Aufenthalt von Personen in Räumen digital ab, um ein schnelles Finden von Kontaktdaten und Kontaktpersonen im Falle einer Corona-Infektion zu ermöglichen. Ziel ist es, Papierlisten abzuschaffen, um so den Verwaltungsaufwand zu reduzieren, eine datenschutzkonforme Löschung der Personendaten zu gewährleisten sowie den Vorgaben des Gesundheitsamts zu entsprechen.
+## Purpose of the project
+### Purpose of the project
+The purpose of the project is to provide contact tracking for infection control by the health department. The Corona Tracking Tool (CTT) digitally stores the whereabouts of people in rooms to enable quick finding of contact data and contact persons in case of a Corona infection. The goal is to eliminate paper lists in order to reduce the administrative burden, ensure that personal data is deleted in compliance with data protection regulations, and meet the requirements of the health department.
 
-### Genutzte Technologien
-Die App arbeitet hauptsächlich mit dem Java-Framework Spring Boot, dem Layout Manager Thymeleaf sowie einer PostgreSQL-Datenbank.
-Sämtliche Kommunikation zwischen Client und Server wird nach gängigem Webstandard verschlüsselt über HTTPS übertragen.
-Die genutzten Module und Bibliotheken sind:
+### Technologies used
+The app works mainly with the Java framework Spring Boot, the layout manager Thymeleaf and a PostgreSQL database.
+All communication between client and server is transmitted encrypted via HTTPS according to common web standards.
+The modules and libraries used are:
  - Spring Data JPA
  - Spring Security
  - Spring Web
@@ -31,34 +31,37 @@ Die genutzten Module und Bibliotheken sind:
  - jQuery
  - Lombok
 
-Das Spring-Framework stellt außerdem einen integrierten Tomcat-Server bereit, auf dem die App ausgeführt wird.
+The Spring framework also provides an integrated Tomcat server on which the app runs.
 
-## Datenhaltung
+## Data management
 
-### Was wird gespeichert?
-Für Studierende und Hochschulmitarbeiter*innen speichert die App ausschließlich die Email-Adresse des Benutzers, die Zeit des Eincheckens und den Raum in dem sich der Email-Inhaber anmeldet. Die Speicherung der Email-Adresse auf der Datenbank erfolgt AES-verschlüsselt und kann ausschließlich von Administratoren/Tracingbeauftragten über die App ausgelesen werden.
+### What is saved?
+For students and university employees, the app only stores the user's email address, the time of check-in and the room in which the email holder logs in. The storage of the email address on the database is AES encrypted and can only be read by administrators/tracing officers via the app.
 
-Für Gäste speichert die App nach Corona-Verordnung neben der Dauer des Aufenthalts noch Name, Vorname, Email sowie wahlweise eine Telefonnummer und/oder Postadresse. Diese Daten müssen zwingend gespeichert werden, um dem Gesundheitsamt alle benötigten Daten zur Kontaktverfolgung bereitzustellen.
+For guests, the app stores, according to Corona regulation, in addition to the duration of the stay, name, first name, email and optionally a phone number and/or postal address. It is mandatory that this data is stored in order to provide the health department with all the necessary data for contact tracing.
 
-### Wann wird gelöscht?
-Alle Einträge, die älter als vier Wochen alt sind, werden automatisch aus der Datenbank entfernt.
+### When will be deleted?
+All entries older than four weeks are automatically removed from the database.
 
 ## Hosting
-Aktuell wird die App in einem Docker-Container auf einem hochschulinternen Ubuntu-Server (18.04) betrieben. Der Server läuft 24/7 auf einer virtuellen Maschine, welche von der Campus IT im Rahmen des VirtuServ-Projektes bereitgestellt wird. 
-Sicherheitsupdates werden automatisch installiert. Eine Firewall mit Fail2Ban ist installiert und eingerichtet. Der Server besitzt aktuell 11 GB RAM und 30 GB Festplattenspeicher.
+Currently, the app is run in a Docker container on a university-internal Ubuntu server (18.04). The server runs 24/7 on a virtual machine provided by Campus IT as part of the VirtuServ project.
+Security updates are installed automatically. A firewall with Fail2Ban is installed and configured. The server currently has 11 GB of RAM and 30 GB of hard disk space.
 
-## Rollen und Rechte
-### User-Rolle
 
-Die User-Rolle ist Standard für alle Nutzer, die die Website nutzen und erfordert keinen Login. Diese Rolle ermöglicht es ausschließlich, sich in eine Veranstaltung bzw. einen Raum einzutragen.
+## Roles and rights
+### User role
 
-###  Rolle Mitarbeitende
+The user role is standard for all users using the website and does not require a login. This role only allows users to log into an event or room.
 
-Diese Rolle hat die Möglichkeit, Veranstaltungen anzulegen und ihre Belegung (Anzahl der eingetragenen Nutzer) anzuzeigen. Geplant ist die Möglichkeit, eine Veranstaltung bzw. einen Raum zu leeren, wenn sich nicht alle vorherigen Nutzer ordnungsgemäß ausgecheckt haben.
+###  Staff role
+This role has the ability to create events and view their occupancy (number of registered users). Planned is the possibility to empty an event or room if not all previous users have checked out properly.
 
-### Admin-Rolle
 
-Die Admin-Rolle kann alles was die Rolle Mitarbeitende kann und kann zusätzlich die Kontaktverfolgung nutzen.
+### Admin role
+The Admin role can do everything the Staff role can do and can also use contact tracking.
 
-## Ansprechpartner
-Für Fragen rund um das Projekt und zur Software wenden Sie sich bitte an [CTT Administration] (mailto:ctt-admin@hs-mannheim.de)
+
+## Contact
+
+For questions about the project and the software, please contact [CTT Administration](mailto:ctt-admin@hs-mannheim.de).
+
