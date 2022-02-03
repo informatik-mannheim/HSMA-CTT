@@ -26,8 +26,8 @@
     <faq-element id="2">
         <question>Wie kann ich das CTT verwenden, wenn ich kein Smartphone zur Verfügung habe?</question>
         <answer>
-            &lt;p&gt;Alternativ zu dem Einscannen der QR-Codes finden sie auf jedem Zettel einen URL. Diese können sie in einem Browser ihrer Wahl zum manuellen Check-In/Out eingeben. 
-            Sollte Ihnen kein Gerät mit Internetzugang zur Verfügung stehen, bitten Sie bitte eine andere Person aus dem Raum Sie ein- und dann später auch wieder auszuchecken.
+            &lt;p&gt;Alternativ zu dem Einscannen der QR-Codes finden Sie auf jedem Zettel eine URL. Diese können Sie in einem Browser Ihrer Wahl zum manuellen Check-In/Out eingeben.
+            Sollte Ihnen kein Gerät mit Internetzugang zur Verfügung stehen, bitten Sie eine andere Person aus dem Raum Sie ein- und dann später auch wieder auszuchecken.
             &lt;/p&gt;
        </answer>
     </faq-element>
@@ -35,8 +35,8 @@
         <question>Kann ich mich auch noch nachträglich Ein- oder Auschecken?</question>
         <answer>
             &lt;p&gt;Nein, es ist essenziell wichtig sich zeitnah mit dem Betreten eines Raums einzuchecken und beim Verlassen wieder auszuchecken.
-            Sollten Sie einmal vergessen haben sich auszuchecken, werden sie entweder mit dem Einchecken in einen anderen Raum oder spätestens mit Ende des Tages automatisch ausgecheckt.
-            Bedenken sie aber, dass sie in der Zwischenzeit weiter als anwesend in dem vorherigen Raum eingetragen sind.
+            Sollten Sie einmal vergessen haben sich auszuchecken, werden Sie entweder mit dem Einchecken in einen anderen Raum oder spätestens mit Ende des Tages automatisch ausgecheckt.
+            Bedenken Sie aber, dass Sie in der Zwischenzeit weiter als anwesend in dem vorherigen Raum eingetragen sind.
             &lt;/p&gt;
         </answer>
     </faq-element>
@@ -50,7 +50,7 @@
     <faq-element id="5">
         <question>Ich wurde positiv auf Corona getestet und hatte die letzten Tage an einer oder mehreren Veranstaltungen teilgenommen, was soll ich jetzt tun?</question>
         <answer>
-            &lt;p&gt;Wenn bei ihnen das Coronavirus nachgewiesen wurde, sollten sie sich schnellmöglich per E-Mail mit ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie dem Datum des Corona-Nachweis an &lt;a href=&quot;#&quot;
+            &lt;p&gt;Wenn bei Ihnen das Coronavirus nachgewiesen wurde, sollten Sie sich schnellstmöglich per E-Mail mit ihre Kontaktdaten (Name, Anschrift, Telefonnummer, Geburtsdatum) sowie dem Datum des Corona-Nachweis an &lt;a href=&quot;#&quot;
             class=&quot;crypted&quot; data-name=&quot;corona.zv&quot;data-domain=&quot;hs-mannheim&quot; data-tld=&quot;de&quot;
             onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name + &apos;@&apos; + this.dataset.domain
             + &apos;.&apos; + this.dataset.tld + &apos;?subject=Meldung einer Corona-Infektion&apos;; return false;&quot;&gt;&lt;/a&gt;
@@ -61,7 +61,7 @@
     <faq-element id="6">
         <question>Warum kann ich mich nicht einloggen?</question>
         <answer>
-            &lt;p&gt;Für die das Ein- und Auschecken ist eine Anmeldung nicht erforderlich. Der Login ist lediglich für den Administrator bzw. den Kontaktverfolger vorgesehen.
+            &lt;p&gt;Für das Ein- und Auschecken ist eine Anmeldung nicht erforderlich. Der Login ist lediglich für den Administrator bzw. den Kontaktverfolger vorgesehen.
             &lt;/p&gt;
         </answer>
     </faq-element>
@@ -69,7 +69,7 @@
         <question>Kann ich das CTT auch für meine Organisation nutzen?</question>
         <answer>
             &lt;p&gt;Ja, das CTT wird von den Studierenden der Hochschule Mannheim in Form eines Open-Source-Projekts entwickelt, d.h. die Software kann von jedem, absolut kostenfrei, auf eigener Infrastruktur genutzt und für eigene Zwecke angepasst werden.
-            &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Hier&lt;/a&gt; finden sie die dazugehörige Github-Projekt-Seite. Sollten sie technisch Fragen haben, steht ihnen das Entwickler-Team gerne unter &lt;a href=&quot;#&quot;class=&quot;crypted&quot; data-name=&quot;ctt-admin&quot;data-domain=&quot;hs-mannheim&quot;
+            &lt;a href=&apos;https://github.com/informatik-mannheim/HSMA-CTT&apos;&gt;Hier&lt;/a&gt; finden Sie die dazugehörige Github-Projekt-Seite. Sollten Sie weitere technische Fragen haben, steht Ihnen das Entwickler-Team gerne unter &lt;a href=&quot;#&quot;class=&quot;crypted&quot; data-name=&quot;ctt-admin&quot;data-domain=&quot;hs-mannheim&quot;
             data-tld=&quot;de&quot;onclick=&quot;window.location.href = &apos;mailto:&apos; + this.dataset.name +
             &apos;@&apos; + this.dataset.domain+ &apos;.&apos; + this.dataset.tld; return false;&quot;&gt;&lt;/a&gt; 
             zur Verfügung.
