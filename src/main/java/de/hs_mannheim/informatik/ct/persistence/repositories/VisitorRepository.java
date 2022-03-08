@@ -16,19 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 package de.hs_mannheim.informatik.ct.persistence.repositories;
 
-import de.hs_mannheim.informatik.ct.model.Visitor;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-
-import java.util.List;
-import java.util.Optional;
+import de.hs_mannheim.informatik.ct.model.Visitor;
 
 
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {

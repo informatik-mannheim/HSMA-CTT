@@ -60,7 +60,6 @@ public class Room {
         private String roomName;
         @NonNull
         private String roomId;
-        @NonNull
         private int maxCapacity;
         @NonNull
         private String building;

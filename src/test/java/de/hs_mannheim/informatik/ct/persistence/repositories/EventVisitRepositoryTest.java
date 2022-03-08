@@ -1,8 +1,6 @@
-package de.hs_mannheim.informatik.ct.persistence.repositories;
-
 /*
  * Corona Tracking Tool der Hochschule Mannheim
- * Copyright (C) 2021 Hochschule Mannheim
+ * Copyright (c) 2021 Hochschule Mannheim
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,12 +16,16 @@ package de.hs_mannheim.informatik.ct.persistence.repositories;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import de.hs_mannheim.informatik.ct.model.Event;
-import de.hs_mannheim.informatik.ct.model.EventVisit;
-import de.hs_mannheim.informatik.ct.model.Room;
-import de.hs_mannheim.informatik.ct.model.Visitor;
-import de.hs_mannheim.informatik.ct.persistence.RoomVisitHelper;
-import lombok.val;
+package de.hs_mannheim.informatik.ct.persistence.repositories;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
+
+import java.time.Instant;
+import java.util.Date;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.junit.MatcherAssert.assertThat;
+import de.hs_mannheim.informatik.ct.model.Event;
+import de.hs_mannheim.informatik.ct.model.EventVisit;
+import de.hs_mannheim.informatik.ct.model.Room;
+import de.hs_mannheim.informatik.ct.model.Visitor;
+import lombok.val;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest

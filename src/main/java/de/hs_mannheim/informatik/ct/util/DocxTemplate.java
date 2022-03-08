@@ -202,8 +202,8 @@ public class DocxTemplate<T> {
 
     @Data
     @AllArgsConstructor
-    private class PageData<T> {
-        private T data;
+    private class PageData<D> {
+        private D data;
         private String qrCodeId;
     }
 
