@@ -18,24 +18,19 @@
 
 package de.hs_mannheim.informatik.ct.util;
 
+import de.hs_mannheim.informatik.ct.model.Contact;
+import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
+import lombok.val;
+import lombok.var;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
-
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import de.hs_mannheim.informatik.ct.model.Contact;
-import de.hs_mannheim.informatik.ct.persistence.services.DateTimeService;
-import lombok.val;
-import lombok.var;
 
 public class ContactListGenerator {
     private final DateTimeService dateTimeService;
@@ -75,7 +70,7 @@ public class ContactListGenerator {
         writeText(appendRow(sheet), timestampText.apply(dateTimeService.getNow()), styleWithFont(workbook, timeStampStyler));
         appendRow(sheet);
         writeCells(appendRow(sheet), tableHeadings, styleWithFont(workbook, tableHeadingsStyler));
-        writeContacts(contacts, targetEmail, workbook, sheet);
+        writeContacts(contacts, workbook, sheet);
         appendRow(sheet);
         writeText(appendRow(sheet), footerNotice, styleWithFont(workbook, footerStyler));
 
@@ -86,14 +81,9 @@ public class ContactListGenerator {
         return workbook;
     }
 
-    private void writeContacts(Iterable<Contact<?>> contacts, String targetEmail, Workbook workbook, Sheet sheet) {
+    private void writeContacts(Iterable<Contact<?>> contacts, Workbook workbook, Sheet sheet) {
         val defaultStyle = workbook.createCellStyle();
-        val contactStyle = styleWithFont(workbook, contactStyler);
         for (val contact : contacts) {
-            var rowStyle = defaultStyle;
-            if (targetEmail.equals(contact.getTarget().getEmail())) {
-                rowStyle = contactStyle;
-            }
 
             writeCells(
                     appendRow(sheet),
