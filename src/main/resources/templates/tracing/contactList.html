@@ -17,7 +17,7 @@
 
         <div th:unless="${numberOfContacts} == 0">
 
-            <p>Hier sind die Kontakte f&uuml;r <span th:text="${target}"></span>.
+            <p>Hier sind die Kontakte f&uuml;r <strong th:text="${target}"></strong><span th:if="${searchStartDate != null}"> ab dem </span><strong th:text="${searchStartDate}"></strong>.
                 Zur Weitergabe an das Gesundheitsamt können die Daten in Form von Excel Dateien heruntergeladen werden.
                 Dabei kann jeweils eine seperate Excel-Datei für Studenten, Lehrende/Hochschulangestellte und Gäste
                 heruntergeladen werden.

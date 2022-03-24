@@ -25,6 +25,7 @@ import static de.hs_mannheim.informatik.ct.util.TimeUtil.convertToLocalTime;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -71,7 +72,11 @@ public class RoomVisitService implements VisitService<RoomVisit> {
     private String studyRooms;
 
     public RoomVisit visitRoom(Visitor visitor, Room room) {
-        return roomVisitRepository.save(new RoomVisit(visitor, room, dateTimeService.getDateNow()));
+        return visitRoom(visitor, room, dateTimeService.getDateNow());
+    }
+
+    public RoomVisit visitRoom(Visitor visitor, Room room, Date date) {
+        return roomVisitRepository.save(new RoomVisit(visitor, room, date));
     }
 
     /**
@@ -99,9 +104,14 @@ public class RoomVisitService implements VisitService<RoomVisit> {
      */
     @NonNull
     public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor) {
+        return checkOutVisitor(visitor, dateTimeService.getDateNow());
+    }
+
+    @NonNull
+    public List<RoomVisit> checkOutVisitor(@NonNull Visitor visitor, Date date) {
         List<RoomVisit> notSignedOutVisits = getCheckedInRoomVisits(visitor);
         notSignedOutVisits.forEach((visit) -> {
-            visit.checkOut(dateTimeService.getDateNow(), CheckOutSource.UserCheckout);
+            visit.checkOut(date, CheckOutSource.UserCheckout);
             roomVisitRepository.save(visit);
         });
 
@@ -189,6 +199,13 @@ public class RoomVisitService implements VisitService<RoomVisit> {
         log.info("Contact tracing delivered {} contacts.", contacts.size());
         
         return contacts; 
+    }
+
+    public List<Contact<RoomVisit>> getVisitorContacts(@NonNull Visitor visitor, Date startDate) {
+        val contacts = roomVisitRepository.findVisitsWithContactAndStartDate(visitor, startDate);
+        log.info("Contact tracing delivered {} contacts.", contacts.size());
+
+        return contacts;
     }
 
     public int getRemainingStudyPlaces() {

@@ -17,17 +17,27 @@
 
         <form action="#" th:action="@{results}" method="POST">
             <div class="form-group">
-                <label for="email">E-Mail: *</label>
+                <label class="ml-1" for="email">E-Mail: *</label>
                 <input type="text" id="email" name="email" size="32" class="ml-1" required>
                 <input type="submit" class="btn btn-info ml-2" value="Suchen">
             </div>
-
+            <div class="form-group">
+                <label class="ml-1" for="startDate">Suche ab (Datum):</label>
+                <input type="date" id="startDate" name="startDate" size="32" class="ml-1">
+            </div>
             <p><small><i>* = notwendige Eingabe</i></small></p>
 
         </form>
+
         <p class="error-contact-tracing"th:text="${error}"></p>
 
     </div>
+
+    <script>
+        var date = new Date();
+        date.setDate(date.getDate() - 7);
+        document.getElementById('startDate').value = date.toISOString().substr(0, 10);
+    </script>
 
 </div>
 </body>

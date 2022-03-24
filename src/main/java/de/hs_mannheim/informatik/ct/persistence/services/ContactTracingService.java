@@ -19,6 +19,7 @@
 package de.hs_mannheim.informatik.ct.persistence.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hs_mannheim.informatik.ct.model.Visit;
@@ -42,6 +43,15 @@ public class ContactTracingService {
             contacts.addAll(service.getVisitorContacts(visitor));
         }
 
+        return contacts;
+    }
+
+    @NonNull
+    public List<Contact<? extends Visit>> getVisitorContacts(@NonNull Visitor visitor, Date startDate) {
+        val contacts = new ArrayList<Contact<?>>();
+        for (val service : visitServices) {
+            contacts.addAll(service.getVisitorContacts(visitor, startDate));
+        }
         return contacts;
     }
 }

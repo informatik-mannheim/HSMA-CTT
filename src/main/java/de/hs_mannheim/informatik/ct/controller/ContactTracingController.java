@@ -17,15 +17,14 @@
  */
 package de.hs_mannheim.informatik.ct.controller;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -112,14 +111,24 @@ public class ContactTracingController {
     }
 
     @PostMapping("/results")
-    public String doSearch(@RequestParam String email, Model model) {
+    public String doSearch(
+            @RequestParam String email,
+            @RequestParam(required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<Date> startDate,
+            Model model) {
+
         val target = visitorService.findVisitorByEmail(email);
         if (!target.isPresent()) {
             model.addAttribute("error", "Eingegebene E-Mail-Adresse konnte im System nicht gefunden werden!");
             return "tracing/search";
         }
 
-        val contacts = contactTracingService.getVisitorContacts(target.get());
+        List<Contact<? extends Visit>> contacts;
+        if(startDate.isPresent()){
+            contacts = contactTracingService.getVisitorContacts(target.get(), startDate.get());
+        }else{
+            contacts = contactTracingService.getVisitorContacts(target.get());
+        }
+
         List<Contact<?>> contactsStudents = filterContactList(contacts, "students");
         List<Contact<?>> contactsStaff = filterContactList(contacts, "staff");
         List<Contact<?>> contactsGuests = filterContactList(contacts, "guests");
@@ -157,6 +166,8 @@ public class ContactTracingController {
                     return rowValues;
                 }).collect(Collectors.toList());
 
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
         model.addAttribute("numberOfContacts", contacts.size());
         model.addAttribute("tableHeadersStudents", tracingColumnsStudents.stream().map(TracingColumn::getHeader).toArray());
         model.addAttribute("tableHeadersStaff", tracingColumnsStaff.stream().map(TracingColumn::getHeader).toArray());
@@ -165,6 +176,7 @@ public class ContactTracingController {
         model.addAttribute("tableValuesStaff", contactTableStaff);
         model.addAttribute("tableValuesGuests", contactTableGuests);
         model.addAttribute("target", target.get().getEmail());
+        model.addAttribute("searchStartDate", startDate.isPresent() ? dateFormat.format(startDate.get()) : null);
 
         return "tracing/contactList.html";
     }
