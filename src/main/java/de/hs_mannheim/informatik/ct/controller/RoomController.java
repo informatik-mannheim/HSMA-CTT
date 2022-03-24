@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import de.hs_mannheim.informatik.ct.util.CookieManager;
 import de.hs_mannheim.informatik.ct.controller.exception.InvalidRoomPinException;
 import de.hs_mannheim.informatik.ct.model.Room;
 import de.hs_mannheim.informatik.ct.model.RoomVisit;
@@ -136,7 +137,7 @@ public class RoomController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
+    public String checkIn(@ModelAttribute RoomVisit.Data visitData, Model model, CookieManager cookieManager) throws UnsupportedEncodingException, InvalidRoomPinException, InvalidEmailException, InvalidExternalUserdataException {
         isRoomPinValidOrThrow(visitData);
 
         val room = roomService.getRoomOrThrow(visitData.getRoomId());
@@ -167,6 +168,8 @@ public class RoomController {
         // room manager should always be allowed to check-in
         // and needs to be checked in before the browser is forwarded to a different page!
         val visit = roomVisitService.visitRoom(visitor, room);
+
+        cookieManager.addCookie(CookieManager.Cookies.CHECKED_IN_EMAIL, visitorEmail);
         
         if (visitData.isPrivileged()) {
             val encodedVisitorEmail = URLEncoder.encode(visitorEmail, "UTF-8");
@@ -201,7 +204,7 @@ public class RoomController {
      */
     @PostMapping("/checkInOverride")
     @Transactional
-    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model) throws
+    public String checkInWithOverride(@ModelAttribute RoomVisit.Data visitData, Model model, CookieManager cookieManager) throws
                 UnsupportedEncodingException, InvalidEmailException, InvalidExternalUserdataException, InvalidRoomPinException {
 
         // TODO: this method is very similar with the normal check-in, maybe this should be refactored?
@@ -219,6 +222,9 @@ public class RoomController {
         roomVisitService.checkOutVisitor(visitor);
 
         val visit = roomVisitService.visitRoom(visitor, room);
+
+        cookieManager.addCookie(CookieManager.Cookies.CHECKED_IN_EMAIL, visitorEmail);
+
         val currentVisitCount = roomVisitService.getVisitorCount(room);
         visitData = new RoomVisit.Data(visit, currentVisitCount);
         model.addAttribute("visitData", visitData);
@@ -227,9 +233,9 @@ public class RoomController {
     }
 
     @PostMapping("/checkOut")
-    public String checkOut(@ModelAttribute RoomVisit.Data visitData) {
+    public String checkOut(@ModelAttribute RoomVisit.Data visitData, CookieManager cookieManager) {
         val visitor = getVisitorOrThrow(visitData.getVisitorEmail());
-
+        cookieManager.removeCookie(CookieManager.Cookies.CHECKED_IN_EMAIL);
         roomVisitService.checkOutVisitor(visitor);
         return "redirect:/r/checkedOut";
     }

@@ -22,10 +22,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -132,7 +129,8 @@ public class RoomControllerTest {
                         .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL));
     }
 
     @Test
@@ -180,7 +178,8 @@ public class RoomControllerTest {
                         .param("roomId", TEST_ROOM_NAME)
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL));
     }
 
     @Test
@@ -233,6 +232,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL))
                 .andDo(
                         // check out
                         result -> mockMvc.perform(
@@ -241,6 +241,7 @@ public class RoomControllerTest {
                                 .param("visitorEmail", TEST_USER_EMAIL)
                                 .with(csrf()))
                         .andExpect(status().isFound())
+                        .andExpect(cookie().value("checkedInEmail", ""))
                         .andExpect(redirectedUrl("/r/checkedOut")));
     }
 
@@ -255,6 +256,7 @@ public class RoomControllerTest {
                         .param("roomPin", TEST_ROOM_PIN)
                         .with(csrf()))
                 .andExpect(status().isOk())
+                .andExpect(cookie().value("checkedInEmail", TEST_USER_EMAIL))
                 .andDo(
                         // check out
                         result -> mockMvc.perform(
