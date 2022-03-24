@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.1</version>
+		<version>2.6.4</version>
 		<relativePath></relativePath>
 	</parent>
 
@@ -97,7 +97,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 				<executions>
 					<execution>
 						<goals>
@@ -236,12 +236,10 @@
 		<dependency>
     			<groupId>org.thymeleaf</groupId>
     			<artifactId>thymeleaf</artifactId>
-    			<version>3.0.14.RELEASE</version>
 		</dependency>
 		<dependency>
     			<groupId>org.thymeleaf</groupId>
     			<artifactId>thymeleaf-spring5</artifactId>
-    			<version>3.0.14.RELEASE</version>
 		</dependency>
 		
 		<dependency>
@@ -253,12 +251,10 @@
 	  <dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.17.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-to-slf4j</artifactId>
-			<version>2.17.1</version>
 		</dependency>
 		
 		<dependency>
