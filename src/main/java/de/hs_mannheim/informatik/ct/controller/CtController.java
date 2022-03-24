@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.hs_mannheim.informatik.ct.util.MailAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -100,8 +101,12 @@ public class CtController {
     @Value("${hostname}")
     private String host;
 
+    @Value("${support_mail_address}")
+    private String supportMailAddress;
+
     @RequestMapping("/")
     public String home(Model model) {
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         model.addAttribute("freeLearnerPlaces", roomVisitService.getRemainingStudyPlaces());
         return "index";
     }
@@ -335,6 +340,7 @@ public class CtController {
         ArrayList<String> questions = faqs.get("questions");
         model.addAttribute("questions", questions);
         model.addAttribute("answers", answers);
+        model.addAttribute("supportMailAddress", MailAddress.parse(supportMailAddress));
         return "faq";
     }
 
