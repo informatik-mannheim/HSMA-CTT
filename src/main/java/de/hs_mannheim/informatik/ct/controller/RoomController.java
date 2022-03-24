@@ -268,11 +268,7 @@ public class RoomController {
         val currentRoomVisitorCount = roomVisitService.getVisitorCount(room);
         val isRoomOvercrowded = room.getMaxCapacity() <= currentRoomVisitorCount;
 
-        // why is this here?
-        //        val redirectURI = URLEncoder.encode("/r/" + roomId + "/event-manager-portal?visitorEmail=" + encodedVisitorEmail, "UTF-8");
-
-        val roomData = new Room.Data(room);
-        model.addAttribute("roomData", roomData);
+        model.addAttribute("roomData", new Room.Data(room));
         model.addAttribute("currentRoomVisitorCount", currentRoomVisitorCount);
         model.addAttribute("isRoomOvercrowded", isRoomOvercrowded);
         model.addAttribute("visitorEmail", visitorEmail);
@@ -311,22 +307,17 @@ public class RoomController {
 
             return new RestResponse(true);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return new RestResponse(false);
         }
     }
 
     public static class RestResponse {
-        public String message;
         public boolean success;
 
         public RestResponse(boolean success) {
             this.success = success;
         }
 
-        public RestResponse(boolean success, String message) {
-            this(success);
-            this.message = message;
-        }
     }
 
     @RequestMapping("/roomFull/{roomId}")

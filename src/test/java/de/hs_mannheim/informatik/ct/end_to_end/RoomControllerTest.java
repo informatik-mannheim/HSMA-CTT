@@ -273,7 +273,8 @@ public class RoomControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("roomPin", TEST_ROOM_PIN)
         )
-                .andExpect(status().is(200));
+                .andExpect(status().is(200))
+                .andExpect(content().json("{\"success\": true}"));
     }
 
     @Test
@@ -283,7 +284,8 @@ public class RoomControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("roomPin", TEST_ROOM_PIN_INVALID)
         )
-                .andExpect(status().is(400));
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"success\": false}"));
     }
 
     @Test
