@@ -207,7 +207,7 @@ class RoomVisitServiceTest {
         Room emptyRoom = new Room("A", "B", 2);
 
         Mockito.when(roomVisitRepository.findNotCheckedOutVisits(emptyRoom))
-                .thenReturn(Collections.EMPTY_LIST);
+                .thenReturn(new LinkedList<RoomVisit>());
 
         roomVisitService.resetRoom(emptyRoom);
 
