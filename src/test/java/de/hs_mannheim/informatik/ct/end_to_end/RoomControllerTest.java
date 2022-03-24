@@ -19,6 +19,7 @@
 package de.hs_mannheim.informatik.ct.end_to_end;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -292,6 +293,44 @@ public class RoomControllerTest {
                 get("/r/" + "thisRoomShouldNotExsits").with(csrf()))
                 .andExpect(status().is(404))  // checking for response status code 404
                 .andExpect(content().string(containsString("Raum nicht gefunden")));// checking if error message is displayed for user
+    }
+    
+    @Test
+    public void testRoomVisitorsViaRest() throws Exception {
+        Room testRoom = roomService.findByName(TEST_ROOM_NAME).get();
+        
+        // /{roomId}
+        this.mockMvc.perform(
+                get("/api/rooms/" + TEST_ROOM_NAME + "/visitors?pin=" + TEST_ROOM_PIN).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(is("0"))
+        );
+        
+
+        fillRoom(testRoom, 2);
+        this.mockMvc.perform(
+                get("/api/rooms/" + TEST_ROOM_NAME + "/visitors?pin=" + TEST_ROOM_PIN).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(is("2"))
+        );
+        
+        fillRoom(testRoom, 5);
+        this.mockMvc.perform(
+                get("/api/rooms/" + TEST_ROOM_NAME + "/visitors?pin=" + TEST_ROOM_PIN).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(is("7"))
+        );
+        
+        
+        this.mockMvc.perform(
+                get("/api/rooms/" + TEST_ROOM_NAME + "/visitors").with(csrf()))
+                .andExpect(status().isBadRequest()
+        );
+        
+        this.mockMvc.perform(
+                get("/api/rooms/notExistingName/visitors").with(csrf()))
+                .andExpect(status().isNotFound()
+        );
     }
 
     /**
